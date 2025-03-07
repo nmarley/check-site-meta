@@ -10,7 +10,7 @@ export default async function Home(context: {
   let errorMsg: string | null = null
   let url: URL | null = null
 
-  if (url) {
+  if (query.url) {
     try {
       if (Array.isArray(query.url)) {
         url = new URL(query.url[0])
@@ -72,14 +72,13 @@ export default async function Home(context: {
           <div>JSONLD</div>
         </div>
 
-        {url && !errorMsg && (
+        {(url && !errorMsg) && (
           <Suspense fallback="Loading...">
             <section className="card div:grid div:grid-cols-[8rem_1fr] div:*:first:font-medium div:*:second:text-gray-500/80 font-medium hr:-mx-5 leading-relaxed">
               <BasicMetadata url={url.toString()} />
             </section>
           </Suspense>
         )}
-
 
       </div>
       <div>
