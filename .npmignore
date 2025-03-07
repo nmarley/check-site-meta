@@ -11,4 +11,4 @@ src
 tsconfig.json
 tsconfig.tsbuildinfo
 *.ts
-.next
+/.next
