@@ -1,6 +1,6 @@
 {
   "name": "check-site-meta",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "bin": {
     "check-site-meta": "./bin/check-site-meta.js"
@@ -10,7 +10,8 @@
     "build": "rm -rf .next && next build && rm -rf .next/cache && cp -r .next/static .next/standalone/.next/",
     "start": "next start",
     "lint": "next lint",
-    "test": "tsc --p ./bin && node ./bin/check-site-meta.js"
+    "test": "tsc --p ./bin && node ./bin/check-site-meta.js",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "next": "15.2.1",
