@@ -1,13 +1,29 @@
 #!/usr/bin/env node
 
-import { spawn, spawnSync, type ChildProcess } from "child_process";
+import { exec, spawn, spawnSync, type ChildProcess } from "child_process";
 import open from "open";
 import path from "path";
+import { fileURLToPath } from "url";
+
+// Get the directory of the current module (equivalent to __dirname in CommonJS)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const VERSION = "0.1.0";
 const PORT = 3050;
 
 const cwd = process.env.INIT_CWD || process.cwd();
+
+console.log("Current working directory:", process.cwd());
+console.log("INIT_CWD:", process.env.INIT_CWD);
+console.log("npm_execpath:", process.env.npm_execpath);
+console.log("Package installed at:", __dirname);
+console.log("Where am I? (pwd)");
+exec("pwd", (error, stdout, stderr) => {
+  console.log(stdout);
+})
+
+
 
 console.log(`\n   ▲ Check Site Meta ${ VERSION }`);
 
