@@ -2,13 +2,16 @@
 
 import { spawn, spawnSync, type ChildProcess } from "child_process";
 import open from "open";
+import path from "path";
 
 const VERSION = "0.1.0";
 const PORT = 3050;
 
+const cwd = process.env.INIT_CWD || process.cwd();
+
 console.log(`\n   ▲ Check Site Meta ${ VERSION }`);
 
-const nextProcess = spawn("node", ["./.next/standalone/server.js"], {
+const nextProcess = spawn("node", [path.join(cwd, "./.next/standalone/server.js")], {
   stdio: ["ignore", "pipe", "pipe"],
   env: {
     ...process.env,

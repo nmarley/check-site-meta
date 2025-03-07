@@ -11,7 +11,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "tsc --p ./bin && node ./bin/check-site-meta.js",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build && tsc --p ./bin"
   },
   "dependencies": {
     "next": "15.2.1",
