@@ -8,3 +8,6 @@ postcss.config.mjs
 tsconfig.json
 public
 src
+tsconfig.json
+tsconfig.tsbuildinfo
+*.ts
