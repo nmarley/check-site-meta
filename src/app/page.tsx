@@ -18,9 +18,8 @@ export default async function Home(context: {
       return
     }
     try {
-      const { root, html } = await getRoot(url.toString())
+      const { root } = await getRoot(url.toString())
       const metadata = getMetadata(root)
-
       resolve(metadata)
     } catch (error) {
       console.error("Error:", error, (url))

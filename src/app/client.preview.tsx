@@ -89,13 +89,10 @@ function TwitterPreview(props: {
       description: ogDescription,
       url: ogUrl,
       image: ogImage,
-      type: ogType,
-      siteName: ogSiteName,
     },
     twitter: {
       title: twitterTitle,
       description: twitterDescription,
-      card: twitterCard,
       image: twitterImage,
     }
   }: Metadata = props.metadata

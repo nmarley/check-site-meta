@@ -152,6 +152,10 @@ function OpenGraphMetadata(props: {
   return (
     <>
       <div>
+        <div>og:title</div>
+        <div>{ogTitle ?? "-"}</div>
+      </div>
+      <div>
         <div>og:description</div>
         <div>{ogDescription ?? "-"}</div>
       </div>
