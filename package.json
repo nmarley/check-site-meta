@@ -1,10 +1,14 @@
 {
   "name": "check-site-meta",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "type": "module",
   "bin": {
     "check-site-meta": "./bin/check-site-meta.js"
   },
+  "files": [
+    ".next",
+    "bin"
+  ],
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "rm -rf .next && next build && rm -rf .next/cache && cp -r .next/static .next/standalone/.next/",
