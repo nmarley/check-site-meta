@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./components.css";
 
 :root {
   --background: #ffffff;
@@ -24,15 +25,13 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-@utility card {
-  --padding: calc(5 * 0.25rem);
-  @apply p-[var(--padding)] border rounded-md border-gray-200 bg-background 
-    hr:-mx-[var(--padding)] 
-    hr:my-[var(--padding)]
-    hr:border-gray-200
-  ;
+
+@utility break-word{
+  word-break: break-word;
+  @apply break-words;
 }
 
 @custom-variant div (&>div);
 @custom-variant second (&:nth-child(2));
 @custom-variant hr (&>hr);
+@custom-variant a (&>a);

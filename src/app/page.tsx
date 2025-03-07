@@ -1,129 +1,108 @@
 import { Suspense, type SVGProps } from "react";
 import Form from 'next/form'
-import { getRoot } from "./get-metadata";
+import { getMetadata, getRoot, type Metadata } from "./lib/get-metadata";
+import { parseUrlFromQuery } from "./lib/parse-url";
+import { MetadataInformations } from "./client.metadata";
+import { LinkPreview } from "./client.preview";
 
 export default async function Home(context: {
   searchParams: Promise<Record<string, string | string[]>>
 }) {
   const query = await context.searchParams;
 
-  let errorMsg: string | null = null
-  let url: URL | null = null
+  const { url, error } = parseUrlFromQuery(query.url)
 
-  if (query.url) {
-    try {
-      if (Array.isArray(query.url)) {
-        url = new URL(query.url[0])
-      } else {
-        url = new URL(query.url)
-      }
-    } catch (error) {
-      console.log("Error:", error)
-      errorMsg = error instanceof Error ? error.message : "An error occurred"
+  const metadataPromise = new Promise<Metadata>(async (resolve, reject) => {
+    if (!url) {
+      reject();
+      return
     }
-  }
+    try {
+      const { root, html } = await getRoot(url.toString())
+      const metadata = getMetadata(root)
 
+      resolve(metadata)
+    } catch (error) {
+      console.error("Error:", error, (url))
+      reject(`An error occurred, ${ error }`)
+    }
+  })
 
   return (
-    <main className="mx-auto max-w-3xl lg:max-w-none px-12 xl:px-24 py-24 font-medium pb-[100vh] lg:grid lg:grid-cols-2 font-sans">
-      <div className="flex flex-col gap-8">
+    <main className="mx-auto max-w-3xl lg:max-w-none px-8 lg:px-12 xl:px-24  font-medium  lg:grid lg:grid-cols-2 gap-x-8 font-sans pb-[100vh]"
+      style={{
+        // @ts-expect-error custom css prop
+        "--padding-top": "3rem",
+        "--padding-bottom": "3rem",
+      }}
+    >
 
-        <header className="text-start">
-          <div className="text-xs text-gray-600 font-mono">npx check-site-meta</div>
-          <h1 className="text-2xl font-bold tracking-tight leading-normal">
-            Site Metadata Checker
-          </h1>
-          <p className="mt text-gray-600 text-pretty text-sm">
-            Validate how your Open Graph data is used for link previews on social platforms.
-          </p>
-        </header>
-        <section className="card">
-          <label className="text-sm font-semibold tracking-tight flex items-center gap-0.5 mb-1 text-foreground-input" htmlFor="id">
-            <CiSearchMagnifyingGlass className="w-4 h-4" />
+      <div className="flex flex-col gap-8 py-[var(--padding-top)] pb-[var(--padding-bottom)]">
+
+        <Header />
+
+        <section className="">
+          {/* <label className="text-sm font-semibold tracking-tight flex items-center gap-0.5 mb-1 text-foreground-input" htmlFor="id">
             Website URL
-          </label>
-          <Form action="/" className="flex gap-2">
+          </label> */}
+          <Form
+            action="/"
+            className="flex p-1 bg-white  card rounded-xl focus-within:border-slate-400 outline-transparent focus-within:outline-4 focus-within:outline-slate-200 transition">
+            <CiSearchMagnifyingGlass className="w-4 h-4 ml-3 mr-3 self-center" />
             <input
               required
-              id="url"
+              autoComplete="off"
+              id="lookup_url"
               name="url"
               defaultValue={query.url as string}
-              className="grow border bg-background border-gray-200 p-2 px-3 pr-0 rounded-lg font-medium tracking-tight transition-all focus:outline-4 outline-gray-100 text-foreground-input" />
+              className="grow border-none focus:outline-0 mr-1 px-2"
+            />
             <button
-              className="text-sm bg-foreground text-background px-4 rounded-md hover:bg-gray-800 cursor-pointer transition-all active:translate-y-0.5 font-semibold"
-            >Check Metadata</button>
+              type="submit"
+            >Check</button>
           </Form>
-          <div className="text-gray-400 text-xs mt-1">
-            Provide a complete URL including the protocol (http:// or https://)
-          </div>
-          {errorMsg && (
+
+          {error && (
             <div className="text-xs mt-1 text-red-500">
-              {errorMsg}
+              {error}
             </div>
           )}
 
         </section>
 
-        {/* Tabs */}
-        <div className="flex p-1 rounded-md text-sm bg-slate-200/60 -mb-4 *:p-1.5 *:px-6 *:text-slate-500 *:font-semibold *:data-active:bg-white *:data-active:text-foreground *:data-active:rounded-sm *:data-active:shadow-xs *:cursor-pointer">
-          <div data-active>General</div>
-          <div>Open Graph</div>
-          <div>Twitter</div>
-          <div>JSONLD</div>
-        </div>
-
-        {(url && !errorMsg) && (
-          <Suspense fallback="Loading...">
-            <section className="card div:grid div:grid-cols-[8rem_1fr] div:*:first:font-medium div:*:second:text-gray-500/80 font-medium hr:-mx-5 leading-relaxed">
-              <BasicMetadata url={url.toString()} />
-            </section>
+        {!!(!!url && !!!error) && (
+          <Suspense
+            key={url.toString()}
+            fallback={<span className="fadeIn-3000">Loading...</span>}>
+            <MetadataInformations metadataPromise={metadataPromise} />
           </Suspense>
         )}
-
       </div>
-      <div>
-
+      <div className="flex flex-col items-center gap-8 py-[var(--padding-top)] pb-[var(--padding-bottom)]">
+        {(url && !error) && (
+          <Suspense
+            key={url.toString()}
+            fallback={<span className="fadeIn-3000">Loading...</span>}>
+            <LinkPreview metadataPromise={metadataPromise} />
+          </Suspense>
+        )}
       </div>
     </main>
   );
 }
 
-
-async function BasicMetadata(props: {
-  url: string
-}) {
-  const root = await getRoot(props.url)
-  const title = root.querySelector("title")?.text
-  const ogTitle = root.querySelector("meta[property='og:title']")?.getAttribute("content")
-  const twitterTitle = root.querySelector("meta[name='twitter:title']")?.getAttribute("content")
-
-  const description = root.querySelector("meta[name=description]")?.getAttribute("content")
-
-
+async function Header() {
   return (
-    <>
-      <div>
-        <div><b>title</b></div>
-        <div>{title}</div>
-      </div>
-      <div>
-        <div>og:title</div>
-        <div>{ogTitle ?? "-"}</div>
-      </div>
-      <div>
-        <div>twitter:title</div>
-        <div>{twitterTitle ?? "-"}</div>
-      </div>
-      <hr />
-      <div>
-        <div>description</div>
-        <div>{description}</div>
-      </div>
-    </>
+    <header className="text-start">
+      <div className="text-xs text-gray-600 font-mono">npx check-site-meta</div>
+      <h1 className="leading-normal">
+        Site Metadata Checker</h1>
+      <p className="text-gray-600 text-pretty text-sm">
+        Validate how your Open Graph data is used for link previews on social platforms.
+      </p>
+    </header>
   )
-
 }
-
 
 function CiSearchMagnifyingGlass(props: SVGProps<SVGSVGElement>) {
   return (
