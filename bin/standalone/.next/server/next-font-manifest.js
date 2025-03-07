@@ -1,1 +1,0 @@
-self.__NEXT_FONT_MANIFEST='{"pages":{},"app":{"/Users/alfonsusac/Documents/dev/projects/check-site-meta/src/app/layout":["static/media/93f479601ee12b01-s.p.woff2","static/media/2b3f1035ed87a788-s.p.woff2"]},"appUsingSizeAdjust":true,"pagesUsingSizeAdjust":false}';
