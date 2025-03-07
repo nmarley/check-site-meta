@@ -5,10 +5,6 @@
   "bin": {
     "check-site-meta": "./bin/check-site-meta.js"
   },
-  "files": [
-    ".next",
-    "bin"
-  ],
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "rm -rf .next && next build && rm -rf .next/cache && cp -r .next/static .next/standalone/.next/ && cp -r .next/standalone bin",
