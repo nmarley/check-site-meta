@@ -1,19 +1,29 @@
 #!/usr/bin/env node
 
-import { spawn } from "child_process";
+import { spawn, spawnSync, type ChildProcess } from "child_process";
 import open from "open";
 
-const VERSION = "0.0.1";
+const VERSION = "0.1.0";
 const PORT = 3050;
 
-const nextProcess = spawn("npx", ["next", "start", "-p", String(PORT)], { stdio: ["ignore", "pipe", "pipe"] });
+console.log(`\n   ▲ Check Site Meta ${ VERSION }`);
+
+const nextProcess = spawn("node", ["./.next/standalone/server.js"], {
+  stdio: ["ignore", "pipe", "pipe"],
+  env: {
+    ...process.env,
+    PORT: String(PORT),
+  },
+});
 
 nextProcess.stdout.on("data", (data) => {
-  if (String(data).startsWith("   ▲ Next.js ")) {
-    process.stdout.write(`   ▲ Check Site Meta ${ VERSION }\n`);
+  const message = String(data)
+
+  if (message.startsWith("   ▲ Next.js ")) {
+    process.stdout.write(message.replace("Next.js", "Using Next.js"));
     return
   }
-  if (String(data).startsWith("   - Local:")) {
+  if (message.startsWith("   - Local:")) {
     process.stdout.write(
       `   - Local: http://localhost:${ PORT }
    - Starting... 🚀\n\n`
@@ -22,7 +32,7 @@ nextProcess.stdout.on("data", (data) => {
   }
 
   // Detect when the server is ready
-  if (String(data).includes(`✓ Ready in`)) {
+  if (message.includes(`✓ Ready in`)) {
     setTimeout(() => {
       console.log(` → Opening browser at http://localhost:${ PORT }`);
       open(`http://localhost:${ PORT }`);
@@ -45,3 +55,12 @@ nextProcess.on("exit", (code) => {
     console.error("\n❌ Next.js server failed to start.");
   }
 });
+
+const cleanup = () => {
+  console.log(`\n → Stopping server on port ${ PORT }...`);
+  nextProcess.kill("SIGTERM"); // Gracefully stop child process
+  process.exit();
+};
+
+process.on("SIGINT", cleanup); // Ctrl + C
+process.on("SIGTERM", cleanup); // Kill command

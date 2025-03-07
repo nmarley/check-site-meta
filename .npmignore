@@ -1,0 +1,10 @@
+node_modules
+.gitignore
+eslint.config.mjs
+next-env.d.ts
+next.config.ts
+NOTES.md
+postcss.config.mjs
+tsconfig.json
+public
+src

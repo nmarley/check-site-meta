@@ -8,20 +8,20 @@ export default async function Home(context: {
   const query = await context.searchParams;
 
   let errorMsg: string | null = null
-  let url: string | null = null
+  let url: URL | null = null
 
-  try {
-    if (Array.isArray(query.url)) {
-      url = query.url[0]
-    } else {
-      url = query.url
+  if (url) {
+    try {
+      if (Array.isArray(query.url)) {
+        url = new URL(query.url[0])
+      } else {
+        url = new URL(query.url)
+      }
+    } catch (error) {
+      console.log("Error:", error)
+      errorMsg = error instanceof Error ? error.message : "An error occurred"
     }
-  } catch (error) {
-    console.error(error)
-    errorMsg = error instanceof Error ? error.message : "An error occurred"
   }
-
-  console.log("url", errorMsg, url)
 
 
   return (
@@ -56,6 +56,11 @@ export default async function Home(context: {
           <div className="text-gray-400 text-xs mt-1">
             Provide a complete URL including the protocol (http:// or https://)
           </div>
+          {errorMsg && (
+            <div className="text-xs mt-1 text-red-500">
+              {errorMsg}
+            </div>
+          )}
 
         </section>
 
@@ -67,15 +72,13 @@ export default async function Home(context: {
           <div>JSONLD</div>
         </div>
 
-        {
-          url && (
-            <Suspense fallback="Loading...">
-              <section className="card div:grid div:grid-cols-[8rem_1fr] div:*:first:font-medium div:*:second:text-gray-500/80 font-medium hr:-mx-5 leading-relaxed">
-                <BasicMetadata url={url} />
-              </section>
-            </Suspense>
-          )
-        }
+        {url && !errorMsg && (
+          <Suspense fallback="Loading...">
+            <section className="card div:grid div:grid-cols-[8rem_1fr] div:*:first:font-medium div:*:second:text-gray-500/80 font-medium hr:-mx-5 leading-relaxed">
+              <BasicMetadata url={url.toString()} />
+            </section>
+          </Suspense>
+        )}
 
 
       </div>
@@ -94,7 +97,7 @@ async function BasicMetadata(props: {
   const title = root.querySelector("title")?.text
   const ogTitle = root.querySelector("meta[property='og:title']")?.getAttribute("content")
   const twitterTitle = root.querySelector("meta[name='twitter:title']")?.getAttribute("content")
-  
+
   const description = root.querySelector("meta[name=description]")?.getAttribute("content")
 
 
