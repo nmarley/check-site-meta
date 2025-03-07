@@ -18,7 +18,7 @@ exec("pwd", (error, stdout, stderr) => {
     console.log(stdout);
 });
 console.log(`\n   ▲ Check Site Meta ${VERSION}`);
-const nextProcess = spawn("node", [path.join(cwd, "./.next/standalone/server.js")], {
+const nextProcess = spawn("node", [path.join(__dirname, "./standalone/server.js")], {
     stdio: ["ignore", "pipe", "pipe"],
     env: {
         ...process.env,
