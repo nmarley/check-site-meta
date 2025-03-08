@@ -1,3 +1,9 @@
+## TODO
+
+- [ ] Favicon
+- [ ] JSON-LD
+- [ ] LLM.txt
+- [ ] ROBOT.txt
 
 
 ## Script Explanations

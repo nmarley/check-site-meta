@@ -11,9 +11,8 @@ export const getRoot = cache(async function getRoot(url: string) {
   });
   const html = await res.text();
   const root = parse(html);
-  return {root, html}
+  return { root, html }
 })
-
 
 export function getMetadata(root: HTMLElement) {
   return {
@@ -23,21 +22,50 @@ export function getMetadata(root: HTMLElement) {
       url: root.querySelector("link[rel=canonical]")?.getAttribute("href"),
     },
     og: {
-      title: root.querySelector("meta[property='og:title']")?.getAttribute("content"),
-      description: root.querySelector("meta[property='og:description']")?.getAttribute("content"),
-      url: root.querySelector("meta[property='og:url']")?.getAttribute("content"),
-      image: root.querySelector("meta[property='og:image']")?.getAttribute("content"),
-      type: root.querySelector("meta[property='og:type']")?.getAttribute("content"),
-      siteName: root.querySelector("meta[property='og:site_name']")?.getAttribute("content"),
+      title: fromMetaTag(root, 'og:title'),
+      description: fromMetaTag(root, 'og:description'),
+      url: fromMetaTag(root, 'og:url'),
+      image: fromMetaTag(root, 'og:image'),
+      type: fromMetaTag(root, 'og:type'),
+      siteName: fromMetaTag(root, 'og:site_name'),
+      imageAlt: fromMetaTag(root, 'og:image:alt'),
     },
     twitter: {
-      title: root.querySelector("meta[name='twitter:title']")?.getAttribute("content"),
-      card: root.querySelector("meta[name='twitter:card']")?.getAttribute("content"),
-      description: root.querySelector("meta[name='twitter:description']")?.getAttribute("content"),
-      image: root.querySelector("meta[name='twitter:image']")?.getAttribute("content"),
+      title: fromMetaTag(root, 'twitter:title'),
+      card: fromMetaTag(root, 'twitter:card'),
+      description: fromMetaTag(root, 'twitter:description'),
+      image: fromMetaTag(root, 'twitter:image'),
+      imageAlt: fromMetaTag(root, 'twitter:image:alt'),
+
+      site: fromMetaTag(root, 'twitter:site'),
+      siteId: fromMetaTag(root, 'twitter:site:id'),
+      creator: fromMetaTag(root, 'twitter:creator'),
+      creatorId: fromMetaTag(root, 'twitter:creator:id'),
+
+      player: fromMetaTag(root, 'twitter:player'),
+      playerWidth: fromMetaTag(root, 'twitter:player:width'),
+      playerHeight: fromMetaTag(root, 'twitter:player:height'),
+      playerStream: fromMetaTag(root, 'twitter:player:stream'),
+
+      appCountry: fromMetaTag(root, 'twitter:app:country'),
+
+      appNameIphone: fromMetaTag(root, 'twitter:app:name:iphone'),
+      appIdIphone: fromMetaTag(root, 'twitter:app:id:iphone'),
+      appUrlIphone: fromMetaTag(root, 'twitter:app:url:iphone'),
+
+      appNameIpad: fromMetaTag(root, 'twitter:app:name:ipad'),
+      appIdIpad: fromMetaTag(root, 'twitter:app:id:ipad'),
+      appUrlIpad: fromMetaTag(root, 'twitter:app:url:ipad'),
+
+      appNameGoogleplay: fromMetaTag(root, 'twitter:app:name:googleplay'),
+      appIdGoogleplay: fromMetaTag(root, 'twitter:app:id:googleplay'),
+      appUrlGoogleplay: fromMetaTag(root, 'twitter:app:url:googleplay'),
     }
   }
 }
 
-export type Metadata = ReturnType<typeof getMetadata>
+function fromMetaTag(root: HTMLElement, key: string) {
+  return root.querySelector(`meta[name='${ key }']`)?.getAttribute("content")
+}
 
+export type Metadata = ReturnType<typeof getMetadata>

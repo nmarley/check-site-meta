@@ -46,17 +46,21 @@
     hr:border-gray-200;
 }
 
+@utility link-underline {
+  @apply text-blue-600 hover:underline;
+}
+
 @utility meta-info-grid {
   @apply flex flex-col gap-1 leading-relaxed font-medium break-word;
   & > div {
-    @apply grid grid-cols-[8rem_1fr];
+    @apply grid grid-cols-[10rem_1fr];
     & > *:first-child {
       @apply font-medium;
     }
     & > *:nth-child(2) {
       @apply text-gray-500/80;
       & > a {
-        @apply text-blue-600 hover:underline;
+        @apply link-underline;
       }
     }
   }

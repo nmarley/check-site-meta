@@ -94,8 +94,27 @@ function TwitterPreview(props: {
       title: twitterTitle,
       description: twitterDescription,
       image: twitterImage,
+      card: twitterCard
     }
   }: Metadata = props.metadata
+
+  if (
+    (
+      twitterCard === "summary"
+    ) || (
+      !twitterCard && ogTitle && ogDescription
+    )
+  ) {
+
+  }
+
+  if (!twitterCard) {
+    if (ogTitle && ogDescription) {
+
+    } else {
+
+    }
+  }
 
   const rawUrl = ogUrl || url
 

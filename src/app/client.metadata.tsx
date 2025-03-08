@@ -2,13 +2,14 @@
 
 import { use, useState } from "react"
 import type { Metadata } from "./lib/get-metadata"
+import { getMetadataMetadata, separator, type FieldData, type MetadataMetadata } from "./lib/get-metadata-field-data"
 
 export function MetadataInformations(
   props: { metadataPromise: Promise<Metadata> }
 ) {
   const metadata = use(props.metadataPromise)
+  const metadataData = getMetadataMetadata(metadata)
 
-  // const tabs = ["General", "Open Graph", "Twitter", "JSONLD", "Misc"]
   const tabs = ["General", "Open Graph", "Twitter"]
   const [tab, setTab] = useState(0)
 
@@ -26,188 +27,153 @@ export function MetadataInformations(
 
       {tab === 0 &&
         <section className="card meta-info-grid fadeIn-100">
-          <BasicMetadata metadata={metadata} />
+          <BasicMetadata m={metadataData} />
         </section>
       }
       {tab === 1 &&
         <section className="card meta-info-grid fadeIn-0">
-          <OpenGraphMetadata metadata={metadata} />
+          <OpenGraphMetadata data={metadataData} />
         </section>
       }
       {tab === 2 &&
         <section className="card meta-info-grid fadeIn-0">
-          <TwitterMetadata metadata={metadata} />
+          <TwitterMetadata data={metadataData} />
         </section>
       }
-      
+
     </>
   )
 
 }
 
-function BasicMetadata(props: {
-  metadata: Metadata
+
+function FieldData(props: {
+  fieldData: FieldData
 }) {
-  const {
-    general: {
-      title,
-      description,
-      url
-    },
-    og: {
-      title: ogTitle,
-      description: ogDescription,
-      url: ogUrl,
-      image: ogImage,
-      type: ogType,
-      siteName: ogSiteName,
-    },
-    twitter: {
-      title: twitterTitle,
-      description: twitterDescription,
-      card: twitterCard,
-      image: twitterImage,
+  return props.fieldData.map((item, i) => {
+    if ("separator" in item) {
+      return <hr key={i} />
     }
-  } = props.metadata
+    return (
+      <div key={i}>
+        <div>{item.label}</div>
+        <div className=" relative">
+          {!item.value && (
+            <span className="opacity-40">
+              -
+            </span>
+          )}
+          {!item.type && (item.value)}
+          {item.value && item.type === "url" && (
+            <a target="_blank" href={item.value} className="group">
+              {item.value}↗
+            </a>
+          )}
+          {item.value && item.type === "image" && (
+            <div className="grid grid-cols-[1fr_3fr] gap-2">
+              <img src={item.value}
+                className="border rounded-md mt-1"
+              />
+              <a target="_blank" href={item.value} className="group link-underline">
+                {item.value}↗
+              </a>
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  })
+
+}
+
+
+
+function BasicMetadata(props: {
+  m: MetadataMetadata
+}) {
+  const m = props.m
+
+  const fieldData = [
+    m.general.title,
+    m.general.description,
+    m.general.url,
+    separator,
+    m.og.title,
+    m.og.description,
+    m.og.image,
+    m.og.url,
+    m.og.type,
+    m.og.siteName,
+    separator,
+    m.twitter.title,
+    m.twitter.description,
+    m.twitter.card,
+    m.twitter.image,
+  ]
+
   return (
-    <>
-      <div>
-        <div>title</div>
-        <div>{title ?? "-"}</div>
-      </div>
-      <div>
-        <div>description</div>
-        <div>{description ?? "-"}</div>
-      </div>
-      <div>
-        <div>url</div>
-        <div>{url ? (<a href={url}>{`${ url }↗`}</a>) : "-"}</div>
-      </div>
-
-      <hr />
-
-      <div>
-        <div>og:title</div>
-        <div>{ogTitle ?? "-"}</div>
-      </div>
-
-      <div>
-        <div>og:description</div>
-        <div>{ogDescription ?? "-"}</div>
-      </div>
-      <div>
-        <div>og:image</div>
-        <div>{ogImage ? (<a href={url}>{`${ ogImage }↗`}</a>) : "-"}</div>
-      </div>
-      <div>
-        <div>og:url</div>
-        <div>{ogUrl ? (<a href={url}>{`${ ogUrl }↗`}</a>) : "-"}</div>
-      </div>
-      <div>
-        <div>og:type</div>
-        <div>{ogType ?? "-"}</div>
-      </div>
-      <div>
-        <div>og:site_name</div>
-        <div>{ogSiteName ?? "-"}</div>
-      </div>
-
-      <hr />
-
-
-      <div>
-        <div>twitter:title</div>
-        <div>{twitterTitle ?? "-"}</div>
-      </div>
-      <div>
-        <div>twitter:description</div>
-        <div>{twitterDescription ?? "-"}</div>
-      </div>
-      <div>
-        <div>twitter:card</div>
-        <div>{twitterCard ?? "-"}</div>
-      </div>
-      <div>
-        <div>twitter:image</div>
-        <div>{twitterImage ? (<a href={url}>{`${ twitterImage }↗`}</a>) : "-"}</div>
-      </div>
-    </>
+    <FieldData fieldData={fieldData} />
   )
-
 }
 
 function OpenGraphMetadata(props: {
-  metadata: Metadata
+  data: MetadataMetadata
 }) {
-  const {
-    og: {
-      title: ogTitle,
-      description: ogDescription,
-      url: ogUrl,
-      image: ogImage,
-      type: ogType,
-      siteName: ogSiteName,
-    }
-  } = props.metadata
+  const m = props.data.og
+
+  const fieldData = [
+    m.title,
+    m.description,
+    m.image,
+    m.url,
+    m.type,
+    m.siteName,
+    m.imageAlt,
+  ]
   return (
-    <>
-      <div>
-        <div>og:title</div>
-        <div>{ogTitle ?? "-"}</div>
-      </div>
-      <div>
-        <div>og:description</div>
-        <div>{ogDescription ?? "-"}</div>
-      </div>
-      <div>
-        <div>og:image</div>
-        <div>{ogImage ? (<a>{`${ ogImage }↗`}</a>) : "-"}</div>
-      </div>
-      <div>
-        <div>og:url</div>
-        <div>{ogUrl ? (<a>{`${ ogUrl }↗`}</a>) : "-"}</div>
-      </div>
-      <div>
-        <div>og:type</div>
-        <div>{ogType ?? "-"}</div>
-      </div>
-      <div>
-        <div>og:site_name</div>
-        <div>{ogSiteName ?? "-"}</div>
-      </div>
-    </>
+    <FieldData fieldData={fieldData} />
   )
 }
 
 function TwitterMetadata(props: {
-  metadata: Metadata
+  data: MetadataMetadata
 }) {
-  const {
-    twitter: {
-      title: twitterTitle,
-      description: twitterDescription,
-      card: twitterCard,
-      image: twitterImage,
-    }
-  } = props.metadata
+  const t = props.data.twitter
+
+  const fieldData = [
+    t.title,
+    t.card,
+    t.description,
+    t.image,
+    t.imageAlt,
+    separator,
+    t.site,
+    t.siteId,
+    separator,
+    t.creator,
+    t.creatorId,
+    separator,
+    t.player,
+    t.playerWidth,
+    t.playerHeight,
+    t.playerStream,
+    separator,
+    t.appCountry,
+    separator,
+    t.appNameIphone,
+    t.appIdIphone,
+    t.appUrlIphone,
+    separator,
+    t.appNameIpad,
+    t.appIdIpad,
+    t.appUrlIpad,
+    separator,
+    t.appNameGoogleplay,
+    t.appIdGoogleplay,
+    t.appUrlGoogleplay,
+  ]
+
   return (
-    <>
-      <div>
-        <div>twitter:title</div>
-        <div>{twitterTitle ?? "-"}</div>
-      </div>
-      <div>
-        <div>twitter:description</div>
-        <div>{twitterDescription ?? "-"}</div>
-      </div>
-      <div>
-        <div>twitter:card</div>
-        <div>{twitterCard ?? "-"}</div>
-      </div>
-      <div>
-        <div>twitter:image</div>
-        <div>{twitterImage ? (<a>{`${ twitterImage }↗`}</a>) : "-"}</div>
-      </div>
-    </>
+    <FieldData fieldData={fieldData} />
   )
 }
