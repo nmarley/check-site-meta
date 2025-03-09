@@ -3,15 +3,22 @@
 import { Fragment, use, useState } from "react"
 import type { Metadata } from "./lib/get-metadata"
 import { getMetadataMetadata, separator, type FieldData, type MetadataMetadata } from "./lib/get-metadata-field-data"
+import type { ErrorInfo } from "./module/error/error-primitives"
+import ErrorCard from "./module/error/Error"
 
 export function MetadataInformations(
-  props: { metadataPromise: Promise<Metadata> }
+  props: { metadataPromise: Promise<Metadata | {error: ErrorInfo}> }
 ) {
+  const [tab, setTab] = useState(0)
+
   const metadata = use(props.metadataPromise)
+  if ("error" in metadata) {
+    return <ErrorCard error={metadata.error} />
+  }
+
   const metadataData = getMetadataMetadata(metadata)
 
   const tabs = ["General", "Open Graph", "Twitter", "Icons"]
-  const [tab, setTab] = useState(0)
 
   return (
     <>
@@ -81,12 +88,12 @@ function FieldData(props: {
             <span>
               <a target="_blank" href={item.resolvedUrl} className="group link-underline">
                 {value} <ExternalIcon />
-              </a> {item.fallback && <span className="text-foreground/30">({fallbackLabel})</span>}
+              </a> {fallback && <span className="text-foreground/30">({fallbackLabel})</span>}
             </span>
           )}
           {value && type?.startsWith("image") && (
             <div className="flex gap-2">
-              <div className="border rounded-md p-1 w-auto shrink-0 self-start">
+              <div className="border border-slate-200 p-1 w-auto shrink-0 self-start">
                 <img src={resolvedUrl}
                   className={` ${ type === "image-favicon" ? "h-[1.5lh]" : "h-[2lh]" }`}
                 />
@@ -94,7 +101,7 @@ function FieldData(props: {
               <span>
                 <a target="_blank" href={resolvedUrl} className="group link-underline">
                   {value} <ExternalIcon />
-                </a>  {item.fallback && <span className="text-foreground/30">({fallbackLabel})</span>}
+                </a> {fallback && <span className="text-foreground/30">({fallbackLabel})</span>}
               </span>
             </div>
           )}
@@ -232,9 +239,9 @@ function IconMetadata(props: {
               <div className="border border-slate-200 p-1 w-auto shrink-0">
                 <img src={resolvedUrl} className="h-[1.5lh]" />
               </div>
-              <span className="text-xs">
-                {new URL(resolvedUrl).pathname.split('/').at(-1)}
-                <br />{fallback && <span className="text-foreground/30">({fallbackLabel})</span>}
+              <span className="text-xs meta-info-field-value">
+                {value}
+                <br />{fallback && <span className="">&quot;{fallbackLabel}&quot;</span>}
               </span>
             </div>
           )
@@ -246,7 +253,7 @@ function IconMetadata(props: {
 
       <div className="mb-4">apple-touch-icon</div>
       <div>
-        <div className="flex! gap-2 items-end flex-wrap col-span-2">
+        <div className="flex gap-2 items-end flex-wrap">
           {(() => {
             const items = props.data.icons.appleTouchIcons.values
 
@@ -269,19 +276,24 @@ function IconMetadata(props: {
                 </div>
               })}
             </>
+          })()}
+        </div>
+        <div className="flex flex-col mt-2 meta-info-field-value">
+          {(() => {
+            const items = props.data.icons.appleTouchIcons.values
 
-            // return (
-            //   <div className="flex flex-col gap-1 items-center justify-center text-center">
-            //     {/* <div className="border border-slate-200 p-1 w-auto shrink-0">
-            //       <img src={value} className="h-[1.5lh]" />
-            //     </div>
-            //     <span className="text-xs">
-            //       {new URL(value).pathname.split('/').at(-1)}
-            //       <br />{props.data.general.favicon2.fallback && <span className="text-foreground/30">({fallbackLabel})</span>}
-            //     </span> */}
-            //   </div>
-            // )
+            if (!items?.length) {
+              return (<div className="opacity-40">-</div>)
+            }
 
+            return <>
+              {items?.map((item, i) => {
+                if (!item.value) return null
+                return <span key={i} className="text-xs">
+                  {item.value}<br />
+                </span>
+              })}
+            </>
           })()}
         </div>
       </div>

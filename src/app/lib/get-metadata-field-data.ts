@@ -75,7 +75,12 @@ export function getMetadataMetadata(m: Metadata):
             value: m.general.favicon3,
             label: "icon shortcut",
             resolvedUrl: resolveUrl(m.general.favicon3),
-          }
+          },
+          {
+            value: m.general.favicon4,
+            label: "/favicon.ico",
+            resolvedUrl: resolveUrl(m.general.favicon4),
+          },
         ]
       },
       favicon2: {
@@ -89,6 +94,12 @@ export function getMetadataMetadata(m: Metadata):
         label: "favicon (icon shortcut)",
         type: "image",
         resolvedUrl: resolveUrl(m.general.favicon3),
+      },
+      favicon4: {
+        value: m.general.favicon4,
+        label: "favicon (direct link)",
+        type: "image",
+        resolvedUrl: resolveUrl(m.general.favicon4),
       },
     },
     og: {
@@ -232,7 +243,7 @@ export function getMetadataMetadata(m: Metadata):
         values: m.icons.appleTouchIcons.map(e => {
           return {
             value: e.href,
-            label: e.sizes,
+            label: e.sizes ?? "",
             resolvedUrl: resolveUrl(e.href),
           }
         }),

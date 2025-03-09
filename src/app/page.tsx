@@ -1,9 +1,10 @@
 import { Suspense, type SVGProps } from "react";
 import Form from 'next/form'
-import { getMetadata, getRoot, type Metadata } from "./lib/get-metadata";
+import { getMetadata, getRoot } from "./lib/get-metadata";
 import { parseUrlFromQuery } from "./lib/parse-url";
 import { MetadataInformations } from "./client.metadata";
 import { LinkPreview } from "./client.preview";
+import { AppError, createError } from "./module/error/error-primitives";
 
 export default async function Home(context: {
   searchParams: Promise<Record<string, string | string[]>>
@@ -12,18 +13,19 @@ export default async function Home(context: {
 
   const { url, error } = parseUrlFromQuery(query.url)
 
-  const metadataPromise = new Promise<Metadata>(async (resolve, reject) => {
-    if (!url) {
-      reject();
-      return
-    }
-    try {
-      const { root } = await getRoot(url.toString())
-      const metadata = getMetadata(root, url.toString())
-      resolve(metadata)
-    } catch (error) {
-      console.error("Error:", error, (url))
-      reject(`An error occurred, ${ error }`)
+
+  const metadataPromise = (async () => {
+    if (!url)
+      throw new AppError(new Error(), "input", "URL is empty");
+
+    const { root } = await getRoot(url.toString())
+    const metadata = getMetadata(root, url.toString())
+    return metadata
+  })().catch(error => {
+    if (error instanceof AppError) {
+      return { error: error.toObject() }
+    } else {
+      return { error: createError("other", error.message) }
     }
   })
 

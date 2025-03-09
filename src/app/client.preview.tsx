@@ -2,21 +2,24 @@
 
 import { use, useState, type SVGProps } from "react";
 import type { Metadata } from "./lib/get-metadata";
+import type { ErrorInfo } from "./module/error/error-primitives";
 
 export function LinkPreview(
-  props: { metadataPromise: Promise<Metadata> }
+  props: { metadataPromise: Promise<Metadata | { error: ErrorInfo }> }
 ) {
+  const [tab, setTab] = useState(0)
+
   const metadata = use(props.metadataPromise)
+  if ("error" in metadata) return null
 
   const tabs = [
-    { label: "Twitter", icon: <RiTwitterXFill /> },
-    { label: "Discord", icon: <IcBaselineDiscord /> },
-    { label: "Google", icon: <TablerBrandGoogleFilled /> },
-    { label: "Facebook", icon: <IcBaselineFacebook /> },
-    { label: "Whatsapp", icon: <IcBaselineWhatsapp /> },
-    { label: "Telegram", icon: <IcBaselineTelegram /> },
+    { label: "Twitter", icon: <RiTwitterXFill />, content: <><TwitterPreview metadata={metadata} /></> },
+    { label: "Discord", icon: <IcBaselineDiscord />, content: <>Coming soon.</> },
+    { label: "Google", icon: <TablerBrandGoogleFilled />, content: <>Coming soon.</> },
+    { label: "Facebook", icon: <IcBaselineFacebook />, content: <>Coming soon.</> },
+    { label: "Whatsapp", icon: <IcBaselineWhatsapp />, content: <>Coming soon.</> },
+    { label: "Telegram", icon: <IcBaselineTelegram />, content: <>Coming soon.</> },
   ]
-  const [tab, setTab] = useState(0)
 
   return (
     <>
@@ -29,12 +32,7 @@ export function LinkPreview(
           >{icon}</div>
         ))}
       </div>
-
-      {tab === 0 &&
-        <div className="">
-          <TwitterPreview metadata={metadata} />
-        </div>
-      }
+      {tabs[tab].content}
     </>
   )
 }
@@ -121,22 +119,36 @@ function TwitterPreview(props: {
     )
   }
 
-  return (
-    <div className="flex flex-col gap-y-1 max-w-[32.375rem] leading-5 font-twitter font-[400] subpixel-antialiased">
-      <div className="rounded-2xl relative border border-[rgb(207,_217,_222)] overflow-hidden">
-        <img
-          width="1200"
-          height="630"
-          className=""
-          src={preview.image}
-        />
-        <div className="absolute bottom-3 left-3 px-2 bg-[rgba(0,_0,_0,_0.77)] text-white rounded-sm line-clamp-1">
-          {preview.title}
+  if (m.twitter.card === "summary_large_image") {
+    return (
+      <div className="flex flex-col gap-y-1 max-w-[32.375rem] leading-5 font-twitter font-[400] subpixel-antialiased">
+        <div className="rounded-2xl relative border border-[rgb(207,_217,_222)] overflow-hidden">
+          <img
+            width="1200"
+            height="630"
+            className=""
+            src={preview.image}
+          />
+          <div className="absolute bottom-3 left-3 px-2 bg-[rgba(0,_0,_0,_0.77)] text-white rounded-sm line-clamp-1">
+            {preview.title}
+          </div>
+        </div>
+        <div className="text-[0.813rem] text-[rgb(83,_100,_113)]">
+          From {preview.url}
         </div>
       </div>
-      <div className="text-[0.813rem] text-[rgb(83,_100,_113)]">
-        From {preview.url}
+    )
+  }
+
+  return (
+    <div className="text-center text-slate-500">
+      <div className="text-slate-600 font-semibold">
+        Preview Unavailable
+      </div>
+      <div>
+        {`Set "twitter:card" to "summary" or "summary_large_image" and provide a title and description to see preview.`}
       </div>
     </div>
   )
+
 }

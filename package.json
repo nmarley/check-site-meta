@@ -1,6 +1,7 @@
 {
   "name": "check-site-meta",
-  "version": "0.1.11",
+  "description": "Check site meta tags",
+  "version": "0.1.12",
   "type": "module",
   "bin": {
     "check-site-meta": "./bin/check-site-meta.js"
@@ -11,9 +12,11 @@
     "start": "next start",
     "lint": "next lint",
     "test": "npm run build; tsc --p ./bin && node ./bin/check-site-meta.js",
+    "test:skipbuild": "tsc --p ./bin && node ./bin/check-site-meta.js",
     "prepublishOnly": "npm run build && tsc --p ./bin"
   },
   "dependencies": {
+    "commander": "^13.1.0",
     "next": "15.2.1",
     "node-html-parser": "^7.0.1",
     "open": "^10.1.0",

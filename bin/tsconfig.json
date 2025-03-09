@@ -11,6 +11,7 @@
     "module": "NodeNext",
     "moduleResolution": "nodenext",
     "isolatedModules": true,
+    "resolveJsonModule": true,
     "incremental": true,
     "paths": {
       "@/*": [

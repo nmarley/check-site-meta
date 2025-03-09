@@ -2,8 +2,6 @@ import type { Metadata } from "./get-metadata";
 
 export function getTwitterMetadataPreview(m: Metadata) {
 
-  const hasCardProp = m.twitter.card !== undefined
-
   return {
     card: {
       value: m.twitter.card ?? (m.og.title && m.og.type && m.og.description) ? "summary" : null,

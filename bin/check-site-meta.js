@@ -3,17 +3,42 @@ import { spawn } from "child_process";
 import open from "open";
 import path from "path";
 import { fileURLToPath } from "url";
+import readline from "readline";
+import packageJson from "../package.json" with { type: "json" };
+import { program } from "commander";
 // Get the directory of the current module (equivalent to __dirname in CommonJS)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const VERSION = "0.1.0";
-const PORT = 3050;
-const cwd = process.env.INIT_CWD || process.cwd();
-console.log("Current working directory:", process.cwd());
-console.log("INIT_CWD:", process.env.INIT_CWD);
-console.log("npm_execpath:", process.env.npm_execpath);
-console.log("Package installed at:", __dirname);
+// Read version from package.json using import
+const NAME = packageJson.name;
+const VERSION = packageJson.version;
+const DESCRIPTION = packageJson.description;
+program
+    .name(NAME)
+    .version(VERSION)
+    .description(DESCRIPTION)
+    .argument("[input]", "URL to check, or localhost port to check (optional)")
+    .option("-p, --port <number>", "Specify port number", (value) => parseInt(value, 10), 3050)
+    .parse(process.argv);
+const options = program.opts();
+console.log(process.argv);
+console.log(options);
+const PORT = options.port;
+function isPositiveInteger(str) {
+    return /^[1-9]\d*$/.test(str);
+}
+const URLorPORT = program.args[0];
+const URL = isPositiveInteger(URLorPORT) ? `http://localhost:${URLorPORT}` : URLorPORT;
+// const cwd = process.env.INIT_CWD || process.cwd();
+// console.log("Current working directory:", process.cwd());
+// console.log("INIT_CWD:", process.env.INIT_CWD);
+// console.log("npm_execpath:", process.env.npm_execpath);
+// console.log("Package installed at:", __dirname);
 console.log(`\n   ▲ Check Site Meta ${VERSION}`);
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
 const nextProcess = spawn("node", [path.join(__dirname, "./standalone/server.js")], {
     stdio: ["ignore", "pipe", "pipe"],
     env: {
@@ -35,8 +60,19 @@ nextProcess.stdout.on("data", (data) => {
     // Detect when the server is ready
     if (message.includes(`✓ Ready in`)) {
         setTimeout(() => {
-            console.log(` → Opening browser at http://localhost:${PORT}`);
-            open(`http://localhost:${PORT}`);
+            // Prompt user if they want to open browser
+            rl.question(' ? Do you want to open the browser? (Y/n) ', (answer) => {
+                if (answer.toLowerCase() === 'y' || answer === '') {
+                    console.log(` → Opening browser at http://localhost:${PORT}`);
+                    open(`http://localhost:${PORT}${URL ? `/?url=${URL}` : ""}`);
+                }
+                else {
+                    console.log(' → Skipping browser launch.');
+                }
+                rl.close();
+            });
+            // console.log(` → Opening browser at http://localhost:${ PORT }`);
+            // open(`http://localhost:${ PORT }`);
         }, 10);
     }
     process.stdout.write(`${data}`);
