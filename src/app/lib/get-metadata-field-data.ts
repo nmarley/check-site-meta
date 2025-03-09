@@ -6,6 +6,17 @@ export type MetadataMetadataItem = {
   description?: string,
   source?: string,
   type?: string,
+  resolvedUrl?: string,
+  fallback?: {
+    value: string | undefined,
+    label: string,
+    resolvedUrl?: string,
+  }[],
+  values?: {
+    value: string | undefined,
+    label: string,
+    resolvedUrl?: string,
+  }[],
 }
 
 export function getMetadataMetadata(m: Metadata):
@@ -14,7 +25,21 @@ export function getMetadataMetadata(m: Metadata):
       [Y in keyof Metadata[X]]: MetadataMetadataItem
     }
   } {
-  return {
+
+  const resolveUrl = (url?: string) => {
+    if (!url) return undefined
+    try {
+      return new URL(url, m.general.rawUrl).href
+    } catch {
+      return undefined
+    }
+  }
+
+  const data: {
+    [X in keyof Metadata]: {
+      [Y in keyof Metadata[X]]: MetadataMetadataItem
+    }
+  } = {
     general: {
       title: {
         value: m.general.title,
@@ -28,6 +53,42 @@ export function getMetadataMetadata(m: Metadata):
         value: m.general.url,
         label: "url",
         type: "url",
+        resolvedUrl: resolveUrl(m.general.url),
+      },
+      rawUrl: {
+        value: m.general.rawUrl,
+        label: "rawUrl",
+        resolvedUrl: resolveUrl(m.general.rawUrl),
+      },
+      favicon: {
+        value: m.general.favicon,
+        label: "favicon",
+        type: "image-favicon",
+        resolvedUrl: resolveUrl(m.general.favicon),
+        fallback: [
+          {
+            value: m.general.favicon2,
+            label: "shortcut icon",
+            resolvedUrl: resolveUrl(m.general.favicon2),
+          },
+          {
+            value: m.general.favicon3,
+            label: "icon shortcut",
+            resolvedUrl: resolveUrl(m.general.favicon3),
+          }
+        ]
+      },
+      favicon2: {
+        value: m.general.favicon2,
+        label: "favicon (shortcut icon)",
+        type: "image",
+        resolvedUrl: resolveUrl(m.general.favicon2),
+      },
+      favicon3: {
+        value: m.general.favicon3,
+        label: "favicon (icon shortcut)",
+        type: "image",
+        resolvedUrl: resolveUrl(m.general.favicon3),
       },
     },
     og: {
@@ -48,6 +109,7 @@ export function getMetadataMetadata(m: Metadata):
         value: m.og.image,
         label: "og:image",
         type: "image",
+        resolvedUrl: resolveUrl(m.og.image),
       },
       type: {
         value: m.og.type,
@@ -79,6 +141,7 @@ export function getMetadataMetadata(m: Metadata):
         value: m.twitter.image,
         label: "twitter:image",
         type: "image",
+        resolvedUrl: resolveUrl(m.twitter.image),
       },
       imageAlt: {
         value: m.twitter.imageAlt,
@@ -161,8 +224,22 @@ export function getMetadataMetadata(m: Metadata):
         label: "twitter:app:url:googleplay",
         type: "url",
       },
+    },
+    icons: {
+      appleTouchIcons: {
+        value: undefined,
+        label: "",
+        values: m.icons.appleTouchIcons.map(e => {
+          return {
+            value: e.href,
+            label: e.sizes,
+            resolvedUrl: resolveUrl(e.href),
+          }
+        }),
+      }
     }
   }
+  return data
 }
 
 export type MetadataMetadata = ReturnType<typeof getMetadataMetadata>

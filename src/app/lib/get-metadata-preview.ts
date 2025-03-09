@@ -105,15 +105,15 @@ export function getTwitterSummaryLargePreview(m: Metadata) {
   if (m.twitter.card !== "summary_large_image")
     return "twitter:card must be summary_large_image"
 
-  if (!m.twitter.title)
+  if (!m.twitter.title && !m.og.title)
     return "twitter:title is required"
 
   return {
     card: m.twitter.card,
     site: m.twitter.site,
-    title: m.twitter.title,
-    description: m.twitter.description,
-    image: m.twitter.image,
+    title: m.twitter.title ?? m.og.title,
+    description: m.twitter.description ?? m.og.description,
+    image: m.twitter.image ?? m.og.image,
     imageAlt: m.twitter.imageAlt,
   }
 }

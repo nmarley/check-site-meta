@@ -19,7 +19,7 @@ export default async function Home(context: {
     }
     try {
       const { root } = await getRoot(url.toString())
-      const metadata = getMetadata(root)
+      const metadata = getMetadata(root, url.toString())
       resolve(metadata)
     } catch (error) {
       console.error("Error:", error, (url))
@@ -41,9 +41,6 @@ export default async function Home(context: {
         <Header />
 
         <section className="">
-          {/* <label className="text-sm font-semibold tracking-tight flex items-center gap-0.5 mb-1 text-foreground-input" htmlFor="id">
-            Website URL
-          </label> */}
           <Form
             action="/"
             className="flex p-1 bg-white  card rounded-xl focus-within:border-slate-400 outline-transparent focus-within:outline-4 focus-within:outline-slate-200 transition">

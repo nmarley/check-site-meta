@@ -50,6 +50,16 @@
   @apply text-blue-600 hover:underline;
 }
 
+@utility meta-info-field-key {
+  @apply font-medium;
+}
+@utility meta-info-field-value {
+  @apply text-gray-500/80;
+  & > a {
+    @apply link-underline;
+  }
+}
+
 @utility meta-info-grid {
   @apply flex flex-col gap-1 leading-relaxed font-medium break-word;
   & > div {
@@ -58,10 +68,7 @@
       @apply font-medium;
     }
     & > *:nth-child(2) {
-      @apply text-gray-500/80;
-      & > a {
-        @apply link-underline;
-      }
+      @apply meta-info-field-value;
     }
   }
 }

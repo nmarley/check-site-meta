@@ -31,9 +31,9 @@ export function LinkPreview(
       </div>
 
       {tab === 0 &&
-        <>
+        <div className="">
           <TwitterPreview metadata={metadata} />
-        </>
+        </div>
       }
     </>
   )
@@ -78,55 +78,51 @@ function IcBaselineTelegram(props: SVGProps<SVGSVGElement>) {
 function TwitterPreview(props: {
   metadata: Metadata
 }) {
-  const {
-    general: {
-      title,
-      description,
-      url
-    },
-    og: {
-      title: ogTitle,
-      description: ogDescription,
-      url: ogUrl,
-      image: ogImage,
-    },
-    twitter: {
-      title: twitterTitle,
-      description: twitterDescription,
-      image: twitterImage,
-      card: twitterCard
-    }
-  }: Metadata = props.metadata
-
-  if (
-    (
-      twitterCard === "summary"
-    ) || (
-      !twitterCard && ogTitle && ogDescription
-    )
-  ) {
-
-  }
-
-  if (!twitterCard) {
-    if (ogTitle && ogDescription) {
-
-    } else {
-
-    }
-  }
-
-  const rawUrl = ogUrl || url
+  const m = props.metadata
 
   const preview = {
-    title: twitterTitle ?? ogTitle ?? title,
-    description: twitterDescription ?? ogDescription ?? description,
-    image: twitterImage ?? ogImage,
-    url: rawUrl ? new URL(rawUrl) : null,
+    title: m.twitter.title ?? m.og.title ?? m.general.title,
+    description: m.twitter.description ?? m.og.description ?? m.general.description,
+    image: m.twitter.image ?? m.og.image,
+    url: m.general.rawUrl ? new URL(m.general.rawUrl).host.replace('www.', '') : null,
+  }
+
+  if (
+    m.general.url && (
+      (
+        m.twitter.card === "summary"
+      ) || (
+        !m.twitter.card && m.og.title && m.og.description
+      ))
+  ) {
+    return (
+      <div className="max-w-[35.375rem] h-[8.188rem] w-full rounded-2xl border border-[rgb(207,_217,_222)] flex overflow-hidden bg-white">
+        <div className="w-[6.875rem] min-[554px]:w-[8.125rem] border-r border-[rgb(207,_217,_222)] shrink-0 flex items-center justify-center bg-[rgba(247,249,249,1.00)]">
+          {
+            preview.image ?
+              <img
+                className="w-full h-full object-cover"
+                src={preview.image} />
+              : <svg viewBox="0 0 24 24" aria-hidden="true" className="h-[2em] fill-current align-bottom select-none max-w-full relative text-[rgba(83,100,113,1.00)] inline-block"><g><path d="M1.998 5.5c0-1.38 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.12 2.5 2.5v13c0 1.38-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.12-2.5-2.5v-13zm2.5-.5c-.276 0-.5.22-.5.5v13c0 .28.224.5.5.5h15c.276 0 .5-.22.5-.5v-13c0-.28-.224-.5-.5-.5h-15zM6 7h6v6H6V7zm2 2v2h2V9H8zm10 0h-4V7h4v2zm0 4h-4v-2h4v2zm-.002 4h-12v-2h12v2z"></path></g></svg>
+          }
+        </div>
+        <div className="p-3 flex flex-col gap-0.5 justify-center font-twitter text-[0.9375rem] leading-5  font-[400] subpixel-antialiased">
+          <div className="text-[rgb(83,_100,_113)]">
+            {preview.url}</div>
+          <div className="text-[rgb(15,_20,_25)] line-clamp-1">
+            {preview.title}</div>
+          <div className="text-[rgb(83,_100,_113)] line-clamp-2">
+            <span>
+              {preview.description}
+            </span>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
-    <div className="flex flex-col gap-y-1">
+    <div className="flex flex-col gap-y-1 max-w-[32.375rem] leading-5 font-twitter font-[400] subpixel-antialiased">
       <div className="rounded-2xl relative border border-[rgb(207,_217,_222)] overflow-hidden">
         <img
           width="1200"
@@ -134,12 +130,12 @@ function TwitterPreview(props: {
           className=""
           src={preview.image}
         />
-        <div className="absolute bottom-3 left-3 px-2 bg-[rgba(0,_0,_0,_0.77)] text-white rounded-sm">
+        <div className="absolute bottom-3 left-3 px-2 bg-[rgba(0,_0,_0,_0.77)] text-white rounded-sm line-clamp-1">
           {preview.title}
         </div>
       </div>
       <div className="text-[0.813rem] text-[rgb(83,_100,_113)]">
-        From {preview.url?.host}
+        From {preview.url}
       </div>
     </div>
   )

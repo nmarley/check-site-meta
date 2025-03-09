@@ -1,6 +1,6 @@
 "use client"
 
-import { use, useState } from "react"
+import { Fragment, use, useState } from "react"
 import type { Metadata } from "./lib/get-metadata"
 import { getMetadataMetadata, separator, type FieldData, type MetadataMetadata } from "./lib/get-metadata-field-data"
 
@@ -10,7 +10,7 @@ export function MetadataInformations(
   const metadata = use(props.metadataPromise)
   const metadataData = getMetadataMetadata(metadata)
 
-  const tabs = ["General", "Open Graph", "Twitter"]
+  const tabs = ["General", "Open Graph", "Twitter", "Icons"]
   const [tab, setTab] = useState(0)
 
   return (
@@ -40,6 +40,11 @@ export function MetadataInformations(
           <TwitterMetadata data={metadataData} />
         </section>
       }
+      {tab === 3 &&
+        <section className="card fadeIn-0">
+          <IconMetadata data={metadataData} />
+        </section>
+      }
 
     </>
   )
@@ -54,29 +59,43 @@ function FieldData(props: {
     if ("separator" in item) {
       return <hr key={i} />
     }
+
+    const fallback = item.fallback?.find(f => f.value)
+
+    const value = item.value ?? fallback?.value
+    const resolvedUrl = item.resolvedUrl ?? fallback?.resolvedUrl
+    const fallbackLabel = fallback?.label
+    const type = item.type
+
     return (
       <div key={i}>
         <div>{item.label}</div>
         <div className=" relative">
-          {!item.value && (
+          {!value && (
             <span className="opacity-40">
               -
             </span>
           )}
-          {!item.type && (item.value)}
-          {item.value && item.type === "url" && (
-            <a target="_blank" href={item.value} className="group">
-              {item.value}↗
-            </a>
+          {!item.type && (value)}
+          {value && item.type === "url" && (
+            <span>
+              <a target="_blank" href={item.resolvedUrl} className="group link-underline">
+                {value} <ExternalIcon />
+              </a> {item.fallback && <span className="text-foreground/30">({fallbackLabel})</span>}
+            </span>
           )}
-          {item.value && item.type === "image" && (
-            <div className="grid grid-cols-[1fr_3fr] gap-2">
-              <img src={item.value}
-                className="border rounded-md mt-1"
-              />
-              <a target="_blank" href={item.value} className="group link-underline">
-                {item.value}↗
-              </a>
+          {value && type?.startsWith("image") && (
+            <div className="flex gap-2">
+              <div className="border rounded-md p-1 w-auto shrink-0 self-start">
+                <img src={resolvedUrl}
+                  className={` ${ type === "image-favicon" ? "h-[1.5lh]" : "h-[2lh]" }`}
+                />
+              </div>
+              <span>
+                <a target="_blank" href={resolvedUrl} className="group link-underline">
+                  {value} <ExternalIcon />
+                </a>  {item.fallback && <span className="text-foreground/30">({fallbackLabel})</span>}
+              </span>
             </div>
           )}
         </div>
@@ -97,6 +116,7 @@ function BasicMetadata(props: {
     m.general.title,
     m.general.description,
     m.general.url,
+    m.general.favicon,
     separator,
     m.og.title,
     m.og.description,
@@ -175,5 +195,97 @@ function TwitterMetadata(props: {
 
   return (
     <FieldData fieldData={fieldData} />
+  )
+}
+
+
+function ExternalIcon() {
+  return (
+    <svg data-testid="geist-icon" height="16" strokeLinejoin="round" viewBox="0 0 16 16" width="16" style={{ "color": "currentcolor" }} className="inline align-[-0.15rem]"><path fillRule="evenodd" clipRule="evenodd" d="M11.5 9.75V11.25C11.5 11.3881 11.3881 11.5 11.25 11.5H4.75C4.61193 11.5 4.5 11.3881 4.5 11.25L4.5 4.75C4.5 4.61193 4.61193 4.5 4.75 4.5H6.25H7V3H6.25H4.75C3.7835 3 3 3.7835 3 4.75V11.25C3 12.2165 3.7835 13 4.75 13H11.25C12.2165 13 13 12.2165 13 11.25V9.75V9H11.5V9.75ZM8.5 3H9.25H12.2495C12.6637 3 12.9995 3.33579 12.9995 3.75V6.75V7.5H11.4995V6.75V5.56066L8.53033 8.52978L8 9.06011L6.93934 7.99945L7.46967 7.46912L10.4388 4.5H9.25H8.5V3Z" fill="currentColor"></path></svg>
+  )
+}
+
+function IconMetadata(props: {
+  data: MetadataMetadata
+}) {
+
+  return (
+    <>
+      <div className="mb-4">icon</div>
+      <div className="flex gap-2 items-end flex-wrap">
+        {(() => {
+          const fallback = props.data.general.favicon.fallback?.find(f => f.value)
+          const value = props.data.general.favicon.value ?? fallback?.value
+          const resolvedUrl = props.data.general.favicon.resolvedUrl ?? fallback?.resolvedUrl
+          const fallbackLabel = fallback?.label
+
+          if (!resolvedUrl) {
+            return (
+              <div className="opacity-40">
+                -
+              </div>
+            )
+          }
+
+          return (
+            <div className="flex flex-col gap-1 items-center justify-center text-center">
+              <div className="border border-slate-200 p-1 w-auto shrink-0">
+                <img src={resolvedUrl} className="h-[1.5lh]" />
+              </div>
+              <span className="text-xs">
+                {new URL(resolvedUrl).pathname.split('/').at(-1)}
+                <br />{fallback && <span className="text-foreground/30">({fallbackLabel})</span>}
+              </span>
+            </div>
+          )
+
+        })()}
+      </div>
+
+      <hr />
+
+      <div className="mb-4">apple-touch-icon</div>
+      <div>
+        <div className="flex! gap-2 items-end flex-wrap col-span-2">
+          {(() => {
+            const items = props.data.icons.appleTouchIcons.values
+
+            if (!items?.length) {
+              return (<div className="opacity-40">-</div>)
+            }
+
+            return <>
+              {items?.map((item, i) => {
+                if (!item.value) return <></>
+
+                return <div key={i} className="flex flex-col gap-1 items-center justify-center text-center">
+                  <div className="border border-slate-200 p-1 w-auto shrink-0">
+                    <img src={item.resolvedUrl} />
+                  </div>
+                  <span className="text-xs">
+                    {item.label}<br />
+                    {/* <span className="opacity-40">{item.value.split('/').at(-1)}</span> */}
+                  </span>
+                </div>
+              })}
+            </>
+
+            // return (
+            //   <div className="flex flex-col gap-1 items-center justify-center text-center">
+            //     {/* <div className="border border-slate-200 p-1 w-auto shrink-0">
+            //       <img src={value} className="h-[1.5lh]" />
+            //     </div>
+            //     <span className="text-xs">
+            //       {new URL(value).pathname.split('/').at(-1)}
+            //       <br />{props.data.general.favicon2.fallback && <span className="text-foreground/30">({fallbackLabel})</span>}
+            //     </span> */}
+            //   </div>
+            // )
+
+          })()}
+        </div>
+      </div>
+
+    </>
   )
 }
