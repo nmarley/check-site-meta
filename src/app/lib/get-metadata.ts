@@ -2,25 +2,26 @@ import parse, { type HTMLElement } from "node-html-parser";
 import { cache } from "react";
 import "server-only"
 import { AppError } from "../module/error/error-primitives";
+import fetch2 from "node-fetch";
 
-export const getRoot = cache(async function getRoot(url: string) {
-  const res = await fetch(url, {
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36',
-      'Accept-Language': 'en-US,en;q=0.9',
-    },
-  }).catch(error => { throw new AppError(error, "fetch", "Fetch Failed", error.message) })
+export const fetchRoot = cache(async function getRoot(url: string) {
 
-  if (!res.ok) {
-    throw new AppError(null, "fetch", "Fetch Failed", `HTTP ${res.status} ${res.statusText}`)
-  }
-
+  const res = await fetch2(
+    url,
+    {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 Edg/133.0.0.0',
+        'Accept-Language': 'en-GB-oxendict,en-GB;q=0.9,en;q=0.8,id;q=0.7,en-US;q=0.6',
+        'referer': 'http://localhost:3000',
+      },
+      referrer: "http://localhost:3000",
+    }).catch(error => { throw new AppError(error, "fetch", "Fetch Failed", error.message, [`url: ${ url }`]) })
   if (!res.headers.get("content-type")?.includes("text/html")) {
-    throw new AppError(null, "parse", "Fetch Returns Non-HTML", `Content-Type: ${res.headers.get("content-type")}`)
+    throw new AppError(null, "parse", "Fetch Returns Non-HTML", `Content-Type: ${ res.headers.get("content-type") }`)
   }
-
-  const html = await res.text().catch(error => { throw new AppError(error, "parse", "Response Parse Failed", error.message) });
-
+  const html = await res.text().catch(error => {
+    throw new AppError(error, "parse", "Response Parse Failed", error.message)
+  });
   try {
     const root = parse(html);
     return { root, html }
@@ -29,18 +30,27 @@ export const getRoot = cache(async function getRoot(url: string) {
   }
 })
 
-export function getMetadata(root: HTMLElement, rawUrl: string) {
+export function getRawMeta(root: HTMLElement, rawUrl: string) {
   try {
     return {
       general: {
         title: root.querySelector("title")?.text,
         description: root.querySelector("meta[name=description]")?.getAttribute("content"),
-        url: root.querySelector("link[rel=canonical]")?.getAttribute("href"),
+        url: root.querySelector("inbntnrbtnlink[rel=canonical]")?.getAttribute("href"),
         rawUrl,
         favicon: root.querySelector("link[rel=icon]")?.getAttribute("href"),
+        favicons: root.querySelectorAll("link[rel~=icon]").map(e => {
+          return {
+            rel: e.getAttribute("rel"),
+            type: e.getAttribute("type"),
+            sizes: e.getAttribute("sizes"),
+            href: e.getAttribute("href")
+          }
+        }),
         favicon2: root.querySelector("link[rel='shortcut icon']")?.getAttribute("href"),
         favicon3: root.querySelector("link[rel='icon shortcut']")?.getAttribute("href"),
         favicon4: "/favicon.ico",
+        robots: root.querySelector("meta[name=robots]")?.getAttribute("content"),
       },
       og: {
         title: fromMetaTagWithProperty(root, 'og:title'),
@@ -50,6 +60,7 @@ export function getMetadata(root: HTMLElement, rawUrl: string) {
         type: fromMetaTagWithProperty(root, 'og:type'),
         siteName: fromMetaTagWithProperty(root, 'og:site_name'),
         imageAlt: fromMetaTagWithProperty(root, 'og:image:alt'),
+        locale: fromMetaTagWithProperty(root, 'og:locale'),
       },
       twitter: {
         title: fromMetaTagWithName(root, 'twitter:title'),
@@ -103,4 +114,8 @@ function fromMetaTagWithProperty(root: HTMLElement, key: string) {
   return root.querySelector(`meta[property='${ key }']`)?.getAttribute("content")
 }
 
-export type Metadata = ReturnType<typeof getMetadata>
+export type Metadata = ReturnType<typeof getRawMeta>
+
+
+export const dynamic = 'force-dynamic'
+export const fetchCache = 'force-no-store'

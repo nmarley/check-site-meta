@@ -5,7 +5,6 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Check Site Meta",
   description: "Check the metadata of any site",
-  
 }
 
 const geistSans = Plus_Jakarta_Sans({
@@ -20,7 +19,6 @@ const geistMono = Geist_Mono({
 const fonts = {
   geistSans,
   geistMono,
-  // twitterDisplay,
 }
 
 export default function RootLayout({
@@ -30,10 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`
-          ${ Object.entries(fonts).map(([, font]) => font.variable).join(" ") } antialiased bg-gray-50`}
-      >
+      <body className={`${ Object.entries(fonts).map(([, font]) => font.variable).join(" ") } antialiased bg-gray-50`}>
         {children}
       </body>
     </html>

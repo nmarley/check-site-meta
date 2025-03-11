@@ -1,5 +1,5 @@
 import type { SVGProps } from "react"
-import type { ErrorInfo } from "./error-primitives"
+import { AppError, type ErrorInfo } from "./error-primitives"
 
 const ErrorInfoMessages = {
   input: {
@@ -30,22 +30,45 @@ const ErrorInfoMessages = {
 
 
 export default function ErrorCard(
-  props: { error: ErrorInfo }
+  props: { error: unknown }
 ) {
+  let error: {
+    summary: string,
+    type: keyof typeof ErrorInfoMessages,
+    detail?: string,
+    context: string[]
+  } = {
+    summary: "An unknown error occurred.",
+    type: "other",
+    context: [JSON.stringify(props.error)],
+  }
+
+  if (props.error instanceof AppError) {
+    error = {
+      summary: props.error.summary,
+      type: props.error.type,
+      detail: props.error.detail,
+      context: props.error.context
+    }
+  }
+
   return (
-    <div className="card">
+    <div className="card fadeIn-0">
       <div className="flex flex-col gap-2 items-start">
         <div className="shrink-0 text-red-400 p-2 rounded-md bg-red-100">
-          <LucideTriangleAlert className="w-6 h-6"/>
+          <LucideTriangleAlert className="w-6 h-6" />
         </div>
         <div className="flex flex-col gap-1">
-          <div className="font-bold text-lg leading-none!">{props.error.summary}</div>
-          <div className="">{ErrorInfoMessages[props.error.type].tips}</div>
+          <div className="font-bold text-lg leading-none!">{error.summary}</div>
+          <div className="">{ErrorInfoMessages[error.type].tips}</div>
         </div>
       </div>
-      {props.error.detail && (
-        <div className="font-mono p-1 px-2 mt-4 bg-slate-100 border border-slate-200 rounded-md">{props.error.detail}</div>
+      {error.detail && (
+        <div className="font-mono p-1 px-2 mt-4 bg-slate-100 border border-slate-200 rounded-md">{error.detail}</div>
       )}
+      {!!error.context.length && (error.context.map((context, index) => (
+        <div key={index} className="font-mono p-1 px-2 mt-4 bg-slate-100 border border-slate-200 rounded-md">{context}</div>
+      )))}
     </div>
   )
 }

@@ -1,109 +1,101 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Suspense, type SVGProps } from "react";
 import Form from 'next/form'
-import { getMetadata, getRoot } from "./lib/get-metadata";
+import { getRawMeta, fetchRoot } from "./lib/get-metadata";
 import { parseUrlFromQuery } from "./lib/parse-url";
-import { MetadataInformations } from "./client.metadata";
-import { LinkPreview } from "./client.preview";
-import { AppError, createError } from "./module/error/error-primitives";
+import type { SearchParamsContext } from "./lib/next-types";
+import { getResolvedMeta, type ResoledMetadata } from "./lib/get-metadata-field-data";
+import { MetaInfoPanel } from "./comp.meta-info";
+import { MetaPreviewPanel } from "./comp.meta-preview";
 
-export default async function Home(context: {
-  searchParams: Promise<Record<string, string | string[]>>
-}) {
+// Structure:
+// 
+//  query
+//   ↓
+//  url
+//   ↓
+//  root
+//   ↓
+//  metadata
+//   ↓
+//  resolved metadata
+//   ↓             ↓
+//  fields       previews
+// 
+
+export default async function Home(context: SearchParamsContext) {
   const query = await context.searchParams;
 
-  const { url, error } = parseUrlFromQuery(query.url)
+  const getMetadata = async () => {
+    const url = parseUrlFromQuery(query.url)
+    if (!url) return null
+    const { root } = await fetchRoot(url.toString())
+    const metadata = getRawMeta(root, url.toString())
+    const resolvedMetadata = getResolvedMeta(metadata)
+    return resolvedMetadata
+  }
 
-
-  const metadataPromise = (async () => {
-    if (!url)
-      throw new AppError(new Error(), "input", "URL is empty");
-
-    const { root } = await getRoot(url.toString())
-    const metadata = getMetadata(root, url.toString())
-    return metadata
-  })().catch(error => {
-    if (error instanceof AppError) {
-      return { error: error.toObject() }
-    } else {
-      return { error: createError("other", error.message) }
-    }
-  })
+  // const getHTML = async () => {
+  //   const url = parseUrlFromQuery(query.url)
+  //   if (!url) return null
+  //   const { html } = await fetchRoot(url.toString())
+  //   return html
+  // }
 
   return (
-    <main className="mx-auto max-w-3xl lg:max-w-none px-8 lg:px-12 xl:px-24  font-medium  lg:grid lg:grid-cols-2 gap-x-8 font-sans pb-[100vh]"
-      style={{
-        // @ts-expect-error custom css prop
-        "--padding-top": "3rem",
-        "--padding-bottom": "3rem",
-      }}
-    >
-
-      <div className="flex flex-col gap-8 py-[var(--padding-top)] pb-[var(--padding-bottom)]">
-
+    <main className="mx-auto max-w-3xl lg:max-w-none px-8 lg:px-12 xl:px-24 *:py-12 font-medium lg:grid lg:grid-cols-2 gap-x-8 font-sans pb-[100vh]">
+      <div className="flex flex-col gap-8">
         <Header />
-
-        <section className="">
-          <Form
-            action="/"
-            className="flex p-1 bg-white  card rounded-xl focus-within:border-slate-400 outline-transparent focus-within:outline-4 focus-within:outline-slate-200 transition">
-            <CiSearchMagnifyingGlass className="w-4 h-4 ml-3 mr-3 self-center" />
-            <input
-              required
-              autoComplete="off"
-              id="lookup_url"
-              name="url"
-              defaultValue={query.url as string}
-              className="grow border-none focus:outline-0 mr-1 px-2"
-            />
-            <button
-              type="submit"
-            >Check</button>
-          </Form>
-
-          {error && (
-            <div className="text-xs mt-1 text-red-500">
-              {error}
-            </div>
-          )}
-
-        </section>
-
-        {!!(!!url && !!!error) && (
-          <Suspense
-            key={url.toString()}
-            fallback={<span className="fadeIn-3000">Loading...</span>}>
-            <MetadataInformations metadataPromise={metadataPromise} />
-          </Suspense>
-        )}
+        <InputForm url={query.url as string} />
+        <Suspense key={query.url?.toString()} fallback={<Loading />}>
+          <MetaInfoPanel metadata={getMetadata()} />
+        </Suspense>
+        {/* <Suspense>
+          <div className="fadeIn-500">
+            <pre className="whitespace-pre-wrap break-all">{await getHTML()}</pre>
+          </div>
+        </Suspense> */}
       </div>
-      <div className="flex flex-col items-center gap-8 py-[var(--padding-top)] pb-[var(--padding-bottom)]">
-        {(url && !error) && (
-          <Suspense
-            key={url.toString()}
-            fallback={<span className="fadeIn-3000">Loading...</span>}>
-            <LinkPreview metadataPromise={metadataPromise} />
-          </Suspense>
-        )}
+      <div className="flex flex-col items-center gap-8">
+        <Suspense key={query.url?.toString()}>
+          <MetaPreviewPanel metadata={getMetadata()} />
+        </Suspense>
       </div>
     </main>
   );
 }
 
-async function Header() {
+function Header() {
+  return <header className="text-start">
+    <div className="text-xs text-gray-600 font-mono">
+      npx check-site-meta</div>
+    <h1 className="leading-normal">
+      Site Metadata Checker</h1>
+    <p className="text-gray-600 text-pretty text-sm">
+      Validate how your Open Graph data is used for link previews on social platforms.</p>
+  </header>
+}
+function InputForm(
+  props: { url: string }
+) {
+  return <Form action="/" className="flex p-1 bg-white  card rounded-xl focus-within:border-slate-400 outline-transparent focus-within:outline-4 focus-within:outline-slate-200 transition">
+    <CiSearchMagnifyingGlass className="w-4 h-4 ml-3 mr-3 self-center" />
+    <input required id="lookup_url" name="url"
+      className="grow border-none focus:outline-0 mr-1 px-2"
+      defaultValue={props.url as string}
+      autoComplete="off"
+    />
+    <button type="submit">Check</button>
+  </Form>
+}
+function Loading() {
   return (
-    <header className="text-start">
-      <div className="text-xs text-gray-600 font-mono">npx check-site-meta</div>
-      <h1 className="leading-normal">
-        Site Metadata Checker</h1>
-      <p className="text-gray-600 text-pretty text-sm">
-        Validate how your Open Graph data is used for link previews on social platforms.
-      </p>
-    </header>
+    <div>
+      <div className="fadeIn-500">Loading...</div>
+      <div className="fadeIn-2000">This takes longer than expected...</div>
+    </div>
   )
 }
-
 function CiSearchMagnifyingGlass(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m15 15l6 6m-11-4a7 7 0 1 1 0-14a7 7 0 0 1 0 14"></path></svg>
-  )
+  return (<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m15 15l6 6m-11-4a7 7 0 1 1 0-14a7 7 0 0 1 0 14"></path></svg>)
 }

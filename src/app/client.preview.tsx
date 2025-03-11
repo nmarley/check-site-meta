@@ -3,6 +3,8 @@
 import { use, useState, type SVGProps } from "react";
 import type { Metadata } from "./lib/get-metadata";
 import type { ErrorInfo } from "./module/error/error-primitives";
+import { AppImage } from "./module/image/Image";
+import { getResolvedMeta } from "./lib/get-metadata-field-data";
 
 export function LinkPreview(
   props: { metadataPromise: Promise<Metadata | { error: ErrorInfo }> }
@@ -78,10 +80,12 @@ function TwitterPreview(props: {
 }) {
   const m = props.metadata
 
+  const d = getResolvedMeta(m)
+
   const preview = {
     title: m.twitter.title ?? m.og.title ?? m.general.title,
     description: m.twitter.description ?? m.og.description ?? m.general.description,
-    image: m.twitter.image ?? m.og.image,
+    image: d.twitter.image.resolvedUrl ?? d.og.image.resolvedUrl,
     url: m.general.rawUrl ? new URL(m.general.rawUrl).host.replace('www.', '') : null,
   }
 
@@ -98,7 +102,7 @@ function TwitterPreview(props: {
         <div className="w-[6.875rem] min-[554px]:w-[8.125rem] border-r border-[rgb(207,_217,_222)] shrink-0 flex items-center justify-center bg-[rgba(247,249,249,1.00)]">
           {
             preview.image ?
-              <img
+              <AppImage
                 className="w-full h-full object-cover"
                 src={preview.image} />
               : <svg viewBox="0 0 24 24" aria-hidden="true" className="h-[2em] fill-current align-bottom select-none max-w-full relative text-[rgba(83,100,113,1.00)] inline-block"><g><path d="M1.998 5.5c0-1.38 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.12 2.5 2.5v13c0 1.38-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.12-2.5-2.5v-13zm2.5-.5c-.276 0-.5.22-.5.5v13c0 .28.224.5.5.5h15c.276 0 .5-.22.5-.5v-13c0-.28-.224-.5-.5-.5h-15zM6 7h6v6H6V7zm2 2v2h2V9H8zm10 0h-4V7h4v2zm0 4h-4v-2h4v2zm-.002 4h-12v-2h12v2z"></path></g></svg>
@@ -119,11 +123,15 @@ function TwitterPreview(props: {
     )
   }
 
+  if (preview.image) {
+
+  }
+
   if (m.twitter.card === "summary_large_image") {
     return (
       <div className="flex flex-col gap-y-1 max-w-[32.375rem] leading-5 font-twitter font-[400] subpixel-antialiased">
         <div className="rounded-2xl relative border border-[rgb(207,_217,_222)] overflow-hidden">
-          <img
+          <AppImage
             width="1200"
             height="630"
             className=""

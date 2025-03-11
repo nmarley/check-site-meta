@@ -32,7 +32,7 @@
     & > div {
       @apply px-5 p-1.5 text-slate-500 font-semibold text-nowrap cursor-pointer hover:text-foreground;
       &[data-active] {
-        @apply rounded-sm shadow-xs text-foreground bg-white;
+        @apply rounded-sm  text-foreground;
       }
     }
   }
@@ -44,6 +44,40 @@
     hr:-mx-[var(--padding)] 
     hr:my-[var(--padding)]
     hr:border-gray-200;
+}
+@utility card-content {
+  --padding: calc(5 * 0.25rem);
+  @apply 
+    hr:-mx-[var(--padding)] 
+    hr:my-[var(--padding)]
+    hr:border-gray-200;
+}
+
+@utility meta-info-grid {
+  @apply flex flex-col gap-1 leading-relaxed font-medium break-word;
+  
+  .meta-2-col {
+    @apply grid grid-cols-[10rem_1fr];
+
+    .meta-title {
+      @apply font-medium;
+    }
+
+    .meta-content {
+      @apply text-gray-500/80;
+    }
+
+    .meta-mute {
+      @apply text-gray-300;
+    }
+  }
+}
+
+@utility meta-field-card {
+  @apply card relative h-[var(--height)] transition-all duration-500 overflow-hidden py-0;
+}
+@utility meta-field-card-content {
+  @apply card-content fadeBlurIn-100 meta-info-grid py-[var(--padding)];
 }
 
 @utility link-underline {
@@ -60,19 +94,6 @@
   }
 }
 
-@utility meta-info-grid {
-  @apply flex flex-col gap-1 leading-relaxed font-medium break-word;
-  & > div {
-    @apply grid grid-cols-[10rem_1fr];
-    & > *:first-child {
-      @apply font-medium;
-    }
-    & > *:nth-child(2) {
-      @apply meta-info-field-value;
-    }
-  }
-}
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -86,5 +107,22 @@
 
 @utility fadeIn-* {
   animation: fadeIn 0.3s ease-out both;
+  animation-delay: calc(--value(integer) * 1ms);
+}
+
+@keyframes fadeBlurIn {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility fadeBlurIn-* {
+  animation: fadeBlurIn 0.2s ease-out both;
   animation-delay: calc(--value(integer) * 1ms);
 }

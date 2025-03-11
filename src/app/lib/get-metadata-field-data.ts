@@ -15,31 +15,19 @@ export type MetadataMetadataItem = {
   values?: {
     value: string | undefined,
     label: string,
+    labels?: (string | undefined)[],
     resolvedUrl?: string,
   }[],
 }
 
-export function getMetadataMetadata(m: Metadata):
-  {
-    [X in keyof Metadata]: {
-      [Y in keyof Metadata[X]]: MetadataMetadataItem
-    }
-  } {
+export function getResolvedMeta(m: Metadata) {
 
   const resolveUrl = (url?: string) => {
     if (!url) return undefined
-    try {
-      return new URL(url, m.general.rawUrl).href
-    } catch {
-      return undefined
-    }
+    try { return new URL(url, m.general.rawUrl).href } catch { }
   }
 
-  const data: {
-    [X in keyof Metadata]: {
-      [Y in keyof Metadata[X]]: MetadataMetadataItem
-    }
-  } = {
+  const data = {
     general: {
       title: {
         value: m.general.title,
@@ -51,56 +39,103 @@ export function getMetadataMetadata(m: Metadata):
       },
       url: {
         value: m.general.url,
-        label: "url",
+        label: "canonical url",
         type: "url",
         resolvedUrl: resolveUrl(m.general.url),
+      },
+      robots: {
+        value: m.general.robots,
+        label: "robots",
       },
       rawUrl: {
         value: m.general.rawUrl,
         label: "rawUrl",
         resolvedUrl: resolveUrl(m.general.rawUrl),
       },
-      favicon: {
-        value: m.general.favicon,
-        label: "favicon",
-        type: "image-favicon",
-        resolvedUrl: resolveUrl(m.general.favicon),
-        fallback: [
-          {
-            value: m.general.favicon2,
-            label: "shortcut icon",
-            resolvedUrl: resolveUrl(m.general.favicon2),
-          },
-          {
-            value: m.general.favicon3,
-            label: "icon shortcut",
-            resolvedUrl: resolveUrl(m.general.favicon3),
-          },
-          {
-            value: m.general.favicon4,
-            label: "/favicon.ico",
-            resolvedUrl: resolveUrl(m.general.favicon4),
-          },
-        ]
-      },
-      favicon2: {
-        value: m.general.favicon2,
-        label: "favicon (shortcut icon)",
-        type: "image",
-        resolvedUrl: resolveUrl(m.general.favicon2),
-      },
-      favicon3: {
-        value: m.general.favicon3,
-        label: "favicon (icon shortcut)",
-        type: "image",
-        resolvedUrl: resolveUrl(m.general.favicon3),
-      },
-      favicon4: {
-        value: m.general.favicon4,
-        label: "favicon (direct link)",
-        type: "image",
-        resolvedUrl: resolveUrl(m.general.favicon4),
-      },
+      ...(() => {
+        const type = "image-favicon"
+        const favicons = {
+          value: undefined,
+          label: "",
+          type: "image-favicon",
+          values: m.general.favicons.map(e => {
+            return {
+              value: e.href,
+              label: "",
+              labels: [e.rel, e.type, e.sizes],
+              resolvedUrl: resolveUrl(e.href),
+            }
+          })
+        }
+        const favicon1 = {
+          type,
+          value: m.general.favicon,
+          label: "favicon (icon)",
+          resolvedUrl: resolveUrl(m.general.favicon),
+        }
+        const favicon2 = {
+          type,
+          value: m.general.favicon2,
+          label: "favicon (shortcut icon)",
+          resolvedUrl: resolveUrl(m.general.favicon2),
+        }
+        const favicon3 = {
+          type,
+          value: m.general.favicon3,
+          label: "favicon (icon shortcut)",
+          resolvedUrl: resolveUrl(m.general.favicon3),
+        }
+        const favicon4 = {
+          type,
+          value: m.general.favicon4,
+          label: "favicon (direct link)",
+          resolvedUrl: resolveUrl(m.general.favicon4),
+        }
+        const inferredFavicon = m.general.favicon ?
+          favicon1 : m.general.favicon2 ?
+            favicon2 : m.general.favicon3 ?
+              favicon3 : favicon4
+
+        return {
+          favicon1,
+          favicon2,
+          favicon3,
+          favicon4,
+          inferredFavicon,
+          favicons
+        }
+      })(),
+      // inferedFavicon: {
+      //   type: "image-favicon",
+      //   ...(() => {
+      //     if (m.general.favicon) {
+      //       return {
+      //         value: m.general.favicon,
+      //         label: "favicon (icon)",
+      //         resolvedUrl: resolveUrl(m.general.favicon),
+      //       }
+      //     }
+      //     if (m.general.favicon2) {
+      //       return {
+      //         value: m.general.favicon2,
+      //         label: "favicon (shortcut icon)",
+      //         resolvedUrl: resolveUrl(m.general.favicon2),
+      //       }
+      //     }
+      //     if (m.general.favicon3) {
+      //       return {
+      //         value: m.general.favicon3,
+      //         label: "favicon (icon shortcut)",
+      //         resolvedUrl: resolveUrl(m.general.favicon3),
+      //       }
+      //     }
+      //     return {
+      //       value: m.general.favicon4,
+      //       label: "favicon (direct link)",
+      //       resolvedUrl: resolveUrl(m.general.favicon4),
+      //     }
+      //   })()
+      // },
     },
     og: {
       title: {
@@ -134,6 +169,10 @@ export function getMetadataMetadata(m: Metadata):
         value: m.og.imageAlt,
         label: "og:image:alt",
       },
+      locale: {
+        value: m.og.locale,
+        label: "og:locale",
+      }
     },
     twitter: {
       title: {
@@ -249,12 +288,14 @@ export function getMetadataMetadata(m: Metadata):
         }),
       }
     }
+  } satisfies {
+    [X in string]: { [Y in string]: MetadataMetadataItem }
   }
   return data
 }
 
-export type MetadataMetadata = ReturnType<typeof getMetadataMetadata>
+export type ResoledMetadata = ReturnType<typeof getResolvedMeta>
 
 export const separator = { separator: true } as const
 
-export type FieldData = (MetadataMetadataItem | typeof separator)[]
+export type FieldDataItem = MetadataMetadataItem
