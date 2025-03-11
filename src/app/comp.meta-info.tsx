@@ -114,8 +114,9 @@ async function FaviconSummary(
   if (!favicon) return <span className="meta-mute">-</span>
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 items-start">
       <FaviconPreview
+        containerProps={{ className: "shrink-0" }}
         src={favicon.resolvedUrl}
       />
       <div>
@@ -213,7 +214,6 @@ function IconMetadata(props: {
             
             if (res.headers.get("content-type")?.includes("image")) {
               const resolvedSize = f.labels[2] ? parseInt(f.labels[2]) : NaN
-
               favicons.push({
                 source: f.labels[0] ?? "?",
                 size: f.labels[2] ?? "size undefined",
@@ -257,9 +257,15 @@ function IconMetadata(props: {
               {items?.map((item, i) => {
                 if (!item.value) return <></>
                 const size = item.label
+                const resolvedSizes = item.label ? parseInt(item.label) || null : null
 
                 return <div key={i} className="flex flex-col gap-1 items-center justify-center text-center">
-                  <div className="border border-slate-200 p-1 w-auto shrink-0">
+                  <div className="border border-slate-200 p-1 w-auto shrink-0"
+                    style={{
+                      width: resolvedSizes ? px(resolvedSizes) : undefined,
+                      height: resolvedSizes ? px(resolvedSizes) : undefined
+                    }}
+                  >
                     <AppImage src={item.resolvedUrl} />
                   </div>
                   {size ? <span className="text-xs">{size}<br /></span> : null}
