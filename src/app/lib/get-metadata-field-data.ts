@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Metadata } from "./get-metadata";
 
 export type MetadataMetadataItem = {
-  value: string | undefined,
+  value?: string | undefined,
   label: string,
   description?: string,
   source?: string,
@@ -10,7 +11,7 @@ export type MetadataMetadataItem = {
   values?: {
     value: string | undefined,
     label: string,
-    labels?: (string | undefined)[],
+    labels?: any[],
     resolvedUrl?: string,
   }[],
 }
@@ -115,7 +116,7 @@ export function getResolvedMeta(m: Metadata) {
         }
       })(),
       colorTheme: {
-        value: m.general.themeColor[0].value,
+        value: m.general.themeColor[0]?.value,
         label: "color theme",
         type: "color",
         values: m.general.themeColor
@@ -163,6 +164,17 @@ export function getResolvedMeta(m: Metadata) {
       locale: {
         value: m.og.locale,
         label: "og:locale",
+      },
+      images: {
+        label: "og:image",
+        values: m.og.images.map(e => {
+          return {
+            value: e.url,
+            label: '',
+            labels: [["alt",e.alt], ["type",e.type], ["width",e.width], ["height",e.height], ["secure_url",e.secure_url]],
+            resolvedUrl: resolveUrl(e.url),
+          }
+        }),
       }
     },
     twitter: {

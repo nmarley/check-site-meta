@@ -57,15 +57,48 @@ export function getRawMeta(root: HTMLElement, rawUrl: string) {
         formatDetection: root.querySelector("meta[name='format-detection']")?.getAttribute("content"),
       },
       og: {
+        // Basic Metadata
         title: fromMetaTagWithProperty(root, 'og:title'),
-        description: fromMetaTagWithProperty(root, 'og:description'),
-        url: fromMetaTagWithProperty(root, 'og:url'),
-        image: fromMetaTagWithProperty(root, 'og:image'),
         type: fromMetaTagWithProperty(root, 'og:type'),
-        siteName: fromMetaTagWithProperty(root, 'og:site_name'),
-        imageAlt: fromMetaTagWithProperty(root, 'og:image:alt'),
+        image: fromMetaTagWithProperty(root, 'og:image'),
+        url: fromMetaTagWithProperty(root, 'og:url'),
+
+        // Optional Metadata
+        audio: fromMetaTagWithProperty(root, 'og:audio'),
+        description: fromMetaTagWithProperty(root, 'og:description'),
+        determiner: fromMetaTagWithProperty(root, 'og:determiner'),
         locale: fromMetaTagWithProperty(root, 'og:locale'),
+        localeAlternate: fromMetaTagWithPropertyArray(root, 'og:locale:alternate').map(e => e.getAttribute("content")),
+        siteName: fromMetaTagWithProperty(root, 'og:site_name'),
+        video: fromMetaTagWithProperty(root, 'og:video'),
+
+        imageAlt: fromMetaTagWithProperty(root, 'og:image:alt'),
         keywords: fromMetaTagWithProperty(root, 'og:keywords'),
+
+        // Structured Properties
+        images: root.querySelectorAll("meta[property~='og:image']").reduce((acc, e) => {
+          const property = e.getAttribute("property")
+          const content = e.getAttribute("content")
+
+          if (!content || !property) return acc
+
+          if (property.split('og:image')[1]) {
+            if (!acc.length) return acc
+            const attr = property.split('og:image')[1].split(':')[1] as keyof typeof acc[0]
+            const last = acc[acc.length - 1]
+            last[attr] = content
+          } else {
+            acc.push({ url: content })
+          }
+          return acc
+        }, [] as {
+          url: string,
+          secure_url?: string,
+          type?: string,
+          width?: string,
+          height?: string
+          alt?: string
+        }[])
       },
       twitter: {
         title: fromMetaTagWithName(root, 'twitter:title'),
@@ -122,6 +155,10 @@ function fromMetaTagWithName(root: HTMLElement, key: string) {
 function fromMetaTagWithProperty(root: HTMLElement, key: string) {
   return root.querySelector(`meta[property='${ key }']`)?.getAttribute("content")
 }
+function fromMetaTagWithPropertyArray(root: HTMLElement, key: string) {
+  return root.querySelectorAll(`meta[property='${ key }']`)
+}
+
 
 export type Metadata = ReturnType<typeof getRawMeta>
 

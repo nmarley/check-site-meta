@@ -43,7 +43,7 @@
   @apply p-[var(--padding)] border rounded-md border-gray-200 bg-background 
     hr:-mx-[var(--padding)] 
     hr:my-[var(--padding)]
-    hr:border-gray-200;
+    [&_hr]:border-gray-200;
 }
 @utility card-content {
   --padding: calc(5 * 0.25rem);
