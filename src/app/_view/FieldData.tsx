@@ -31,7 +31,7 @@ export function MetadataItem(props: {
             : <AppImage src={resolvedUrl} className="h-[2lh]" />}
         </div>
         <span>
-          <a target="_blank" href={resolvedUrl} className="group link-underline">
+          <a target="_blank" href={resolvedUrl} className="group link-underline block">
             {value} <ExternalIcon />
           </a>
         </span>
@@ -40,7 +40,9 @@ export function MetadataItem(props: {
   </>
 
   return (
-    <div {...props.containerProps} className={cn("meta-2-col group flex-nowrap", props.containerProps?.className)} onMouseLeave={() => setInfoOpen(false)} >
+    <div {...props.containerProps} className={cn("meta-2-col group flex-nowrap", props.containerProps?.className)}
+      // onMouseLeave={() => setInfoOpen(false)}
+    >
       <div className="meta-title">
         {label} <InfoButton onClick={() => setInfoOpen(!infoOpen)} />
       </div>
@@ -49,10 +51,13 @@ export function MetadataItem(props: {
       </div>
       <div className={cn("col-span-2 grid grid-rows-[0fr] overflow-hidden transition-all", infoOpen && "grid-rows-[1fr]")}>
         <div className="overflow-hidden">
-          <div className={cn("bg-slate-50 p-4 rounded-md text-sm overflow-hidden mt-2")}>
+          <div className={cn("bg-slate-50 p-4 rounded-md text-sm overflow-hidden mt-2 flex flex-col")}>
             A URL to an image file or to a dynamically generated image for Twitter link previews.
             Images must be less than 5 MB in size. JPG,PNG, WEBP and GIF formats are supported.
             Only the first frame of an animated GIF will be used.SVG is not supported. og:image is used as a fallback.
+            <button className="text-end text-slate-500 text-xs font-medium bg-transparent block px-0 self-end hover:underline"
+              onClick={() => setInfoOpen(false)}
+            >hide</button>
           </div>
         </div>
       </div>

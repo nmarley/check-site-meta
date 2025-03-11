@@ -120,7 +120,7 @@ async function FaviconSummary(
         src={favicon.resolvedUrl}
       />
       <div>
-        <a className="link-underline" target="_blank" href={favicon.resolvedUrl}>
+        <a className="link-underline block leading-snug" target="_blank" href={favicon.resolvedUrl}>
           {favicon.value} <ExternalIcon />
         </a> <span>{favicon.label}</span>
       </div>
