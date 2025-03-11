@@ -81,7 +81,6 @@ export function getRawMeta(root: HTMLElement, rawUrl: string) {
         images: root.querySelectorAll("meta[property*='og:image']").reduce((acc, e) => {
           const property = e.getAttribute("property")
           const content = e.getAttribute("content")
-          console.log({ property, content })
           if (!content || !property) return acc
           if (property.split('og:image')[1]) {
             if (!acc.length) return acc
