@@ -28,7 +28,7 @@ export function getRawMeta(root: HTMLElement, rawUrl: string) {
       general: {
         title: root.querySelector("title")?.text,
         description: root.querySelector("meta[name=description]")?.getAttribute("content"),
-        url: root.querySelector("inbntnrbtnlink[rel=canonical]")?.getAttribute("href"),
+        url: root.querySelector("link[rel=canonical]")?.getAttribute("href"),
         rawUrl,
         favicon: root.querySelector("link[rel=icon]")?.getAttribute("href"),
         favicons: root.querySelectorAll("link[rel~=icon]").map(e => {
@@ -42,6 +42,7 @@ export function getRawMeta(root: HTMLElement, rawUrl: string) {
         favicon2: root.querySelector("link[rel='shortcut icon']")?.getAttribute("href"),
         favicon3: root.querySelector("link[rel='icon shortcut']")?.getAttribute("href"),
         favicon4: "/favicon.ico",
+        author: root.querySelector("meta[name=author]")?.getAttribute("content"),
         robots: root.querySelector("meta[name=robots]")?.getAttribute("content"),
         keywords: root.querySelector("meta[name=keywords]")?.getAttribute("content"),
         generator: root.querySelector("meta[name=generator]")?.getAttribute("content"),
@@ -55,6 +56,7 @@ export function getRawMeta(root: HTMLElement, rawUrl: string) {
         }),
         colorScheme: root.querySelector("meta[name='color-scheme']")?.getAttribute("content"),
         formatDetection: root.querySelector("meta[name='format-detection']")?.getAttribute("content"),
+        applicationName: root.querySelector("meta[name='application-name']")?.getAttribute("content"),
       },
       og: {
         // Basic Metadata
@@ -76,29 +78,25 @@ export function getRawMeta(root: HTMLElement, rawUrl: string) {
         keywords: fromMetaTagWithProperty(root, 'og:keywords'),
 
         // Structured Properties
-        images: root.querySelectorAll("meta[property~='og:image']").reduce((acc, e) => {
+        images: root.querySelectorAll("meta[property*='og:image']").reduce((acc, e) => {
           const property = e.getAttribute("property")
           const content = e.getAttribute("content")
-
+          console.log({ property, content })
           if (!content || !property) return acc
-
           if (property.split('og:image')[1]) {
             if (!acc.length) return acc
             const attr = property.split('og:image')[1].split(':')[1] as keyof typeof acc[0]
-            const last = acc[acc.length - 1]
-            last[attr] = content
-          } else {
-            acc.push({ url: content })
-          }
+            acc[acc.length - 1][attr] = content
+          } else { acc.push({ url: content }) }
           return acc
-        }, [] as {
-          url: string,
-          secure_url?: string,
-          type?: string,
-          width?: string,
-          height?: string
-          alt?: string
-        }[])
+        }, [] as { url: string, secure_url?: string, type?: string, width?: string, height?: string, alt?: string }[]),
+
+        articlePublishedTime: fromMetaTagWithProperty(root, 'article:published_time'),
+        articleModifiedTime: fromMetaTagWithProperty(root, 'article:modified_time'),
+        articleExpirationTime: fromMetaTagWithProperty(root, 'article:expiration_time'),
+        articleAuthor: fromMetaTagWithPropertyArray(root, 'article:author').map(e => e.getAttribute("content")),
+        articleSection: fromMetaTagWithProperty(root, 'article:section'),
+        articleTag: fromMetaTagWithPropertyArray(root, 'article:tag').map(e => e.getAttribute("content")),
       },
       twitter: {
         title: fromMetaTagWithName(root, 'twitter:title'),
@@ -133,6 +131,12 @@ export function getRawMeta(root: HTMLElement, rawUrl: string) {
       },
       mobile: {
         appleTouchIcons: Array.from(root.querySelectorAll("link[rel='apple-touch-icon']")).map(e => {
+          return {
+            sizes: e.getAttribute("sizes"),
+            href: e.getAttribute("href")
+          }
+        }),
+        appleTouchIconsPrecomposed: Array.from(root.querySelectorAll("link[rel='apple-touch-icon-precomposed']")).map(e => {
           return {
             sizes: e.getAttribute("sizes"),
             href: e.getAttribute("href")
