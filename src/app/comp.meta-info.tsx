@@ -67,6 +67,9 @@ function SummaryMetadata(
           <FaviconSummary data={d.general.favicons} baseUrl={d.general.rawUrl.value} />
         </Suspense>
       </MetadataItem>
+      <MetadataItem data={d.general.colorTheme}>
+        <ColorThemes data={d.general.colorTheme} />
+      </MetadataItem>
       <Separator />
       <MetadataItem data={d.og.title} />
       <MetadataItem data={d.og.description} />
@@ -128,6 +131,28 @@ async function FaviconSummary(
   )
 }
 
+function ColorThemes(
+  props: { data: MetadataMetadataItem }
+) {
+  return (
+    <>
+      {props.data.values?.map((item, i) => {
+        return (
+          <div key={i} className="flex gap-1 items-start my-1">
+            <div
+              className="w-4 h-4 rounded-sm border border-slate-200 shrink-0"
+              style={{
+                background: item.value
+              }}
+            />
+            <span className="text-xs">{item.value}</span>
+            <span className="text-xs">{item.label}</span>
+          </div>
+        )
+      })}
+    </>
+  )
+}
 
 
 function OpengraphMetadata(
@@ -211,7 +236,7 @@ function IconMetadata(props: {
           for (const f of rawFavicons) {
             if (!f.resolvedUrl) continue
             const res = await appFetch(f.resolvedUrl)
-            
+
             if (res.headers.get("content-type")?.includes("image")) {
               const resolvedSize = f.labels[2] ? parseInt(f.labels[2]) : NaN
               favicons.push({
@@ -228,8 +253,9 @@ function IconMetadata(props: {
             const { source, size, value, resolvedUrl, resolvedSize } = item
             return <div key={i} className="flex gap-2 items-start">
               <FaviconPreview
-                imgProps1={{ style:{ height: resolvedSize ? px(resolvedSize) : undefined }}}
-                imgProps2={{ style:{ height: resolvedSize ? px(resolvedSize) : undefined }}}
+                containerProps={{ className: "shrink-0" }}
+                imgProps1={{ style: { height: resolvedSize ? px(resolvedSize) : undefined } }}
+                imgProps2={{ style: { height: resolvedSize ? px(resolvedSize) : undefined } }}
                 src={resolvedUrl} />
               <span className="text-xs meta-info-field-value break-words">
                 &quot;{source}&quot;<br />

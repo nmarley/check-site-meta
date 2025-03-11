@@ -114,6 +114,19 @@ export function getResolvedMeta(m: Metadata) {
           favicons
         }
       })(),
+      colorTheme: {
+        value: m.general.themeColor[0].value,
+        label: "color theme",
+        type: "color",
+        values: m.general.themeColor
+          .filter(e => e.value && e.media)
+          .map(e => {
+            return {
+              value: e.value!,
+              label: e.media!,
+            }
+          }),
+      }
     },
     og: {
       title: {
