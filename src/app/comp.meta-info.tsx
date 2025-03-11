@@ -291,9 +291,7 @@ function IconMetadata(props: {
               <div className="text-xs meta-info-field-value break-words min-w-40 basis-0 grow">
                 &quot;{source}&quot;<br />
                 {value.startsWith('data:') ? (
-                  <div>
-                    <div className="line-clamp-2">{value}...</div>
-                  </div>
+                  <div className="line-clamp-3">{value}...</div>
                 ) : (
                   <div>{value}</div>
                 )}
@@ -348,8 +346,12 @@ function IconMetadata(props: {
             return <>
               {items?.map((item, i) => {
                 if (!item.value) return null
-                return <div key={i} className="text-xs line-clamp-2 my-0.5">
-                  {item.value}<br />
+                return <div key={i} className="text-xs my-0.5">
+                  {item.value.startsWith('data:') ? (
+                    <div className="line-clamp-3">{item.value}...</div>
+                  ) : (
+                    <div>{item.value}</div>
+                  )}
                 </div>
               })}
             </>
