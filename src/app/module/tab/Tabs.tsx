@@ -86,7 +86,7 @@ export function Tabs
               if (!tabContainer) return
               contentRect.current.height = (tabContainer.childNodes[1] as HTMLDivElement)?.scrollHeight ?? null
             }}
-            className="relative"
+            className="relative group"
           >
             {label.label}
             {tab === label && <div ref={indicatorRef}
