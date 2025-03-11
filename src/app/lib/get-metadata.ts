@@ -2,20 +2,12 @@ import parse, { type HTMLElement } from "node-html-parser";
 import { cache } from "react";
 import "server-only"
 import { AppError } from "../module/error/error-primitives";
-import fetch2 from "node-fetch";
+import { appFetch } from "./fetch";
 
 export const fetchRoot = cache(async function getRoot(url: string) {
 
-  const res = await fetch2(
-    url,
-    {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 Edg/133.0.0.0',
-        'Accept-Language': 'en-GB-oxendict,en-GB;q=0.9,en;q=0.8,id;q=0.7,en-US;q=0.6',
-        'referer': 'http://localhost:3000',
-      },
-      referrer: "http://localhost:3000",
-    }).catch(error => { throw new AppError(error, "fetch", "Fetch Failed", error.message, [`url: ${ url }`]) })
+  const res = await appFetch(
+    url).catch(error => { throw new AppError(error, "fetch", "Fetch Failed", error.message, [`url: ${ url }`]) })
   if (!res.headers.get("content-type")?.includes("text/html")) {
     throw new AppError(null, "parse", "Fetch Returns Non-HTML", `Content-Type: ${ res.headers.get("content-type") }`)
   }
@@ -51,6 +43,18 @@ export function getRawMeta(root: HTMLElement, rawUrl: string) {
         favicon3: root.querySelector("link[rel='icon shortcut']")?.getAttribute("href"),
         favicon4: "/favicon.ico",
         robots: root.querySelector("meta[name=robots]")?.getAttribute("content"),
+        keywords: root.querySelector("meta[name=keywords]")?.getAttribute("content"),
+        generator: root.querySelector("meta[name=generator]")?.getAttribute("content"),
+        license: root.querySelector("meta[name=license]")?.getAttribute("content"),
+        viewport: root.querySelector("meta[name=viewport]")?.getAttribute("content"),
+        themeColor: root.querySelectorAll("meta[name='theme-color']").map(e => {
+          return {
+            media: e.getAttribute("media"),
+            value: e.getAttribute("content")
+          }
+        }),
+        colorScheme: root.querySelector("meta[name='color-scheme']")?.getAttribute("content"),
+        formatDetection: root.querySelector("meta[name='format-detection']")?.getAttribute("content"),
       },
       og: {
         title: fromMetaTagWithProperty(root, 'og:title'),
@@ -61,6 +65,7 @@ export function getRawMeta(root: HTMLElement, rawUrl: string) {
         siteName: fromMetaTagWithProperty(root, 'og:site_name'),
         imageAlt: fromMetaTagWithProperty(root, 'og:image:alt'),
         locale: fromMetaTagWithProperty(root, 'og:locale'),
+        keywords: fromMetaTagWithProperty(root, 'og:keywords'),
       },
       twitter: {
         title: fromMetaTagWithName(root, 'twitter:title'),
@@ -93,14 +98,18 @@ export function getRawMeta(root: HTMLElement, rawUrl: string) {
         appIdGoogleplay: fromMetaTagWithName(root, 'twitter:app:id:googleplay'),
         appUrlGoogleplay: fromMetaTagWithName(root, 'twitter:app:url:googleplay'),
       },
-      icons: {
+      mobile: {
         appleTouchIcons: Array.from(root.querySelectorAll("link[rel='apple-touch-icon']")).map(e => {
           return {
             sizes: e.getAttribute("sizes"),
             href: e.getAttribute("href")
           }
         }),
-      }
+        mobileWebAppCapable: fromMetaTagWithName(root, 'apple-mobile-web-app-capable'),
+        appleMobileWebAppCapable: fromMetaTagWithName(root, 'apple-mobile-web-app-capable'),
+        appleMobileWebAppTitle: fromMetaTagWithName(root, 'apple-mobile-web-app-title'),
+        appleMobileWebAppStatusBarStyle: fromMetaTagWithName(root, 'apple-mobile-web-app-status-bar-style'),
+      },
     }
   } catch (error) {
     throw new AppError(error, "parse", "Metadata Parse Failed", error instanceof Error ? error.message : "Unknown Error")

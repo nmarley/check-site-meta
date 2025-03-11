@@ -35,12 +35,7 @@ export default async function Home(context: SearchParamsContext) {
     return resolvedMetadata
   }
 
-  // const getHTML = async () => {
-  //   const url = parseUrlFromQuery(query.url)
-  //   if (!url) return null
-  //   const { html } = await fetchRoot(url.toString())
-  //   return html
-  // }
+
 
   return (
     <main className="mx-auto max-w-3xl lg:max-w-none px-8 lg:px-12 xl:px-24 *:py-12 font-medium lg:grid lg:grid-cols-2 gap-x-8 font-sans pb-[100vh]">
@@ -50,11 +45,7 @@ export default async function Home(context: SearchParamsContext) {
         <Suspense key={query.url?.toString()} fallback={<Loading />}>
           <MetaInfoPanel metadata={getMetadata()} />
         </Suspense>
-        {/* <Suspense>
-          <div className="fadeIn-500">
-            <pre className="whitespace-pre-wrap break-all">{await getHTML()}</pre>
-          </div>
-        </Suspense> */}
+        {/* <RawHTML url={query.url} /> */}
       </div>
       <div className="flex flex-col items-center gap-8">
         <Suspense key={query.url?.toString()}>
@@ -98,4 +89,26 @@ function Loading() {
 }
 function CiSearchMagnifyingGlass(props: SVGProps<SVGSVGElement>) {
   return (<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m15 15l6 6m-11-4a7 7 0 1 1 0-14a7 7 0 0 1 0 14"></path></svg>)
+}
+
+
+// DEBUG
+
+async function RawHTML(
+  prop: { url: string | string[] | undefined }
+) {
+  const getHTML = async () => {
+    const url = parseUrlFromQuery(prop.url)
+    if (!url) return null
+    const { html } = await fetchRoot(url.toString())
+    return html
+  }
+
+  return (
+    <Suspense>
+      <div className="fadeIn-500">
+        <pre className="whitespace-pre-wrap break-all">{await getHTML().catch(err => null)}</pre>
+      </div>
+    </Suspense>
+  )
 }

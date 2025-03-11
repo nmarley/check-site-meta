@@ -54,7 +54,11 @@
 }
 
 @utility meta-info-grid {
-  @apply flex flex-col gap-1 leading-relaxed font-medium break-word;
+  @apply flex flex-col leading-relaxed font-medium break-word;
+
+  >div {
+    @apply py-1 -mx-[var(--padding)] px-[var(--padding)]
+  }
   
   .meta-2-col {
     @apply grid grid-cols-[10rem_1fr];
@@ -70,6 +74,10 @@
     .meta-mute {
       @apply text-gray-300;
     }
+  }
+
+  .link-underline {
+    @apply text-blue-600 hover:underline text-xs
   }
 }
 

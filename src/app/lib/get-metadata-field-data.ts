@@ -7,11 +7,6 @@ export type MetadataMetadataItem = {
   source?: string,
   type?: string,
   resolvedUrl?: string,
-  fallback?: {
-    value: string | undefined,
-    label: string,
-    resolvedUrl?: string,
-  }[],
   values?: {
     value: string | undefined,
     label: string,
@@ -58,14 +53,28 @@ export function getResolvedMeta(m: Metadata) {
           value: undefined,
           label: "",
           type: "image-favicon",
-          values: m.general.favicons.map(e => {
-            return {
-              value: e.href,
+          values: [
+            ...m.general.favicons.map(e => {
+              return {
+                value: e.href,
+                label: "",
+                labels: [e.rel, e.type, e.sizes],
+                resolvedUrl: resolveUrl(e.href),
+              }
+            }),
+            {
+              value: "/favicon.ico",
               label: "",
-              labels: [e.rel, e.type, e.sizes],
-              resolvedUrl: resolveUrl(e.href),
+              labels: ['/favicon.ico', 'image/x-icon', 'size undefined'],
+              resolvedUrl: resolveUrl("/favicon.ico"),
+            },
+            {
+              value: "/favicon.png",
+              label: "",
+              labels: ['/favicon.png', 'image/png', 'size undefined'],
+              resolvedUrl: resolveUrl("/favicon.png"),
             }
-          })
+          ]
         }
         const favicon1 = {
           type,
@@ -105,37 +114,6 @@ export function getResolvedMeta(m: Metadata) {
           favicons
         }
       })(),
-      // inferedFavicon: {
-      //   type: "image-favicon",
-      //   ...(() => {
-      //     if (m.general.favicon) {
-      //       return {
-      //         value: m.general.favicon,
-      //         label: "favicon (icon)",
-      //         resolvedUrl: resolveUrl(m.general.favicon),
-      //       }
-      //     }
-      //     if (m.general.favicon2) {
-      //       return {
-      //         value: m.general.favicon2,
-      //         label: "favicon (shortcut icon)",
-      //         resolvedUrl: resolveUrl(m.general.favicon2),
-      //       }
-      //     }
-      //     if (m.general.favicon3) {
-      //       return {
-      //         value: m.general.favicon3,
-      //         label: "favicon (icon shortcut)",
-      //         resolvedUrl: resolveUrl(m.general.favicon3),
-      //       }
-      //     }
-      //     return {
-      //       value: m.general.favicon4,
-      //       label: "favicon (direct link)",
-      //       resolvedUrl: resolveUrl(m.general.favicon4),
-      //     }
-      //   })()
-      // },
     },
     og: {
       title: {
@@ -278,8 +256,8 @@ export function getResolvedMeta(m: Metadata) {
     icons: {
       appleTouchIcons: {
         value: undefined,
-        label: "",
-        values: m.icons.appleTouchIcons.map(e => {
+        label: "apple-touch-icon",
+        values: m.mobile.appleTouchIcons.map(e => {
           return {
             value: e.href,
             label: e.sizes ?? "",
