@@ -25,17 +25,17 @@ export function MetadataItem(props: {
       </a>
     </span>}
     {value && type?.startsWith("image") && (
-      <div className="flex gap-2">
+      <div className="flex gap-x-2 flex-wrap" >
         <div className="border border-slate-200 p-1 w-auto shrink-0 self-start">
           {type === "image-favicon"
             ? <AppImage src={resolvedUrl} className="h-[1.5lh]" />
             : <AppImage src={resolvedUrl} className="h-[2lh]" />}
         </div>
-        <span>
+        <div className="min-w-20">
           <a target="_blank" href={resolvedUrl} className="group link-underline block">
             {value} <ExternalIcon />
           </a>
-        </span>
+        </div>
       </div>
     )}
   </>
@@ -69,11 +69,6 @@ export function Separator() {
 }
 
 
-// export function RiExternalLinkFill(props: SVGProps<SVGSVGElement>) {
-//   return (
-//     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props} className="inline align-[-0.15rem]"><path fill="currentColor" d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1zm11-3v9l-3.794-3.793l-5.999 6l-1.414-1.414l5.999-6L12 3z"></path></svg>
-//   )
-// }
 export function ExternalIcon(props: SVGProps<SVGSVGElement>) {
   return (<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props} className="inline align-[-0.15rem]"><path fill="currentColor" d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1zm11-3v9l-3.794-3.793l-5.999 6l-1.414-1.414l5.999-6L12 3z"></path></svg>)
 }

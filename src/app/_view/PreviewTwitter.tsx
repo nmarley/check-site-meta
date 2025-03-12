@@ -1,4 +1,4 @@
-import { getSharp } from "next/dist/server/image-optimizer";
+import { imageSize } from 'image-size'
 import { appFetch } from "../lib/fetch";
 import type { ResoledMetadata } from "../lib/get-metadata-field-data";
 import { AppImage } from "../module/image/Image";
@@ -36,11 +36,11 @@ export async function PreviewTwitter(
     } else if (type === "summary") {
       return (
         <div className="max-w-[32.375rem] h-[8.188rem] w-full rounded-2xl border border-[rgb(207,_217,_222)] flex overflow-hidden bg-white">
-          <div className="w-[6.875rem] min-[554px]:w-[8.125rem] border-r border-[rgb(207,_217,_222)] shrink-0 flex items-center justify-center bg-[rgba(247,249,249,1.00)] bg-white">
+          <div className="w-[6.875rem] min-[554px]:w-[8.125rem] border-r border-[rgb(207,_217,_222)] shrink-0 flex items-center justify-center bg-[rgba(247,249,249,1.00)]">
             {
               image ?
                 <AppImage
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover bg-white"
                   firstFrameGif={image?.format === "gif"}
                   src={image.url} />
                 : <svg viewBox="0 0 24 24" aria-hidden="true" className="h-[2em] fill-current align-bottom select-none max-w-full relative text-[rgba(83,100,113,1.00)] inline-block"><g><path d="M1.998 5.5c0-1.38 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.12 2.5 2.5v13c0 1.38-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.12-2.5-2.5v-13zm2.5-.5c-.276 0-.5.22-.5.5v13c0 .28.224.5.5.5h15c.276 0 .5-.22.5-.5v-13c0-.28-.224-.5-.5-.5h-15zM6 7h6v6H6V7zm2 2v2h2V9H8zm10 0h-4V7h4v2zm0 4h-4v-2h4v2zm-.002 4h-12v-2h12v2z"></path></g></svg>
@@ -157,14 +157,14 @@ export async function getTwitterPreview(metadata: ResoledMetadata) {
       const res = await appFetch(data.image)
       const buffer = Buffer.from(await res.arrayBuffer()); // Convert once
 
-
-      const sharp = getSharp(undefined)
-      const sharpres = await (async () => await sharp(buffer).metadata())().catch((error) => ({ error }))
-      if ('error' in sharpres) {
-        errors.push(`Unable to read image metadata.${ isLargeSummary ? " Defaulting to summary." : "" } Error: ${ sharpres.error }`)
-        return { fallbackToSummary: true }
-      }
-      const { width, height, format } = sharpres
+      const { width, height, type: format } = (() => {
+        try {
+          return imageSize(buffer)
+        } catch (error) {
+          errors.push(`Unable to read image metadata.${ isLargeSummary ? " Defaulting to summary." : "" } Error: ${ error } `)
+          return { width: undefined, height: undefined, type: undefined }
+        }
+      })()
       const imgData = { width, height, format, size: buffer.length, url: data.image }
 
       if (!width || !height || !format) {
@@ -204,8 +204,8 @@ export async function getTwitterPreview(metadata: ResoledMetadata) {
         }
         return { image: imgData }
       } else {
-        errors.push(`Image must be at least 120x120px (Current: ${ width }x${ height }).${ isLargeSummary ? " Defaulting to summary." : "" }`)
-        return { fallbackToSummary: true }
+        errors.push(`Image must be at least 120x120px (Current: ${ width }x${ height }). Image may not show properly. ${ isLargeSummary ? " Defaulting to summary." : "" }`)
+        return { fallbackToSummary: true, image: imgData }
       }
     })()
 
