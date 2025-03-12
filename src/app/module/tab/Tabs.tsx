@@ -11,6 +11,7 @@ export function Tabs
     tabProps?: ComponentProps<"div">,
     tabIndicatorProps?: ComponentProps<"div">,
     contentProps?: ComponentProps<"div">,
+    containerProps?: ComponentProps<"div">,
   }) {
 
   const [tabNum, setTab] = useState<number>(props.initialTab ?? 0)
@@ -71,7 +72,7 @@ export function Tabs
   }, [tab])
 
   return (
-    <div id={id} className="flex flex-col">
+    <div id={id} {...props.containerProps} >
       <div {...props.tabProps}>
         {props.tabs.map((label, index) => (
           <div key={label.key}

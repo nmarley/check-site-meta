@@ -16,9 +16,9 @@ import { MetaPreviewPanel } from "./comp.meta-preview";
 //   ↓
 //  root
 //   ↓
-//  metadata
+//  metadata    
 //   ↓
-//  resolved metadata
+//  resolved metadata  ← descriptions
 //   ↓             ↓
 //  fields       previews
 // 
@@ -35,6 +35,8 @@ export default async function Home(context: SearchParamsContext) {
     return resolvedMetadata
   }
 
+  const random = Math.random()
+
 
 
   return (
@@ -42,13 +44,13 @@ export default async function Home(context: SearchParamsContext) {
       <div className="flex flex-col gap-8">
         <Header />
         <InputForm url={query.url as string} />
-        <Suspense key={query.url?.toString()} fallback={<Loading />}>
+        <Suspense key={random} fallback={<Loading />}>
           <MetaInfoPanel metadata={getMetadata()} />
         </Suspense>
         {/* <RawHTML url={query.url} /> */}
       </div>
       <div className="flex flex-col items-center gap-8">
-        <Suspense key={query.url?.toString()}>
+        <Suspense key={random}>
           <MetaPreviewPanel metadata={getMetadata()} />
         </Suspense>
       </div>

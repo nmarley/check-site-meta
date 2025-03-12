@@ -12,3 +12,7 @@ export async function appFetch(...args: Parameters<typeof fetch2>) {
     },
   })
 }
+
+export function withProxy(url: string) {
+  return `/proxy-img?url=${encodeURIComponent(url)}`
+}

@@ -98,35 +98,35 @@ export function getRawMeta(root: HTMLElement, rawUrl: string) {
         articleTag: fromMetaTagWithPropertyArray(root, 'article:tag').map(e => e.getAttribute("content")),
       },
       twitter: {
-        title: fromMetaTagWithName(root, 'twitter:title'),
-        card: fromMetaTagWithName(root, 'twitter:card'),
-        description: fromMetaTagWithName(root, 'twitter:description'),
-        image: fromMetaTagWithName(root, 'twitter:image'),
-        imageAlt: fromMetaTagWithName(root, 'twitter:image:alt'),
+        title: getTwitterMeta(root, 'twitter:title'),
+        card: getTwitterMeta(root, 'twitter:card'),
+        description: getTwitterMeta(root, 'twitter:description'),
+        image: getTwitterMeta(root, 'twitter:image'),
+        imageAlt: getTwitterMeta(root, 'twitter:image:alt'),
 
-        site: fromMetaTagWithName(root, 'twitter:site'),
-        siteId: fromMetaTagWithName(root, 'twitter:site:id'),
-        creator: fromMetaTagWithName(root, 'twitter:creator'),
-        creatorId: fromMetaTagWithName(root, 'twitter:creator:id'),
+        site: getTwitterMeta(root, 'twitter:site'),
+        siteId: getTwitterMeta(root, 'twitter:site:id'),
+        creator: getTwitterMeta(root, 'twitter:creator'),
+        creatorId: getTwitterMeta(root, 'twitter:creator:id'),
 
-        player: fromMetaTagWithName(root, 'twitter:player'),
-        playerWidth: fromMetaTagWithName(root, 'twitter:player:width'),
-        playerHeight: fromMetaTagWithName(root, 'twitter:player:height'),
-        playerStream: fromMetaTagWithName(root, 'twitter:player:stream'),
+        player: getTwitterMeta(root, 'twitter:player'),
+        playerWidth: getTwitterMeta(root, 'twitter:player:width'),
+        playerHeight: getTwitterMeta(root, 'twitter:player:height'),
+        playerStream: getTwitterMeta(root, 'twitter:player:stream'),
 
-        appCountry: fromMetaTagWithName(root, 'twitter:app:country'),
+        appCountry: getTwitterMeta(root, 'twitter:app:country'),
 
-        appNameIphone: fromMetaTagWithName(root, 'twitter:app:name:iphone'),
-        appIdIphone: fromMetaTagWithName(root, 'twitter:app:id:iphone'),
-        appUrlIphone: fromMetaTagWithName(root, 'twitter:app:url:iphone'),
+        appNameIphone: getTwitterMeta(root, 'twitter:app:name:iphone'),
+        appIdIphone: getTwitterMeta(root, 'twitter:app:id:iphone'),
+        appUrlIphone: getTwitterMeta(root, 'twitter:app:url:iphone'),
 
-        appNameIpad: fromMetaTagWithName(root, 'twitter:app:name:ipad'),
-        appIdIpad: fromMetaTagWithName(root, 'twitter:app:id:ipad'),
-        appUrlIpad: fromMetaTagWithName(root, 'twitter:app:url:ipad'),
+        appNameIpad: getTwitterMeta(root, 'twitter:app:name:ipad'),
+        appIdIpad: getTwitterMeta(root, 'twitter:app:id:ipad'),
+        appUrlIpad: getTwitterMeta(root, 'twitter:app:url:ipad'),
 
-        appNameGoogleplay: fromMetaTagWithName(root, 'twitter:app:name:googleplay'),
-        appIdGoogleplay: fromMetaTagWithName(root, 'twitter:app:id:googleplay'),
-        appUrlGoogleplay: fromMetaTagWithName(root, 'twitter:app:url:googleplay'),
+        appNameGoogleplay: getTwitterMeta(root, 'twitter:app:name:googleplay'),
+        appIdGoogleplay: getTwitterMeta(root, 'twitter:app:id:googleplay'),
+        appUrlGoogleplay: getTwitterMeta(root, 'twitter:app:url:googleplay'),
       },
       mobile: {
         appleTouchIcons: Array.from(root.querySelectorAll("link[rel='apple-touch-icon']")).map(e => {
@@ -150,6 +150,10 @@ export function getRawMeta(root: HTMLElement, rawUrl: string) {
   } catch (error) {
     throw new AppError(error, "parse", "Metadata Parse Failed", error instanceof Error ? error.message : "Unknown Error")
   }
+}
+
+function getTwitterMeta(root: HTMLElement, key: string) {
+  return root.querySelector(`meta[name='${ key }']`)?.getAttribute("content") ?? root.querySelector(`meta[property='${ key }']`)?.getAttribute("content")
 }
 
 function fromMetaTagWithName(root: HTMLElement, key: string) {

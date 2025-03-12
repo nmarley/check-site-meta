@@ -31,7 +31,7 @@ export function OpengraphMetadata(
       <MetadataItem data={d.og.articleExpirationTime} />
       <MetadataItem data={d.og.articleSection} />
       <MetadataItem data={d.og.articleTag}>
-        {d.og.articleAuthor.values.length === 0 && <div className="meta-mute">-</div>}
+        {d.og.articleTag.values.length === 0 && <div className="meta-mute">-</div>}
         {d.og.articleTag.values.map((item, i) => {
           return <div key={i}>{item}</div>
         })}
