@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# check-site-meta
 
-## Getting Started
+**`check-site-meta`** is a command-line tool for inspecting website metadata and generating link previews without requiring deployment. It runs a local Node.js backend to bypass CORS restrictions and caching issues, providing accurate metadata retrieval.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
+- Extract metadata from any URL
+- Compatible with `localhost` for local development
+- Supports link previews (X/Twitter, Discord)
+- Avoids CORS and caching limitations
+
+## Installation & Usage
+
+To use `check-site-meta`, install it via `npx` or `pnpx`:
+
+```sh
+npx check-site-meta
 # or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpx check-site-meta
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Checking Localhost Ports
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+To inspect metadata for a locally running application, specify a port:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```sh
+pnpx check-site-meta 3000
+pnpx check-site-meta 5173
+```
 
-## Learn More
+### Customizing the Backend Port
 
-To learn more about Next.js, take a look at the following resources:
+To change the backend port, use the `-p` flag:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```sh
+pnpx check-site-meta 5173 -p 5000
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Resources
 
-## Deploy on Vercel
+- **NPM**: [check-site-meta](https://www.npmjs.com/package/check-site-meta)
+- **GitHub**: [alfonsusac/check-site-meta](https://github.com/alfonsusac/check-site-meta)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+For feedback or issues, please open an issue on GitHub.
