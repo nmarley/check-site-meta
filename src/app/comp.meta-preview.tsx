@@ -3,6 +3,7 @@ import { type ResoledMetadata } from "./lib/get-metadata-field-data";
 import { tab } from "./module/tab/tab-primitives";
 import { Tabs } from "./module/tab/Tabs";
 import { PreviewTwitter } from "./_view/PreviewTwitter";
+import { PreviewDiscord } from "./_view/PreviewDiscord";
 
 export async function MetaPreviewPanel(
   props: { metadata: Promise<ResoledMetadata | null> }
@@ -16,20 +17,23 @@ export async function MetaPreviewPanel(
         tabProps={{ className: "tab fadeIn-50 *:p-2 *:px-3 *:[&>svg]:w-5 *:[&>svg]:h-5 gap-0" }}
         tabIndicatorProps={{ className: "bg-white rounded-sm shadow-xs" }}
         tabs={[
-          // tab("Twitter", <RiTwitterXFill />, <LinkPreview metadataPromise={metadataPromise} />),
-          tab("Twitter",
-            <RiTwitterXFill />,
-            <Suspense fallback={<span className="fadeIn-0">Loading...</span>}>
-              <PreviewTwitter metadata={metadata} className="fadeIn-0" />
-            </Suspense>
-          ),
           tab("Discord",
             <IcBaselineDiscord
               style={{ "--color": "#5865F2" } as CSSProperties}
               className="transition group-hover:text-[var(--color)] group-data-active:text-[var(--color)]"
             />,
-            <ComingSoon />
+            <Suspense key='discord'>
+              <PreviewDiscord metadata={metadata} className="fadeIn-100" />
+            </Suspense>
           ),
+          // tab("Twitter", <RiTwitterXFill />, <LinkPreview metadataPromise={metadataPromise} />),
+          tab("Twitter",
+            <RiTwitterXFill />,
+            <Suspense key='twitter' fallback={<span className="fadeIn-0">Loading...</span>}>
+              <PreviewTwitter metadata={metadata} className="fadeIn-0" />
+            </Suspense>
+          ),
+
           tab("Google",
             <LogosGoogleIcon className="p-0.5" />,
             <ComingSoon />

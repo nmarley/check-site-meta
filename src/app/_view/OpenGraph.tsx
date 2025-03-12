@@ -58,14 +58,12 @@ function StructuredOpengraphMetadata(
               </div>
             )}
             <div className="text-xs meta-info-field-value break-words grid grid-cols-[5rem_1fr] gap-y-1 w-full">
-              {
-                item.labels.map((label, i) => {
-                  return <Fragment key={i}>
-                    <div className="text-foreground opacity-100">{label[0]}</div>
-                    <div>{label[1] ?? <span className="meta-mute" >-</span>}</div>
-                  </Fragment>
-                })
-              }
+              {item.labels.map((label, i) => {
+                return <Fragment key={i}>
+                  <div className="text-foreground opacity-100">{label[0]}</div>
+                  <div>{label[1] ?? <span className="meta-mute" >-</span>}</div>
+                </Fragment>
+              })}
             </div>
           </div>
         )

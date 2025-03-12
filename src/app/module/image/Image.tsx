@@ -12,7 +12,7 @@ export function AppImage(
   if (!src) return null
 
   if (firstFrameGif) {
-    return <AppImageFirstFrameGif src={`/api/proxy-img?url=${ encodeURIComponent(src) }`} {...props} />
+    return <AppImageFirstFrameGif src={`/api/proxy-img?url=${ encodeURIComponent(src) }`} {...props as ComponentProps<"canvas">} />
   }
 
   return <img
