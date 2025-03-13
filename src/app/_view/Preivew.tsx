@@ -1,4 +1,5 @@
 import { cn } from "lazy-cn";
+import type { ReactNode } from "react";
 import type { ComponentProps, SVGProps } from "react";
 
 export function PreviewInfo(
@@ -62,3 +63,20 @@ export function ClarityExclamationTriangleSolid(props: SVGProps<SVGSVGElement>) 
   )
 }
 
+export function PreviewPanelContent(
+  { PreviewInfoContent, PreviewSection, className, ...props }: {
+    PreviewSection: ReactNode,
+    PreviewInfoContent: ReactNode,
+  } & ComponentProps<"div">
+) {
+  return (
+    <>
+      <div className={cn("mb-8 w-full flex justify-center", className)} {...props}>
+        {PreviewSection}
+      </div>
+      <PreviewInfo>
+        {PreviewInfoContent}
+      </PreviewInfo>
+    </>
+  )
+}

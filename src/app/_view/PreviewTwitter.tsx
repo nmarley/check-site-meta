@@ -4,7 +4,7 @@ import type { ResoledMetadata } from "../lib/get-metadata-field-data";
 import { AppImage } from "../module/image/Image";
 import type { ComponentProps, SVGProps } from "react";
 import { cn } from "lazy-cn";
-import { MessageList, PreviewInfo } from "./Preivew";
+import { MessageList, PreviewInfo, PreviewPanelContent } from "./Preivew";
 
 export async function PreviewTwitter(
   { metadata, className, ...props }: { metadata: ResoledMetadata } & ComponentProps<"div">
@@ -67,17 +67,17 @@ export async function PreviewTwitter(
   })()
 
   return (
-    <>
-      <div className={cn("mb-8 w-full flex justify-center", className)} {...props}>
-        {PreviewSection}
-      </div>
-      <PreviewInfo>
-        {image && (<div className="break-word text-xs text-slate-500">
-          {image?.format}, {image?.width}✕{image?.height}, {image?.size} Bytes, <span className="break-all">{image?.url}</span>
-        </div>)}
-        <MessageList errors={errors} infos={infos} />
-      </PreviewInfo>
-    </>
+    <PreviewPanelContent
+      PreviewSection={PreviewSection}
+      PreviewInfoContent={
+        <>
+          {image && (<div className="break-word text-xs text-slate-500">
+            {image?.format}, {image?.width}✕{image?.height}, {image?.size} Bytes, <span className="break-all">{image?.url}</span>
+          </div>)}
+          <MessageList errors={errors} infos={infos} />
+        </>
+      }
+    />
   )
 
 }
@@ -124,9 +124,6 @@ export async function getTwitterPreview(metadata: ResoledMetadata) {
     }
   }
 
-  const title = data.title
-  const description = data.description
-
   const {
     type,
     image
@@ -154,6 +151,7 @@ export async function getTwitterPreview(metadata: ResoledMetadata) {
         }
         return { fallbackToSummary: true }
       }
+
       const res = await appFetch(data.image)
       const buffer = Buffer.from(await res.arrayBuffer()); // Convert once
 
@@ -176,7 +174,7 @@ export async function getTwitterPreview(metadata: ResoledMetadata) {
         errors.push(`Image must be less than 5mb (Current: ${ buffer.length }). Preview may fail to load. ${ isLargeSummary ? " Defaulting to summary." : "" }`)
         return { fallbackToSummary: true }
       }
-      if (!format.match(/(jpeg|png|webp|gif)/)) {
+      if (!format.match(/(jpeg|jpg|png|webp|gif)/)) {
         errors.push(`Image must be of type JPG, PNG, WEBP or GIF (Current: ${ format }).${ isLargeSummary ? " Defaulting to summary." : "" }`)
         return { fallbackToSummary: true }
       }
