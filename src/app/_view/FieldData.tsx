@@ -47,7 +47,7 @@ export function MetadataItem(props: {
       <div className="meta-title whitespace-pre-wrap">
         {label} <InfoButton onClick={() => setInfoOpen(!infoOpen)} />
       </div>
-      <div {...props.contentProps} className={cn("meta-content", props.contentProps?.className)} >
+      <div {...props.contentProps} className={cn("meta-content whitespace-pre-wrap", props.contentProps?.className)} >
         {content}
       </div>
       <div className={cn("col-span-2 grid grid-rows-[0fr] overflow-hidden transition-all", infoOpen && "grid-rows-[1fr]")}>

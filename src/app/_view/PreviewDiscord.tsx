@@ -52,7 +52,7 @@ export async function PreviewDiscord(
                 {title}
               </a>
             </div>
-            <div className="mt-2 col-[1/1] text-[color:var(--embed-text)] text-[0.875rem] font-[400] leading-[1.125rem]">
+            <div className="mt-2 col-[1/1] text-[color:var(--embed-text)] text-[0.875rem] font-[400] leading-[1.125rem] whitespace-pre-wrap">
               {description}
             </div>
             {image && type === "summary" && (
