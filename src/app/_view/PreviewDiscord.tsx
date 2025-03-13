@@ -143,7 +143,7 @@ async function getDiscordPreview(metadata: ResoledMetadata) {
         data.themeColor = '#' + data.themeColor.split('#')[1].padStart(6, '0')
       }
       if (!res.shortHex && res.withAlpha) {
-        errors.push(`8 digit hex values (${ data.themeColor }) will cause the preview to now show up properly. Consider using 6 digit hex values.`)
+        errors.push(`8 digit hex values (${ data.themeColor }) will cause the preview to not show up properly. Consider using 6 digit hex values.`)
         data.themeColor = undefined
         crashed = true
       }

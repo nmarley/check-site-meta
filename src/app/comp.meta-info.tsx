@@ -114,9 +114,6 @@ async function FaviconSummary(
   for (const f of favicons) {
     if (!f.resolvedUrl) continue
     const res = await appFetch(f.resolvedUrl)
-    // wait 200ms
-    await new Promise(resolve => setTimeout(resolve, 200))
-    console.log("URL", f.resolvedUrl, "OK?", res.ok, "WHY?", res.status, res.statusText)
     if (res.headers.get("content-type")?.includes("image")) {
       favicon = {
         value: f.value ?? "",
