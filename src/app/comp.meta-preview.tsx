@@ -22,7 +22,7 @@ export async function MetaPreviewPanel(
               style={{ "--color": "#5865F2" } as CSSProperties}
               className="transition group-hover:text-[var(--color)] group-data-active:text-[var(--color)]"
             />,
-            <Suspense key='discord'>
+            <Suspense key='discord' fallback={<span className="fadeIn-0">Loading...</span>}>
               <PreviewDiscord metadata={metadata} className="fadeIn-100" />
             </Suspense>
           ),

@@ -16,7 +16,7 @@ export async function PreviewDiscord(
   const site = metadata.og.siteName.value
   const title = data?.title ?? metadata.general.title.value
   const description = data?.description ?? metadata.general.description.value
-  const image = data?.image ?? metadata.twitter.image.value ?? metadata.og.image.resolvedUrl
+  const image = metadata.og.image.resolvedUrl ?? data?.image ?? metadata.twitter.image.value
   const type = data?.type ?? metadata.twitter.card.value ?? "summary"
 
 
@@ -56,13 +56,15 @@ export async function PreviewDiscord(
               {description}
             </div>
             {image && type === "summary" && (
-              <div className="row-[1/8] col-[2/2] ml-4 mt-2 w-full h-full flex rounded-[.25rem]">
-                <AppImage src={image} alt="" className="w-20 h-20 max-w-none object-contain object-top" />
+              <div className="row-[1/8] col-[2/2] ml-4 mt-2 max-w-20 max-h-20 justify-items-end h-full flex rounded-[.25rem]">
+                <AppImage src={image} alt="" className="w-min h-min max-w-none max-h-[inherit] object-contain object-top rounded-[.25rem] overflow-hidden" />
               </div>
             )}
             {image && type === "summary_large_image" && (
               <div className="col-[1/1] mt-4 w-full flex object-contain rounded-[.25rem] overflow-hidden">
-                <AppImage src={image} alt="" className="max-w-none w-full" />
+                <div>
+                  <AppImage src={image} alt="" className="max-w-none w-full" />
+                </div>
               </div>
             )}
           </div>
