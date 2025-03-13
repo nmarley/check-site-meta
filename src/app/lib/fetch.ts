@@ -1,7 +1,9 @@
 import fetch2 from "node-fetch";
 
-export async function appFetch(...args: Parameters<typeof fetch2>) {
-  return fetch2(args[0], {
+const fetchInstance = globalThis.fetch;
+
+export async function appFetch(...args: Parameters<typeof fetchInstance>) {
+  return fetchInstance(args[0], {
     // referrer: "http://localhost:3000",
     ...args[1],
     headers: {

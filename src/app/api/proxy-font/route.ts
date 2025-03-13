@@ -8,21 +8,9 @@ export async function GET(request: NextRequest) {
 
   try {
     const response = await appFetch(url);
-    if (response.headers.get('content-type')?.includes('font')) {
-      // @ts-expect-error - Not sure what the correct type is
-      return new Response(response.body, {
-        headers: {
-          "Content-Type": response.headers.get("Content-Type")!,
-        },
-      })
-    } else {
-      return Response.json({
-        error: "Not a font",
-        status: response.status,
-        statusText: response.statusText,
-        body: await response.text(),
-      })
-    }
+    return new Response(response.body, {
+      headers: { ...response.headers, },
+    })
   } catch (error) {
     console.log("Proxy Img: Error:\n", error)
     return Response.json({ error: error instanceof Error ? error.message : "Unknown error occurred" }, { status: 500 });
