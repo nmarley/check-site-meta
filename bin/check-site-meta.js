@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env node -S node --no-warnings
 import { spawn } from "child_process";
 import open from "open";
 import path from "path";
@@ -21,19 +21,12 @@ program
     .option("-p, --port <number>", "Specify port number", (value) => parseInt(value, 10), 3050)
     .parse(process.argv);
 const options = program.opts();
-console.log(process.argv);
-console.log(options);
 const PORT = options.port;
 function isPositiveInteger(str) {
     return /^[1-9]\d*$/.test(str);
 }
 const URLorPORT = program.args[0];
 const URL = isPositiveInteger(URLorPORT) ? `http://localhost:${URLorPORT}` : URLorPORT;
-// const cwd = process.env.INIT_CWD || process.cwd();
-// console.log("Current working directory:", process.cwd());
-// console.log("INIT_CWD:", process.env.INIT_CWD);
-// console.log("npm_execpath:", process.env.npm_execpath);
-// console.log("Package installed at:", __dirname);
 console.log(`\n   ▲ Check Site Meta ${VERSION}`);
 const rl = readline.createInterface({
     input: process.stdin,

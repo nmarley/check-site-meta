@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env node -S node --no-warnings
 
 import { exec, spawn, spawnSync, type ChildProcess } from "child_process";
 import open from "open";
@@ -27,9 +27,6 @@ program
 
 const options = program.opts();
 
-console.log(process.argv)
-console.log(options)
-
 const PORT = options.port;
 
 function isPositiveInteger(str: string) {
@@ -39,11 +36,6 @@ function isPositiveInteger(str: string) {
 const URLorPORT = program.args[0];
 const URL = isPositiveInteger(URLorPORT) ? `http://localhost:${ URLorPORT }` : URLorPORT;
 
-// const cwd = process.env.INIT_CWD || process.cwd();
-// console.log("Current working directory:", process.cwd());
-// console.log("INIT_CWD:", process.env.INIT_CWD);
-// console.log("npm_execpath:", process.env.npm_execpath);
-// console.log("Package installed at:", __dirname);
 console.log(`\n   ▲ Check Site Meta ${ VERSION }`);
 
 
