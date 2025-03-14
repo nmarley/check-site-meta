@@ -15,7 +15,7 @@ export async function PreviewTwitter(
   const PreviewSection = (() => {
     if (type === "summary_large_image") {
       return (
-        <div className={cn("flex flex-col gap-y-1 max-w-[32.375rem] leading-5 font-twitter font-[400] subpixel-antialiased", className)}>
+        <div className={cn("flex flex-col gap-y-1 max-w-[32.375rem] leading-5 font-twitter font-[400] subpixel-antialiased", className)} {...props}>
           <div className="rounded-2xl relative border border-[rgb(207,_217,_222)] overflow-hidden aspect-[120/63]">
             <AppImage
               width="1200"

@@ -33,7 +33,7 @@ program
 const options = program.opts();
 
 // Analytics
-if (!options.noAnalytics) {
+if (!options.noAnalytics && process.env.NODE_ENV === 'production') {
   fetch(`https://alfon.dev/api/public/analytics`, {
     method: 'POST',
     body: JSON.stringify({
@@ -71,6 +71,8 @@ const nextProcess = spawn("node", [path.join(__dirname, "./standalone/server.js"
   env: {
     ...process.env,
     PORT: String(PORT),
+    DISABLE_ANALYTICS: options.noAnalytics,
+    CSM_VERSION: VERSION,
   },
 });
 

@@ -3,9 +3,11 @@ import Form from 'next/form'
 import { getRawMeta, fetchRoot } from "./lib/get-metadata";
 import { parseUrlFromQuery } from "./lib/parse-url";
 import type { SearchParamsContext } from "./lib/next-types";
-import { getResolvedMeta, type ResoledMetadata } from "./lib/get-metadata-field-data";
+import { getResolvedMeta } from "./lib/get-metadata-field-data";
 import { MetaInfoPanel } from "./comp.meta-info";
 import { MetaPreviewPanel } from "./comp.meta-preview";
+import { after } from "next/server";
+import { logCheckButton } from "./lib/analytics";
 
 // Structure:
 // 
@@ -51,6 +53,8 @@ export default async function Home(context: SearchParamsContext) {
           <MetaPreviewPanel metadata={getMetadata()} />
         </Suspense>
       </div>
+      <div id="version" className="hidden">{process.env['CSM_VERSION']}</div>
+      <div id="disable_analytics" className="hidden">{process.env['DISABLE_ANALYTICS']}</div>
     </main>
   );
 }
@@ -68,7 +72,10 @@ function Header() {
 function InputForm(
   props: { url: string }
 ) {
-  return <Form action="/" className="flex p-1 bg-white  card rounded-xl focus-within:border-slate-400 outline-transparent focus-within:outline-4 focus-within:outline-slate-200 transition">
+  return <Form
+    onSubmit={logCheckButton}
+    action="/"
+    className="flex p-1 bg-white  card rounded-xl focus-within:border-slate-400 outline-transparent focus-within:outline-4 focus-within:outline-slate-200 transition">
     <CiSearchMagnifyingGlass className="w-4 h-4 ml-3 mr-3 self-center" />
     <input required id="lookup_url" name="url"
       className="grow border-none focus:outline-0 mr-1 px-2"
