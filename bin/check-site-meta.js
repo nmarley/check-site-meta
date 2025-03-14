@@ -4,8 +4,10 @@ import open from "open";
 import path from "path";
 import { fileURLToPath } from "url";
 import readline from "readline";
-import packageJson from "../package.json" with { type: "json" };
+// import packageJson from "../package.json"
 import { program } from "commander";
+const data = await import("../package.json", { assert: { type: "json" } });
+const packageJson = data.default;
 // Get the directory of the current module (equivalent to __dirname in CommonJS)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

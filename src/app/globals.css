@@ -43,6 +43,10 @@ body {
 @custom-variant a (&>a);
 
 
+@utility max-w-screen-* {
+  max-width: var(--value(--breakpoint-*));
+}
+
 
 
 

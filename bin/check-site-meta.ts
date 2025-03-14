@@ -5,8 +5,11 @@ import open from "open";
 import path from "path";
 import { fileURLToPath } from "url";
 import readline from "readline";
-import packageJson from "../package.json" with { type: "json"};
+// import packageJson from "../package.json"
 import { program } from "commander";
+
+const data = await import("../package.json", { assert: { type: "json" } })
+const packageJson = data.default
 
 // Get the directory of the current module (equivalent to __dirname in CommonJS)
 const __filename = fileURLToPath(import.meta.url);
@@ -23,9 +26,15 @@ program
   .description(DESCRIPTION)
   .argument("[input]", "URL to check, or localhost port to check (optional)")
   .option("-p, --port <number>", "Specify port number", (value) => parseInt(value, 10), 3050)
+  .option("--showdir", "Show directory path of where the command is run")
   .parse(process.argv);
 
 const options = program.opts();
+
+if (options.showdir) {
+  console.log(`\n → Running from directory: ${ __dirname }\n`);
+  process.exit();
+}
 
 const PORT = options.port;
 
@@ -74,7 +83,7 @@ nextProcess.stdout.on("data", (data) => {
       rl.question(' ? Do you want to open the browser? (Y/n) ', (answer) => {
         if (answer.toLowerCase() === 'y' || answer === '') {
           console.log(` → Opening browser at http://localhost:${ PORT }`);
-          open(`http://localhost:${ PORT }${ URL ? `/?url=${ URL }` : ""}`);
+          open(`http://localhost:${ PORT }${ URL ? `/?url=${ URL }` : "" }`);
         } else {
           console.log(' → Skipping browser launch.');
         }
