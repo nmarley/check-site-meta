@@ -33,7 +33,7 @@ program
 const options = program.opts();
 
 // Analytics
-if (!options.noAnalytics && process.env.NODE_ENV === 'production') {
+if (!options.noAnalytics) {
   fetch(`https://alfon.dev/api/public/analytics`, {
     method: 'POST',
     body: JSON.stringify({
