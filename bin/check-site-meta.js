@@ -19,15 +19,30 @@ program
     .version(VERSION)
     .description(DESCRIPTION)
     .argument("[input]", "URL to check, or localhost port to check (optional)")
-    .option("-p, --port <number>", "Specify port number", (value) => parseInt(value, 10), 3050)
+    .option("-p, --port <number>", "Specify port number", (value) => parseInt(value, 10))
     .option("--showdir", "Show directory path of where the command is run")
     .parse(process.argv);
 const options = program.opts();
+// Analytics
+fetch(`https://api.axiom.co/v1/datasets/main-app-dataset/ingest`, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer xaat-faca0c65-c8fb-4774-bf76-bc41f74c2586`
+    },
+    body: JSON.stringify([{
+            level: 'info',
+            appname: 'check-site-meta',
+            event: 'command-run',
+            meta: options,
+            source: "check-site-meta.js (public)",
+        }])
+}).catch(() => { });
 if (options.showdir) {
     console.log(`\n → Running from directory: ${__dirname}\n`);
     process.exit();
 }
-const PORT = options.port;
+const PORT = options.port ?? 3050;
 function isPositiveInteger(str) {
     return /^[1-9]\d*$/.test(str);
 }
