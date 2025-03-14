@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Suspense, type SVGProps } from "react";
 import Form from 'next/form'
 import { getRawMeta, fetchRoot } from "./lib/get-metadata";
@@ -36,8 +35,6 @@ export default async function Home(context: SearchParamsContext) {
   }
 
   const random = Math.random()
-
-
 
   return (
     <main className="mx-auto max-w-3xl lg:max-w-none px-8 lg:px-12 xl:px-24 *:py-12 font-medium lg:grid lg:grid-cols-2 gap-x-8 font-sans pb-[100vh]">
@@ -84,8 +81,9 @@ function InputForm(
 function Loading() {
   return (
     <div>
-      <div className="fadeIn-500">Loading...</div>
+      <div className="fadeIn-200">Loading...</div>
       <div className="fadeIn-2000">This takes longer than expected...</div>
+      <div className="fadeIn-3000">This takes longer than expected...</div>
     </div>
   )
 }

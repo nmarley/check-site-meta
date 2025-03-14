@@ -57,8 +57,7 @@ export function Tabs
     const content = tabContainer.children[1] as HTMLDivElement
     const prev = contentRect.current.height
     const curr = (content?.firstChild as HTMLDivElement)?.scrollHeight
-    const delta = curr - prev
-    if (!prev || !curr) return
+    const delta = curr - prev;
 
     (content.firstChild as HTMLDivElement)?.animate?.([
       { marginBottom: px(-delta) },
@@ -85,7 +84,7 @@ export function Tabs
 
               const tabContainer = document.getElementById(id)
               if (!tabContainer) return
-              contentRect.current.height = (tabContainer.childNodes[1] as HTMLDivElement)?.scrollHeight ?? null
+              contentRect.current.height = (tabContainer.childNodes[1] as HTMLDivElement)?.getBoundingClientRect().height ?? null
             }}
             className="relative group"
           >

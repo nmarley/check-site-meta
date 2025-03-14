@@ -1,9 +1,10 @@
-import { Suspense, type CSSProperties, type SVGProps } from "react";
+import { Suspense, type ComponentProps, type CSSProperties, type SVGProps } from "react";
 import { type ResoledMetadata } from "./lib/get-metadata-field-data";
 import { tab } from "./module/tab/tab-primitives";
 import { Tabs } from "./module/tab/Tabs";
 import { PreviewTwitter } from "./_view/PreviewTwitter";
 import { PreviewDiscord } from "./_view/PreviewDiscord";
+import { cn } from "lazy-cn";
 
 export async function MetaPreviewPanel(
   props: { metadata: Promise<ResoledMetadata | null> }
@@ -12,54 +13,51 @@ export async function MetaPreviewPanel(
     const metadata = await props.metadata;
     if (!metadata) return null
     return (
-      <Tabs
-        containerProps={{ className: "flex flex-col gap-8 items-center w-full" }}
-        tabProps={{ className: "tab fadeIn-50 *:p-2 *:px-3 *:[&>svg]:w-5 *:[&>svg]:h-5 gap-0" }}
-        tabIndicatorProps={{ className: "bg-white rounded-sm shadow-xs" }}
-        tabs={[
-          tab("Discord",
-            <IcBaselineDiscord
-              style={{ "--color": "#5865F2" } as CSSProperties}
-              className="transition group-hover:text-[var(--color)] group-data-active:text-[var(--color)]"
-            />,
-            <Suspense key='discord' fallback={<span className="fadeIn-0">Loading...</span>}>
+      <Suspense key='discord' fallback={<span className="fadeIn-0">Loading...</span>}>
+        <Tabs
+          containerProps={{ className: "flex flex-col gap-8 items-center w-full" }}
+          tabProps={{ className: "tab fadeIn-50 *:p-2 *:px-3 *:[&>svg]:w-5 *:[&>svg]:h-5 gap-0" }}
+          tabIndicatorProps={{ className: "bg-white rounded-sm shadow-xs" }}
+          tabs={[
+            tab("Discord",
+              <IcBaselineDiscord
+                style={{ "--color": "#5865F2" } as CSSProperties}
+                className="transition group-hover:text-[var(--color)] group-data-active:text-[var(--color)]"
+              />,
               <PreviewDiscord metadata={metadata} className="fadeIn-100" />
-            </Suspense>
-          ),
-          // tab("Twitter", <RiTwitterXFill />, <LinkPreview metadataPromise={metadataPromise} />),
-          tab("Twitter",
-            <RiTwitterXFill />,
-            <Suspense key='twitter' fallback={<span className="fadeIn-0">Loading...</span>}>
+            ),
+            tab("Twitter",
+              <RiTwitterXFill />,
               <PreviewTwitter metadata={metadata} className="fadeIn-0" />
-            </Suspense>
-          ),
+            ),
+            tab("Google",
+              <LogosGoogleIcon className="p-0.5" />,
+              <ComingSoon />
+            ),
+            tab("Facebook",
+              <IcBaselineFacebook
+                style={{ "--color": "#1877f2" } as CSSProperties}
+                className="transition group-hover:text-[var(--color)] group-data-active:text-[var(--color)]"
+              />,
+              <ComingSoon />
+            ),
+            tab("Whatsapp",
+              <IcBaselineWhatsapp
+                style={{ "--color": "#65D072" } as CSSProperties}
+                className="transition group-hover:text-[var(--color)] group-data-active:text-[var(--color)]"
+              />,
+              <ComingSoon />
+            ),
+            tab("Telegram",
+              <IcBaselineTelegram
+                style={{ "--color": "#2AABEE" } as CSSProperties}
+                className="transition group-hover:text-[var(--color)] group-data-active:text-[var(--color)]"
+              />,
+              <ComingSoon />
+            ),
+          ]} />
+      </Suspense>
 
-          tab("Google",
-            <LogosGoogleIcon className="p-0.5" />,
-            <ComingSoon />
-          ),
-          tab("Facebook",
-            <IcBaselineFacebook
-              style={{ "--color": "#1877f2" } as CSSProperties}
-              className="transition group-hover:text-[var(--color)] group-data-active:text-[var(--color)]"
-            />,
-            <ComingSoon />
-          ),
-          tab("Whatsapp",
-            <IcBaselineWhatsapp
-              style={{ "--color": "#65D072" } as CSSProperties}
-              className="transition group-hover:text-[var(--color)] group-data-active:text-[var(--color)]"
-            />,
-            <ComingSoon />
-          ),
-          tab("Telegram",
-            <IcBaselineTelegram
-              style={{ "--color": "#2AABEE" } as CSSProperties}
-              className="transition group-hover:text-[var(--color)] group-data-active:text-[var(--color)]"
-            />,
-            <ComingSoon />
-          ),
-        ]} />
     )
   } catch {
     return null
@@ -92,7 +90,7 @@ function IcBaselineWhatsapp(props: SVGProps<SVGSVGElement>) {
 function IcBaselineTelegram(props: SVGProps<SVGSVGElement>) {
   return (<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2m4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19c-.14.75-.42 1-.68 1.03c-.58.05-1.02-.38-1.58-.75c-.88-.58-1.38-.94-2.23-1.5c-.99-.65-.35-1.01.22-1.59c.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02c-.09.02-1.49.95-4.22 2.79c-.4.27-.76.41-1.08.4c-.36-.01-1.04-.2-1.55-.37c-.63-.2-1.12-.31-1.08-.66c.02-.18.27-.36.74-.55c2.92-1.27 4.86-2.11 5.83-2.51c2.78-1.16 3.35-1.36 3.73-1.36c.08 0 .27.02.39.12c.1.08.13.19.14.27c-.01.06.01.24 0 .38"></path></svg>)
 }
-function ComingSoon() {
-  return <div className="text-gray-500 text-center mt-8">Coming soon.</div>
+function ComingSoon({ className, ...props }: ComponentProps<'div'>) {
+  return <div key={Math.random()} className={cn("text-gray-500 text-center mt-8 fadeIn-0", className)} {...props}>Coming soon.</div>
 }
 
