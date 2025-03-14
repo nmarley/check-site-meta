@@ -42,3 +42,5 @@ next-env.d.ts
 
 /bin/standalone/
 /bin/standalone
+
+/bin/check-site-meta.js
