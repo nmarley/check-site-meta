@@ -13,7 +13,7 @@ export async function MetaPreviewPanel(
     const metadata = await props.metadata;
     if (!metadata) return null
     return (
-      <Suspense key='discord' fallback={<span className="fadeIn-0">Loading...</span>}>
+      <Suspense fallback={<span className="fadeIn-0">Loading...</span>}>
         <Tabs
           containerProps={{ className: "flex flex-col gap-8 items-center w-full" }}
           tabProps={{ className: "tab fadeIn-50 *:p-2 *:px-3 *:[&>svg]:w-5 *:[&>svg]:h-5 gap-0" }}
@@ -24,11 +24,11 @@ export async function MetaPreviewPanel(
                 style={{ "--color": "#5865F2" } as CSSProperties}
                 className="transition group-hover:text-[var(--color)] group-data-active:text-[var(--color)]"
               />,
-              <PreviewDiscord metadata={metadata} className="fadeIn-100" />
+              <PreviewDiscord key="d" metadata={metadata} className="fadeIn-100" />
             ),
             tab("Twitter",
               <RiTwitterXFill />,
-              <PreviewTwitter metadata={metadata} className="fadeIn-0" />
+              <PreviewTwitter key="x" metadata={metadata} className="fadeIn-100" />
             ),
             tab("Google",
               <LogosGoogleIcon className="p-0.5" />,

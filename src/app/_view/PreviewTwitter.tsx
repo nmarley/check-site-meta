@@ -4,18 +4,18 @@ import type { ResoledMetadata } from "../lib/get-metadata-field-data";
 import { AppImage } from "../module/image/Image";
 import type { ComponentProps, SVGProps } from "react";
 import { cn } from "lazy-cn";
-import { MessageList, PreviewInfo, PreviewPanelContent } from "./Preivew";
+import { MessageList, PreviewInfo, PreviewPanelContent, type PreviewMessages } from "./Preivew";
 
 export async function PreviewTwitter(
   { metadata, className, ...props }: { metadata: ResoledMetadata } & ComponentProps<"div">
 ) {
 
-  const { errors, infos, type, image, data } = await getTwitterPreview(metadata)
+  const { messages, type, image, data } = await getTwitterPreview(metadata)
 
   const PreviewSection = (() => {
     if (type === "summary_large_image") {
       return (
-        <div className="flex flex-col gap-y-1 max-w-[32.375rem] leading-5 font-twitter font-[400] subpixel-antialiased">
+        <div className={cn("flex flex-col gap-y-1 max-w-[32.375rem] leading-5 font-twitter font-[400] subpixel-antialiased", className)}>
           <div className="rounded-2xl relative border border-[rgb(207,_217,_222)] overflow-hidden aspect-[120/63]">
             <AppImage
               width="1200"
@@ -74,7 +74,7 @@ export async function PreviewTwitter(
           {image && (<div className="break-word text-xs text-slate-500">
             {image?.format}, {image?.width}✕{image?.height}, {image?.size} Bytes, <span className="break-all">{image?.url}</span>
           </div>)}
-          <MessageList errors={errors} infos={infos} />
+          <MessageList messages={messages} />
         </>
       }
     />
@@ -102,8 +102,7 @@ export function ClarityExclamationTriangleSolid(props: SVGProps<SVGSVGElement>) 
 export async function getTwitterPreview(metadata: ResoledMetadata) {
   const m = metadata
 
-  const errors: string[] = []
-  const infos: string[] = []
+  const messages: PreviewMessages = []
 
   const data = {
     title: m.twitter.title.value ?? m.og.title.value,
@@ -116,12 +115,8 @@ export async function getTwitterPreview(metadata: ResoledMetadata) {
 
 
   if (!data.title) {
-    if (!data.title)
-      errors.push("Title Metadata is required. Please provide either twitter:title or og:title.")
-    return {
-      errors,
-      infos,
-    }
+    messages.push(["error", "Title Metadata is required. Please provide either twitter:title or og:title."])
+    return { messages }
   }
 
   const {
@@ -145,9 +140,9 @@ export async function getTwitterPreview(metadata: ResoledMetadata) {
     } = await (async () => {
       if (!data.image) {
         if (isLargeSummary) {
-          errors.push("Image is not provided. Image is required for summary_large_image. Defaulting to summary.")
+          messages.push(["error", "Image is not provided. Image is required for summary_large_image. Defaulting to summary."])
         } else {
-          infos.push("Image is not provided.")
+          messages.push(["info", "Image is not provided."])
         }
         return { fallbackToSummary: true }
       }
@@ -159,37 +154,37 @@ export async function getTwitterPreview(metadata: ResoledMetadata) {
         try {
           return imageSize(buffer)
         } catch (error) {
-          errors.push(`Unable to read image metadata.${ isLargeSummary ? " Defaulting to summary." : "" } Error: ${ error } `)
+          messages.push(["error", `Unable to read image metadata.${ isLargeSummary ? " Defaulting to summary." : "" } Error: ${ error } `])
           return { width: undefined, height: undefined, type: undefined }
         }
       })()
       const imgData = { width, height, format, size: buffer.length, url: data.image }
 
       if (!width || !height || !format) {
-        errors.push(`Unable to read image metadata.${ isLargeSummary ? " Defaulting to summary." : "" }`)
+        messages.push(["error", `Unable to read image metadata.${ isLargeSummary ? " Defaulting to summary." : "" }`])
         return { fallbackToSummary: true }
       }
 
       if (buffer.length > 5 * 1024 * 1024) {
-        errors.push(`Image must be less than 5mb (Current: ${ buffer.length }). Preview may fail to load. ${ isLargeSummary ? " Defaulting to summary." : "" }`)
+        messages.push(["error", `Image must be less than 5mb (Current: ${ buffer.length }). Preview may fail to load. ${ isLargeSummary ? " Defaulting to summary." : "" }`])
         return { fallbackToSummary: true }
       }
       if (!format.match(/(jpeg|jpg|png|webp|gif)/)) {
-        errors.push(`Image must be of type JPG, PNG, WEBP or GIF (Current: ${ format }).${ isLargeSummary ? " Defaulting to summary." : "" }`)
+        messages.push(["error", `Image must be of type JPG, PNG, WEBP or GIF (Current: ${ format }).${ isLargeSummary ? " Defaulting to summary." : "" }`])
         return { fallbackToSummary: true }
       }
       if (format === "gif") {
-        infos.push(`GIF images only show the first frame on Twitter. The preview may not be accurate.`)
+        messages.push(["info", `GIF images only show the first frame on Twitter. The preview may not be accurate.`])
+      }
+      if (format === "png") {
+        messages.push(["info", `If the image is animated (APNG), Only the first frame will be shown.`])
+      }
+      if (format === "webp") {
+        messages.push(["info", `If the image is an animated Webp, Only the first frame will be shown.`])
       }
 
-      // const img = new Image()
-      // img.src = URL.createObjectURL(blob)
-      // await new Promise(resolve => img.onload = resolve)
-      // const { width, height } = img
-      // URL.revokeObjectURL(img.src)
-
       if (width > 4096 || height > 4096) {
-        errors.push(`Image must be smaller than 4096x4096px (Current: ${ width }x${ height }).${ isLargeSummary ? " Defaulting to summary." : "" }`)
+        messages.push(["error", `Image must be smaller than 4096x4096px (Current: ${ width }x${ height }).${ isLargeSummary ? " Defaulting to summary." : "" }`])
         return { fallbackToSummary: true }
       }
 
@@ -197,12 +192,12 @@ export async function getTwitterPreview(metadata: ResoledMetadata) {
 
       if (width >= 120 && height >= 120) {
         if (data.type === "summary_large_image" && (width < 300 || height < 157)) {
-          errors.push(`Image must be at least 300x157px for summary_large_image (Current: ${ width }x${ height }). Defaulting to summary.`)
+          messages.push(["error", `Image must be at least 300x157px for summary_large_image (Current: ${ width }x${ height }). Defaulting to summary.`])
           return { fallbackToSummary: true, image: imgData }
         }
         return { image: imgData }
       } else {
-        errors.push(`Image must be at least 120x120px (Current: ${ width }x${ height }). Image may not show properly. ${ isLargeSummary ? " Defaulting to summary." : "" }`)
+        messages.push(["error", `Image must be at least 120x120px (Current: ${ width }x${ height }). Image may not show properly. ${ isLargeSummary ? " Defaulting to summary." : "" }`])
         return { fallbackToSummary: true, image: imgData }
       }
     })()
@@ -210,11 +205,11 @@ export async function getTwitterPreview(metadata: ResoledMetadata) {
     // Has title and description
 
     if (!data.type) {
-      infos.push("Twitter card type (`twitter:card`) is not specified. Defaulting to summary.")
+      messages.push(["info", "Twitter card type (`twitter:card`) is not specified. Defaulting to summary."])
       return { type: "summary", image }
     }
     if (data.type !== "summary" && data.type !== "summary_large_image") {
-      errors.push("Unable to preview twitter:card values other than `summary` or `summary_large_image`. (I have no idea what they look like)")
+      messages.push(["error", "Unable to preview twitter:card values other than `summary` or `summary_large_image`. (I have no idea what they look like)"])
       return { type: "summary", image }
     }
 
@@ -236,8 +231,7 @@ export async function getTwitterPreview(metadata: ResoledMetadata) {
 
 
   return {
-    errors,
-    infos,
+    messages,
     type,
     image,
     data,

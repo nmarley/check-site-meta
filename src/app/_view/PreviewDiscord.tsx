@@ -5,7 +5,7 @@ import { cn } from "lazy-cn";
 import { AppImage } from "../module/image/Image";
 import { appFetch } from "../lib/fetch";
 import imageSize from "image-size";
-import { MessageList, PreviewPanelContent } from "./Preivew";
+import { MessageList, PreviewPanelContent, type PreviewMessages } from "./Preivew";
 import { validateHex } from "../lib/hex";
 
 export async function PreviewDiscord(
@@ -13,7 +13,7 @@ export async function PreviewDiscord(
     metadata: ResoledMetadata
   }
 ) {
-  const { errors, infos, data, crashed } = await getDiscordPreview(metadata)
+  const { messages, data, crashed } = await getDiscordPreview(metadata)
 
   const PreviewSection = (() => {
     if (!data) return null
@@ -75,7 +75,7 @@ export async function PreviewDiscord(
     <PreviewPanelContent
       PreviewSection={PreviewSection}
       PreviewInfoContent={
-        <MessageList errors={errors} infos={infos} />
+        <MessageList messages={messages} />
       }
     />
   )
@@ -84,8 +84,7 @@ export async function PreviewDiscord(
 async function getDiscordPreview(metadata: ResoledMetadata) {
   const m = metadata
 
-  const errors: string[] = []
-  const infos: string[] = []
+  const messages: PreviewMessages = []
   let crashed = false
 
   const data = {
@@ -98,25 +97,21 @@ async function getDiscordPreview(metadata: ResoledMetadata) {
   }
 
   if (!data.title) {
-    if (!data.title)
-      errors.push("Title Metadata is required.")
-    return {
-      errors,
-      infos,
-    }
+    return { messages: [["error", "Title Metadata is required to show a preview."]] as PreviewMessages }
   }
 
   // Kudos to @riskymh
   if (data.title.length > 67) {
     data.title = data.title.slice(0, 67) + "..."
-    infos.push("Title is too long, it was shortened. Recommended length is below 67 characters.")
+    messages.push(["info", "Title was shortened to 67 characters."])
   }
   if ((data.description?.length ?? 0) > 347) {
     data.description = data.description?.slice(0, 347) + "..."
-    infos.push("Description is too long, it was shortened. Recommended length is below 347 characters.")
+    messages.push(["info", "Description was shortened to 347 characters."])
   }
   if ((data.site?.length ?? 0) > 256) {
-    errors.push("Site name is too long. Embed will not show if site name is longer than 256 characters.")
+    data.site = data.site?.slice(0, 256) + "..."
+    messages.push(["error", "Site name is too long. Embed will not show if site name is longer than 256 characters."])
   }
 
   try {
@@ -126,24 +121,22 @@ async function getDiscordPreview(metadata: ResoledMetadata) {
     const { type } = imageSize(buffer)
 
     if (type === "png") {
-      infos.push("If the image is animated (APNG), Only the first frame will be shown.")
+      messages.push(["info", "If the image is animated (APNG), Only the first frame will be shown."])
     }
   } catch (error) { }
 
   if (data.themeColor) {
     const res = validateHex(data.themeColor)
     if (!res.valid) {
-      if (res.invalidChars) errors.push("Invalid characters in color theme value.")
-      if (res.invalidLength) errors.push("Invalid length in color theme value.")
-      if (res.missingHash) errors.push("Missing hash in color theme value.")
+      messages.push(["error", `Invalid color theme value. (${ data.themeColor })`])
     }
     if (res.valid) {
       if (res.shortHex || (res.shortHex && res.withAlpha)) {
-        infos.push(`Short Hex values (${ data.themeColor }) will be parsed incorrectly by Discord. Consider using full hex values.`)
+        messages.push(["warn", `Short Hex values (${ data.themeColor }) will be parsed incorrectly by Discord. Consider using full hex values.`])
         data.themeColor = '#' + data.themeColor.split('#')[1].padStart(6, '0')
       }
       if (!res.shortHex && res.withAlpha) {
-        errors.push(`8 digit hex values (${ data.themeColor }) will cause the preview to not show up properly. Consider using 6 digit hex values.`)
+        messages.push(["error", `8 digit hex values (${ data.themeColor }) will cause the preview to not show up. Consider using 6 digit hex values.`])
         data.themeColor = undefined
         crashed = true
       }
@@ -152,8 +145,7 @@ async function getDiscordPreview(metadata: ResoledMetadata) {
   }
 
   return {
-    errors,
-    infos,
+    messages,
     data,
     crashed
   }

@@ -12,44 +12,55 @@ export function PreviewInfo(
   )
 }
 
+export type PreviewMessages = [
+  level: 'error' | 'warn' | 'info',
+  text: string
+][]
+
 export function MessageList(
-  { errors, infos }: {
-    errors: string[],
-    infos: string[],
-  }
+  props: { messages: PreviewMessages }
 ) {
   return (
     <div className="flex flex-col gap-2 text-base pt-2 leading-tight">
-      {errors.map((item, i) => <ErrorMessage key={i}>{item}</ErrorMessage>)}
-      {infos.map((item, i) => <WarnMessage key={i}>{item}</WarnMessage>)}
+      {
+        props.messages.map((item, i) => (
+          <div key={i}
+            style={{
+              animationDelay: `${ (i + 3) * 100 }ms`
+            }}
+            className={cn("flex items-start gap-1 fadeIn-0",
+              item[0] === "error" && "text-orange-400",
+              item[0] === "warn" && "text-yellow-500",
+              item[0] === "info" && "text-slate-500",
+              "[&_svg]:opacity-60"
+            )}>
+            {
+              item[0] === "error" &&
+              <ClarityExclamationCircleSolid className="w-5 h-5 translate-y-[-0.05rem] shrink-0" />
+            }
+            {
+              item[0] === "warn" &&
+              <ClarityExclamationTriangleSolid className="w-5 h-5 translate-y-[-0.05rem] shrink-0" />
+            }
+            {
+              item[0] === "info" &&
+              <ClarityInfoCircleSolid className="w-5 h-5 translate-y-[-0.05rem] shrink-0" />
+            }
+            <span className="text">
+              {item[1]}
+            </span>
+          </div>
+        ))
+      }
     </div>
   )
 }
 
-
-function ErrorMessage(
-  { className, children, ...props }: ComponentProps<"div">
-) {
+export function ClarityInfoCircleSolid(props: SVGProps<SVGSVGElement>) {
   return (
-    <div className={cn("text-red-500 flex items-start gap-1", className)} {...props}>
-      <ClarityExclamationCircleSolid className="w-5 h-5 translate-y-[-0.05rem] shrink-0" />
-      {children}
-    </div>
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 36 36" {...props}><path fill="currentColor" d="M18 6a12 12 0 1 0 12 12A12 12 0 0 0 18 6m-2 5.15a2 2 0 1 1 2 2a2 2 0 0 1-2.1-2ZM23 24a1 1 0 0 1-1 1h-7a1 1 0 1 1 0-2h2v-6h-1a1 1 0 0 1 0-2h4v8h2a1 1 0 0 1 1 1" className="clr-i-solid clr-i-solid-path-1"></path><path fill="none" d="M0 0h36v36H0z"></path></svg>
   )
 }
-
-function WarnMessage(
-  { className, children, ...props }: ComponentProps<"div">
-) {
-  return (
-    <div className={cn("text-orange-500 flex items-start gap-1", className)} {...props}>
-      <ClarityExclamationTriangleSolid className="w-5 h-5 translate-y-[-0.05rem] shrink-0" />
-      {children}
-    </div>
-  )
-}
-
-
 
 function ClarityExclamationCircleSolid(props: SVGProps<SVGSVGElement>) {
   return (
@@ -71,7 +82,7 @@ export function PreviewPanelContent(
 ) {
   return (
     <>
-      <div className={cn("mb-8 w-full flex justify-center", className)} {...props}>
+      <div className={cn("mb-8 w-full flex justify-center fadeIn-0", className)} {...props}>
         {PreviewSection}
       </div>
       <PreviewInfo>
