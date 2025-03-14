@@ -14,21 +14,21 @@ export function FaviconPreview(props: {
   return (
     <div
       {...props.containerProps}
-      className={cn("border border-slate-200 flex", props.containerProps?.className)}
+      className={cn("border border-slate-200 flex items-start", props.containerProps?.className)}
     >
-      <div className="p-1 bg-zinc-100">
+      <div className="p-1 bg-zinc-100 shrink">
         <AppImage
           {...props.imgProps1}
           src={props.src}
-          className={cn("h-[1.5lh] w-[1.5lh]", props.imgProps1?.className)}
+          className={cn("h-[1.5lh] w-[1.5lh] max-h-fit object-contain", props.imgProps1?.className)}
         />
       </div>
 
-      <div className="p-1 bg-zinc-500">
+      <div className="p-1 bg-zinc-500 shrink">
         <AppImage
           {...props.imgProps2}
           src={props.src}
-          className={cn("h-[1.5lh] w-[1.5lh]", props.imgProps2?.className)}
+          className={cn("h-[1.5lh] w-[1.5lh] max-h-fit object-contain", props.imgProps2?.className)}
         />
       </div>
     </div>

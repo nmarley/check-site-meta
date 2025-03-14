@@ -249,7 +249,7 @@ function IconMetadata(props: {
             const { source, size, value, resolvedUrl, resolvedSize } = item
             return <div key={i} className="flex gap-2 items-start flex-wrap">
               <FaviconPreview
-                containerProps={{ className: "shrink-0" }}
+                containerProps={{ className: "" }}
                 imgProps1={{ style: { height: resolvedSize ? px(resolvedSize) : undefined, width: resolvedSize ? px(resolvedSize) : undefined } }}
                 imgProps2={{ style: { height: resolvedSize ? px(resolvedSize) : undefined, width: resolvedSize ? px(resolvedSize) : undefined } }}
                 src={resolvedUrl} />
@@ -267,78 +267,10 @@ function IconMetadata(props: {
           </>
         })()}
       </MetadataItem>
-
-
       <hr />
-
       <IconListPreviewMetadataItem data={props.data.icons.appleTouchIcons} />
-
       <hr />
-
       <IconListPreviewMetadataItem data={props.data.icons.appleTouchIconsPrecomposed} />
-      {/* 
-      {
-        [
-          props.data.icons.appleTouchIcons,
-          props.data.icons.appleTouchIconsPrecomposed,
-        ].map((item, i) => {
-          return <MetadataItem key={i} data={item}
-            containerProps={{ className: "flex! flex-col" }}
-            contentProps={{ className: "col-span-2 row-start-[10] mt-2" }}>
-            <div className="flex gap-2 items-end flex-wrap">
-              {(() => {
-                const items = item.values
-                if (!items?.length) return (<div className="opacity-40">-</div>)
-
-                return <>
-                  {items?.map((item, i) => {
-                    if (!item.value) return <></>
-                    const size = item.label
-                    const resolvedSizes = item.label ? parseInt(item.label) || null : null
-
-                    return <div key={i} className="flex flex-col gap-1 items-center justify-center text-center">
-                      <div className="border border-slate-200 p-1 w-auto shrink-0"
-                        style={{
-                          width: resolvedSizes ? px(resolvedSizes) : undefined,
-                          height: resolvedSizes ? px(resolvedSizes) : undefined
-                        }}
-                      >
-                        <AppImage src={item.resolvedUrl} />
-                      </div>
-                      {size ? <span className="text-xs">{size}<br /></span> : null}
-                    </div>
-                  })}
-                </>
-              })()}
-            </div>
-            <div className="flex flex-col mt-2 meta-info-field-value">
-              {(() => {
-                const items = item.values
-
-                if (!items?.length) {
-                  return (<div className="opacity-40">-</div>)
-                }
-
-                return <>
-                  {items?.map((item, i) => {
-                    if (!item.value) return null
-                    return <div key={i} className="text-xs my-0.5">
-                      {item.value.startsWith('data:') ? (
-                        <div className="line-clamp-3">{item.value}...</div>
-                      ) : (
-                        <div>{item.value}</div>
-                      )}
-                    </div>
-                  })}
-                </>
-              })()}
-            </div>
-          </MetadataItem>
-        })
-      } */}
-
-
-
     </>
   )
 }
