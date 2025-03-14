@@ -2,10 +2,12 @@
 
 import { px } from "@/app/lib/unit";
 import { cn } from "lazy-cn";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useId, useLayoutEffect, useRef, useState, type ComponentProps, type ReactNode } from "react";
 
 export function Tabs
   (props: {
+    id: string,
     tabs: ({ key: string, label: ReactNode, content?: ReactNode })[],
     initialTab?: number,
     tabProps?: ComponentProps<"div">,
@@ -13,8 +15,13 @@ export function Tabs
     contentProps?: ComponentProps<"div">,
     containerProps?: ComponentProps<"div">,
   }) {
+  const sp = useSearchParams()
 
-  const [tabNum, setTab] = useState<number>(props.initialTab ?? 0)
+  const [tabNum, setTab] = useState<number>(() => {
+    const n = parseInt(sp.get(props.id) ?? '0')
+    return isNaN(n) ? props.initialTab ?? 0 : n
+  })
+  
   const tab = props.tabs[tabNum]
   const currentContent = tab.content
 
@@ -61,7 +68,7 @@ export function Tabs
 
     (content.firstChild as HTMLDivElement)?.animate?.([
       { marginBottom: px(-delta) },
-      {  }
+      {}
     ], {
       duration: Math.abs(delta),
       easing: "ease-out",
@@ -81,6 +88,10 @@ export function Tabs
               rectRef.current.x = rect?.left ?? null
               rectRef.current.w = rect?.width ?? null
               setTab(index)
+              const newSp = new URLSearchParams(sp)
+              newSp.set(props.id, index.toString())
+              window.history.replaceState(null, "", "?" + newSp.toString())
+
 
               const tabContainer = document.getElementById(id)
               if (!tabContainer) return

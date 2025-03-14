@@ -19,6 +19,7 @@ export async function MetaInfoPanel(
 
     return (
       <Tabs
+        id="info"
         tabProps={{ className: "tab self-start mb-4 fadeIn-0" }}
         tabIndicatorProps={{ className: "bg-white rounded-sm shadow-xs" }}
         tabs={[
