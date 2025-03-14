@@ -1,4 +1,4 @@
-#!/usr/bin/env node -S node --no-warnings
+#!/usr/bin/env -S node --no-warnings
 import { spawn } from "child_process";
 import open from "open";
 import path from "path";
@@ -21,8 +21,13 @@ program
     .description(DESCRIPTION)
     .argument("[input]", "URL to check, or localhost port to check (optional)")
     .option("-p, --port <number>", "Specify port number", (value) => parseInt(value, 10), 3050)
+    .option("--showdir", "Show directory path of where the command is run")
     .parse(process.argv);
 const options = program.opts();
+if (options.showdir) {
+    console.log(`\n → Running from directory: ${__dirname}\n`);
+    process.exit();
+}
 const PORT = options.port;
 function isPositiveInteger(str) {
     return /^[1-9]\d*$/.test(str);
