@@ -1,4 +1,4 @@
-#!/usr/bin/env node -S node --no-warnings
+#!/usr/bin/env -S node --no-warnings
 
 import { exec, spawn, spawnSync, type ChildProcess } from "child_process";
 import open from "open";
