@@ -4,17 +4,16 @@ import open from "open";
 import path from "path";
 import { fileURLToPath } from "url";
 import readline from "readline";
-// import packageJson from "../package.json"
 import { program } from "commander";
-const data = await import("../package.json", { assert: { type: "json" } });
-const packageJson = data.default;
+import { readFileSync } from "fs";
 // Get the directory of the current module (equivalent to __dirname in CommonJS)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const packageJson = JSON.parse(readFileSync(path.join(__dirname, "../package.json"), "utf-8"));
 // Read version from package.json using import
-const NAME = packageJson.name;
-const VERSION = packageJson.version;
-const DESCRIPTION = packageJson.description;
+const NAME = packageJson['name'];
+const VERSION = packageJson['version'];
+const DESCRIPTION = packageJson['description'];
 program
     .name(NAME)
     .version(VERSION)
@@ -57,25 +56,19 @@ nextProcess.stdout.on("data", (data) => {
    - Starting... 🚀\n\n`);
         return;
     }
-    // Detect when the server is ready
-    if (message.includes(`✓ Ready in`)) {
-        setTimeout(() => {
-            // Prompt user if they want to open browser
-            rl.question(' ? Do you want to open the browser? (Y/n) ', (answer) => {
-                if (answer.toLowerCase() === 'y' || answer === '') {
-                    console.log(` → Opening browser at http://localhost:${PORT}`);
-                    open(`http://localhost:${PORT}${URL ? `/?url=${URL}` : ""}`);
-                }
-                else {
-                    console.log(' → Skipping browser launch.');
-                }
-                rl.close();
-            });
-            // console.log(` → Opening browser at http://localhost:${ PORT }`);
-            // open(`http://localhost:${ PORT }`);
-        }, 10);
-    }
     process.stdout.write(`${data}`);
+    if (message.includes(`✓ Ready in`)) {
+        rl.question(' ? Do you want to open the browser? (Y/n) ', (answer) => {
+            if (answer.toLowerCase() === 'y' || answer === '') {
+                console.log(` → Opening browser at http://localhost:${PORT}`);
+                open(`http://localhost:${PORT}${URL ? `/?url=${URL}` : ""}`);
+            }
+            else {
+                console.log(' → Skipping browser launch.');
+            }
+            rl.close();
+        });
+    }
 });
 // Read and modify stderr (warnings/errors)
 nextProcess.stderr.on("data", (data) => {
