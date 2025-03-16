@@ -42,6 +42,13 @@ export default async function Home(context: SearchParamsContext) {
     return resolvedMetadata
   }
 
+  const getHead = async () => {
+    const url = parseUrlFromQuery(query.url)
+    if (!url) return null
+    const { html } = await fetchRoot(url.toString())
+    return html.split('<body>')[0].replaceAll('\>', '\>\n')
+  }
+
   const random = Math.random()
 
   return (
@@ -51,9 +58,8 @@ export default async function Home(context: SearchParamsContext) {
           <Header />
           <InputForm query={query} />
           <Suspense key={random} fallback={<Loading />}>
-            <MetaInfoPanel metadata={getMetadata()} />
+            <MetaInfoPanel metadata={getMetadata()} head={getHead()} />
           </Suspense>
-          {/* <RawHTML url={query.url} /> */}
         </div>
         <div className="flex flex-col items-center gap-8">
           <Suspense key={random}>

@@ -21,11 +21,14 @@ function MetaCard({ className, ...props }: ComponentProps<"section">) {
 }
 
 export async function MetaInfoPanel(
-  props: { metadata: Promise<ResoledMetadata | null> }
+  props: { metadata: Promise<ResoledMetadata | null>, head: Promise<string | null> }
 ) {
   try {
     const metadata = await props.metadata;
     if (!metadata) return null
+
+    const head = await props.head;
+
     return (
       <Tabs
         id="info"
@@ -34,6 +37,7 @@ export async function MetaInfoPanel(
           tab("Open Graph", <>Open Graph</>, <MetaCard><OpengraphMetadata m={metadata} /></MetaCard>),
           tab("Twitter", <>Twitter</>, <MetaCard><TwitterMetadata m={metadata} /></MetaCard>),
           tab("Icons", <>Icons</>, <MetaCard><IconMetadata data={metadata} /></MetaCard>),
+          tab("Head", <>Head</>, <MetaCard><pre className="whitespace-pre overflow-auto">{head}</pre></MetaCard>),
         ]} />
     );
   } catch (error) {
@@ -49,7 +53,7 @@ function SummaryMetadata(props: { m: ResoledMetadata }) {
       <MetadataRow data={d.general.title} />
       <MetadataRow data={d.general.description} />
       <MetadataRow data={d.general.author} />
-      <MetadataRow data={d.general.inferredFavicon}>
+      <MetadataRow data={d.general.favicons}>
         <Suspense fallback="Loading...">
           <FaviconSummary data={d.general.favicons} baseUrl={d.general.rawUrl.value} />
         </Suspense>
