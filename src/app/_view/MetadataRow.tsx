@@ -36,7 +36,7 @@ export function MetadataRow(props: {
   return (
     <div {...props.containerProps} className={cn("group flex-nowrap whitespace-pre-wrap", props.containerProps?.className)}>
 
-      <button className="w-fit h-fit meta-info-field-key" onClick={toggleInfo}>
+      <button className="w-fit h-fit text-start meta-info-field-key" onClick={toggleInfo}>
         {label}
       </button>
 
