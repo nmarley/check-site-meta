@@ -1,7 +1,7 @@
 import { cn } from "lazy-cn";
 import type { ComponentProps } from "react";
 import { AppImage } from "../module/image/Image";
-import { MetadataItem } from "./FieldData";
+import { MetadataRow } from "./FieldData";
 import type { ResoledMetadata } from "../lib/get-metadata-field-data";
 import { px } from "../lib/unit";
 
@@ -41,7 +41,7 @@ export function IconListPreviewMetadataItem(props: {
 }) {
   const item = props.data
   return (
-    <MetadataItem data={item}
+    <MetadataRow data={item}
       containerProps={{ className: "flex! flex-col" }}
       contentProps={{ className: "col-span-2 row-start-[10] order-10 mt-2" }}>
       <div className="flex gap-2 items-end flex-wrap ">
@@ -92,6 +92,6 @@ export function IconListPreviewMetadataItem(props: {
           </>
         })()}
       </div>
-    </MetadataItem>
+    </MetadataRow>
   )
 }

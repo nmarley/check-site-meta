@@ -5,7 +5,7 @@ import { descriptions, type FieldDataItem } from "../lib/get-metadata-field-data
 import { AppImage } from "../module/image/Image";
 import { cn } from "lazy-cn";
 
-export function MetadataItem(props: {
+export function MetadataRow(props: {
   data: FieldDataItem,
   children?: ReactNode,
   contentProps?: ComponentProps<"div">
@@ -41,9 +41,7 @@ export function MetadataItem(props: {
   </>
 
   return (
-    <div {...props.containerProps} className={cn("meta-2-col group flex-nowrap", props.containerProps?.className)}
-      // onMouseLeave={() => setInfoOpen(false)}
-    >
+    <div {...props.containerProps} className={cn("group flex-nowrap", props.containerProps?.className)}>
       <div className="meta-title whitespace-pre-wrap">
         {label} <InfoButton onClick={() => setInfoOpen(!infoOpen)} />
       </div>

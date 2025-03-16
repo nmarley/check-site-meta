@@ -1,36 +1,64 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import { cn } from "lazy-cn";
+import { ButtonTest } from "./theme-switch";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "Check Site Meta",
   description: "Check the metadata of any site",
 }
-
-const geistSans = Plus_Jakarta_Sans({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const fonts = {
-  geistSans,
-  geistMono,
+export const viewport: Viewport = {
+  colorScheme: "light dark"
 }
 
-export default function RootLayout({
-  children,
-}: Readonly<{
+export default function RootLayout(props: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body className={`${ Object.entries(fonts).map(([, font]) => font.variable).join(" ") } antialiased bg-gray-50`}>
-        {children}
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <ThemeScript />
+      </head>
+      <body className={cn(
+        sans.variable,
+        mono.variable,
+        `subpixel-antialiased bg-background`
+      )}>
+        <ButtonTest />
+        {props.children}
       </body>
     </html>
   );
 }
+
+// Fonts -----------------------------
+
+const sans = Plus_Jakarta_Sans({
+  variable: "--font-pjs",
+  subsets: ["latin"],
+});
+const mono = Geist_Mono({
+  variable: "--font-gm",
+  subsets: ["latin"],
+});
+
+
+// Scripts -----------------------------
+
+function ThemeScript() {
+  return (
+    <script id="theme">{`
+const theme = localStorage.getItem('theme');
+if (theme === null || !['light', 'dark', 'system'].includes(theme)) {
+  localStorage.setItem('theme', 'system');
+  document.documentElement.style.colorScheme = 'system';
+} else {
+  document.documentElement.style.colorScheme = theme;
+}
+      `}</script>
+
+  )
+}
+

@@ -1,145 +1,170 @@
 @import "tailwindcss";
+@import "./globals.fonts.css";
 @import "./components.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Root ----------------------------- */
+/* 
+html:has(input[value="dark"]:checked) {
+  color-scheme: dark;
+}
+html:has(input[value="light"]:checked) {
+  color-scheme: light;
+} */
+body {
+  font-size: 0.85rem;
+  color: var(--color-foreground);
 }
 
+/* Tokens ----------------------------- */
+
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-foreground: light-dark(var(--color-gray-800), var(--color-neutral-300));
+  --color-foreground-muted: light-dark(var(--color-slate-500), var(--color-neutral-400));
+  --color-foreground-muted-2: light-dark(var(--color-gray-500), var(--color-neutral-500));
+  --color-background: light-dark(var(--color-gray-50), var(--color-neutral-900));
+  --color-background-muted: light-dark(#eceff4,#121312);
+  --color-background-card: light-dark(#fff, #232424);
+  --color-border: light-dark(#eceff4, #2F3030);
+  --color-focus: light-dark(var(--color-slate-200), var(--color-neutral-800));
+  --color-border-focus: light-dark(var(--color-slate-400), var(--color-neutral-700));
+
+  --font-sans: var(--font-pjs);
+  --font-mono: var(--font-gm);
+  --font-twitter: TwitterChirp, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+  --font-discord: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial,
+    sans-serif;
 
   --color-foreground-input: #1e2939;
 
-  --text-base: 0.85rem;
   --text-sm: 0.8rem;
   --text-xs: 0.75rem;
-
-  --font-twitter: TwitterChirp, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-discord: "gg sans","Noto Sans","Helvetica Neue",Helvetica,Arial,sans-serif
+  --text-base: 0.85rem;
 }
 
+/* Utilities ----------------------------- */
+
+@utility max-w-screen-* {
+  max-width: --value(--breakpoint- *);
+}
 @utility font-use-* {
-  font-family: var(--value([*]))
+  font-family: var(--value([ *]));
 }
-
-body {
-  font-size: 0.85rem;
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-@utility break-word{
+@utility break-word {
   word-break: break-word;
   @apply break-words;
 }
+@utility container-* {
+  max-width: --value(--breakpoint- *);
+  max-width: calc(--value(integer) * 0.25rem);
+  @apply mx-auto;
+}
+
+/* Selectors ----------------------------- */
 
 @custom-variant div (&>div);
 @custom-variant second (&:nth-child(2));
 @custom-variant hr (&>hr);
 @custom-variant a (&>a);
 
+/* Default Elements ----------------------------- */
 
-@utility max-w-screen-* {
-  max-width: var(--value(--breakpoint-*));
-}
+@layer base {
+  a {
+    @apply cursor-pointer;
+  }
+  button {
+    @apply text-sm rounded-md font-semibold
+    cursor-pointer transition-all
+    active:translate-y-0.5;
 
-
-
-
-/* Twitter Fonts */
-
-@font-face {
-  font-family: 'TwitterChirp';
-  font-weight: 400;
-  src: url('https://abs.twimg.com/responsive-web/client-web/Chirp-Regular.80fda27a.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'TwitterChirpBold';
-  font-weight: 600;
-  src: url('https://abs.twimg.com/responsive-web/client-web/Chirp-Bold.ebb56aba.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'TwitterChirpHeavy';
-  font-weight: 700;
-  src: url('https://abs.twimg.com/responsive-web/client-web/Chirp-Heavy.f44ae4ea.woff2') format('woff2');
+    &.normal {
+      @apply px-4 py-2;
+    }
+    &.primary {
+      @apply bg-foreground text-background;
+    }
+  }
 }
 
+/* Components ----------------------------- */
 
+@utility link-underline {
+  color: light-dark(var(--color-blue-600), var(--color-blue-500));
+  @apply hover:underline
+}
 
+/* Tabs */
 
-@font-face {
-    font-family: gg sans;
-    font-style: normal;
-    font-weight: 400;
-    src: url(/api/proxy-font?url=https://discord.com/assets/66d715454104d24e.woff2) format("woff2")
+@utility tab {
+  @apply flex w-full sm:w-auto 
+  flex-wrap p-1.5 rounded-xl text-sm select-none isolate
+  bg-background-muted;
+  /* background: light-dark(var(--color-background-muted), var(--color-background-muted)); */
 }
-@font-face {
-    font-family: gg sans;
-    font-style: italic;
-    font-weight: 400;
-    src: url(/api/proxy-font?url=https://discord.com/assets/dd24010f3cf7def7.woff2) format("woff2")
+
+@utility tab-item {
+  @apply px-5 p-2 
+  text-foreground-muted 
+  font-medium
+  text-nowrap 
+  hover:text-foreground;
+
+  &[data-active] {
+    @apply text-foreground;
+  }
 }
-@font-face {
-    font-family: gg sans;
-    font-style: normal;
-    font-weight: 500;
-    src: url(/api/proxy-font?url=https://discord.com/assets/b272b33815319bae.woff2) format("woff2")
+
+@utility tab-background {
+  @apply absolute top-0 left-0 w-full h-full
+  pointer-events-none -z-10 
+  rounded-lg shadow-xs
+  bg-background-card;
+
+  /* background: light-dark(var(--color-background-card), var(--color-background-card)) */
 }
-@font-face {
-    font-family: gg sans;
-    font-style: italic;
-    font-weight: 500;
-    src: url(/api/proxy-font?url=https://discord.com/assets/6a1346ad3821ff3c.woff2) format("woff2")
+
+/* Card */
+
+@utility card {
+  --padding: --spacing(5);
+  @apply p-[var(--padding)]
+    border rounded-md
+    border-border
+    bg-background-card;
+  &:has(.card-content) {
+    @apply py-0
+  }
 }
-@font-face {
-    font-family: gg sans;
-    font-style: normal;
-    font-weight: 600;
-    src: url(/api/proxy-font?url=https://discord.com/assets/2df2c3ff74408972.woff2) format("woff2")
+
+@utility card-content {
+  @apply 
+    py-[var(--padding)] 
+    -mx-[var(--padding)] 
+    px-[var(--padding)];
+
+  &>hr {
+    @apply -mx-[var(--padding)] my-[var(--padding)] border-border
+  }
 }
-@font-face {
-    font-family: gg sans;
-    font-style: italic;
-    font-weight: 600;
-    src: url(/api/proxy-font?url=https://discord.com/assets/d5d789aeb6282532.woff2) format("woff2")
+
+/* Grid */
+
+@utility meta-info-field-key {
+  @apply font-medium;
 }
-@font-face {
-    font-family: gg sans;
-    font-style: normal;
-    font-weight: 700;
-    src: url(/api/proxy-font?url=https://discord.com/assets/189422196a4f8b53.woff2) format("woff2")
-}
-@font-face {
-    font-family: gg sans;
-    font-style: italic;
-    font-weight: 700;
-    src: url(/api/proxy-font?url=https://discord.com/assets/ce3b8055f5114434.woff2) format("woff2")
-}
-@font-face {
-    font-family: gg sans;
-    font-style: normal;
-    font-weight: 800;
-    src: url(/api/proxy-font?url=https://discord.com/assets/b2fdbe507d6ce9ef.woff2) format("woff2")
-}
-@font-face {
-    font-family: gg sans;
-    font-style: italic;
-    font-weight: 800;
-    src: url(/api/proxy-font?url=https://discord.com/assets/03dcf979852e8b8e.woff2) format("woff2")
-}
-@font-face {
-    font-family: gg mono;
-    font-style: normal;
-    font-weight: 400;
-    src: url(/api/proxy-font?url=https://discord.com/assets/249d0a057895c668.woff2) format("woff2")
-}
-@font-face {
-    font-family: gg mono;
-    font-style: normal;
-    font-weight: 700;
-    src: url(/api/proxy-font?url=https://discord.com/assets/45efa6936fdfb918.woff2) format("woff2")
+
+@utility meta-info-grid {
+  @apply flex flex-col leading-relaxed font-normal break-word;
+
+  /* Meta Row */
+  >div {
+    @apply py-1 -mx-[var(--padding)] px-[var(--padding)] grid grid-cols-[10rem_1fr]
+  }
+  .meta-content {
+    color: light-dark(--alpha(var(--color-gray-500) / 0.8), var(--color-neutral-400));
+  }
+  .meta-mute {
+    @apply text-gray-300;
+  }
 }

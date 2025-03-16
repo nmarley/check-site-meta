@@ -9,11 +9,11 @@ export function Tabs
   (props: {
     id: string,
     tabs: ({ key: string, label: ReactNode, content?: ReactNode })[],
+    className?: string,
     initialTab?: number,
     tabProps?: ComponentProps<"div">,
     tabIndicatorProps?: ComponentProps<"div">,
     contentProps?: ComponentProps<"div">,
-    containerProps?: ComponentProps<"div">,
   }) {
   const sp = useSearchParams()
 
@@ -21,7 +21,7 @@ export function Tabs
     const n = parseInt(sp.get(props.id) ?? '0')
     return isNaN(n) ? props.initialTab ?? 0 : n
   })
-  
+
   const tab = props.tabs[tabNum]
   const currentContent = tab.content
 
@@ -46,9 +46,9 @@ export function Tabs
       { translate: px(prevX - currX), width: px(prevW) },
       { translate: px(0), width: px(currW) }
     ], {
-      duration: 100,
+      duration: 150,
       fill: "forwards",
-      easing: "ease-out",
+      easing: "ease-in-out",
     })
     a.onfinish = () => a.cancel()
   }, [tab])
@@ -57,16 +57,18 @@ export function Tabs
   const contentRect = useRef({ height: null as number | null })
 
   const id = useId()
+
   useEffect(() => {
     const tabContainer = document.getElementById(id)
     if (!tabContainer) return
     if (contentRect.current.height === null) return
-    const content = tabContainer.children[1] as HTMLDivElement
+    const content = tabContainer.nextSibling as HTMLDivElement
     const prev = contentRect.current.height
-    const curr = (content?.firstChild as HTMLDivElement)?.scrollHeight
+    const contentFirstChild = content.firstChild as HTMLDivElement
+    const curr = contentFirstChild?.scrollHeight
     const delta = curr - prev;
 
-    (content.firstChild as HTMLDivElement)?.animate?.([
+    contentFirstChild?.animate?.([
       { marginBottom: px(-delta) },
       {}
     ], {
@@ -78,12 +80,15 @@ export function Tabs
   }, [tab])
 
   return (
-    <div id={id} {...props.containerProps} >
-      <div {...props.tabProps}>
+    <>
+      <div id={id} {...props.tabProps} className={cn(
+        'tab',
+        props.tabProps?.className
+      )}>
         {props.tabs.map((label, index) => (
           <div key={label.key}
             data-active={tab.key === label.key ? "" : undefined}
-            onClick={() => {
+            onClick={(e) => {
               const rect = indicatorRef.current?.getBoundingClientRect()
               rectRef.current.x = rect?.left ?? null
               rectRef.current.w = rect?.width ?? null
@@ -95,15 +100,17 @@ export function Tabs
 
               const tabContainer = document.getElementById(id)
               if (!tabContainer) return
-              contentRect.current.height = (tabContainer.childNodes[1] as HTMLDivElement)?.getBoundingClientRect().height ?? null
+              contentRect.current.height = (tabContainer.nextSibling as HTMLDivElement)?.getBoundingClientRect?.().height ?? null
             }}
-            className="relative group"
+            className={cn(
+              "relative group tab-item",
+            )}
           >
             {label.label}
             {tab === label && <div ref={indicatorRef}
               {...props.tabIndicatorProps}
               className={cn(
-                "absolute top-0 left-0 w-full h-full pointer-events-none -z-10",
+                "tab-background",
                 props.tabIndicatorProps?.className
               )}
             />}
@@ -112,6 +119,6 @@ export function Tabs
       </div>
 
       {currentContent}
-    </div>
+    </>
   )
 }

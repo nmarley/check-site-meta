@@ -16,9 +16,10 @@ export async function MetaPreviewPanel(
       <Suspense fallback={<span className="fadeIn-0">Loading...</span>}>
         <Tabs
           id="preview"
-          containerProps={{ className: "flex flex-col gap-8 items-center w-full" }}
+          // containerProps={{ className: "flex flex-col gap-8 items-center w-full" }}
           tabProps={{ className: "tab fadeIn-50 *:p-2 *:px-3 *:[&>svg]:w-5 *:[&>svg]:h-5 gap-0" }}
-          tabIndicatorProps={{ className: "bg-white rounded-sm shadow-xs" }}
+          // tabProps={{ className: "*:p-1" }}
+          // tabIndicatorProps={{ className: "bg-white rounded-sm shadow-xs" }}
           tabs={[
             tab("Twitter",
               <RiTwitterXFill />,
