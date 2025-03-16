@@ -1,7 +1,7 @@
 import { cn } from "lazy-cn";
 import type { ComponentProps } from "react";
 import { AppImage } from "../module/image/Image";
-import { MetadataRow } from "./FieldData";
+import { MetadataRow } from "./MetadataRow";
 import type { ResoledMetadata } from "../lib/get-metadata-field-data";
 import { px } from "../lib/unit";
 

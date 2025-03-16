@@ -2,7 +2,7 @@ import ErrorCard from "./module/error/ErrorCard";
 import { tab } from "./module/tab/tab-primitives";
 import { Tabs } from "./module/tab/Tabs";
 import { type MetadataMetadataItem, type ResoledMetadata } from "./lib/get-metadata-field-data";
-import { ExternalIcon, MetadataRow, Separator } from "./_view/FieldData";
+import { ExternalIcon, MetadataRow, Separator } from "./_view/MetadataRow";
 import { Suspense, type ComponentProps } from "react";
 import { FaviconPreview, IconListPreviewMetadataItem } from "./_view/Favicon";
 import { appFetch } from "./lib/fetch";
@@ -10,9 +10,7 @@ import { px } from "./lib/unit";
 import { OpengraphMetadata } from "./_view/OpenGraph";
 import { cn } from "lazy-cn";
 
-function MetaCard(
-  { className, ...props }: ComponentProps<"section">
-) {
+function MetaCard({ className, ...props }: ComponentProps<"section">) {
   return (
     <section className={cn("card", className)}>
       <div key={Math.random()} className="card-content meta-info-grid fadeBlurIn-100">
@@ -44,9 +42,7 @@ export async function MetaInfoPanel(
   }
 }
 
-function SummaryMetadata(
-  props: { m: ResoledMetadata }
-) {
+function SummaryMetadata(props: { m: ResoledMetadata }) {
   const d = props.m;
   return (
     <>
@@ -88,9 +84,7 @@ function SummaryMetadata(
   )
 }
 
-async function FaviconSummary(
-  props: { data: MetadataMetadataItem, baseUrl: string }
-) {
+async function FaviconSummary(props: { data: MetadataMetadataItem, baseUrl: string }) {
   const favicons = props.data.values
   if (!favicons) return <span className="meta-mute">-</span>
 

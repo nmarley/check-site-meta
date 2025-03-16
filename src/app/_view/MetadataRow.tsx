@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, type ComponentProps, type ReactNode, type SVGProps } from "react";
-import { descriptions, type FieldDataItem } from "../lib/get-metadata-field-data";
+import { type FieldDataItem } from "../lib/get-metadata-field-data";
 import { AppImage } from "../module/image/Image";
 import { cn } from "lazy-cn";
 
@@ -41,23 +41,27 @@ export function MetadataRow(props: {
   </>
 
   return (
-    <div {...props.containerProps} className={cn("group flex-nowrap", props.containerProps?.className)}>
-      <div className="meta-title whitespace-pre-wrap">
+    <div {...props.containerProps} className={cn("group flex-nowrap whitespace-pre-wrap", props.containerProps?.className)}>
+      
+      <div>
         {label} <InfoButton onClick={() => setInfoOpen(!infoOpen)} />
       </div>
-      <div {...props.contentProps} className={cn("meta-content whitespace-pre-wrap", props.contentProps?.className)} >
+      
+      <div {...props.contentProps} className={cn(props.contentProps?.className)} >
         {content}
       </div>
+
       <div className={cn("col-span-2 grid grid-rows-[0fr] overflow-hidden transition-all", infoOpen && "grid-rows-[1fr]")}>
         <div className="overflow-hidden">
-          <div className={cn("bg-slate-50 p-4 rounded-md text-sm overflow-hidden mt-2 flex flex-col")}>
+          <div className={cn("bg-background-tooltip p-4 py-3.5 rounded-md text-sm overflow-hidden mt-2 flex flex-col")}>
             {description ?? "No description available"}
-            <button className="text-end text-slate-500 text-xs font-medium bg-transparent block px-0 self-end hover:underline"
+            <button className="text-end mt-3 -mb-1 -mr-1 text-foreground-muted-2 text-xs font-medium bg-transparent block px-0 self-end hover:underline"
               onClick={() => setInfoOpen(false)}
             >hide</button>
           </div>
         </div>
       </div>
+
     </div>
   )
 }
@@ -74,7 +78,7 @@ export function InfoButton(
   props: ComponentProps<"button">
 ) {
   return (
-    <button className="opacity-10 group-hover:opacity-100 group-hover:*:translate-y-0 bg-slate-100 rounded-md px-0 py-0 w-3.5 h-3.5 text-slate-500 inline-flex items-center justify-center align-[-0.1rem] ml-0.5 overflow-hidden " {...props}>
+    <button className="opacity-10 group-hover:opacity-100 group-hover:*:translate-y-0 bg-background-tooltip rounded-md px-0 py-0 w-3.5 h-3.5 text-foreground-muted inline-flex items-center justify-center align-[-0.1rem] ml-0.5 overflow-hidden " {...props}>
       <InfoIcon className="transition translate-y-full" />
     </button>
   )
