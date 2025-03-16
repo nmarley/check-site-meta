@@ -28,26 +28,14 @@ export async function MetaInfoPanel(
   try {
     const metadata = await props.metadata;
     if (!metadata) return null
-
     return (
       <Tabs
         id="info"
         tabs={[
-          tab("General",
-            <div>General</div>,
-            <MetaCard><SummaryMetadata m={metadata} /></MetaCard>
-          ),
-          tab("Open Graph",
-            <div>Open Graph</div>,
-            <MetaCard><OpengraphMetadata m={metadata} /></MetaCard>
-          ),
-          tab("Twitter",
-            <div>Twitter</div>,
-            <MetaCard><TwitterMetadata m={metadata} /></MetaCard>
-          ),
-          tab("Icons", <div>Icons</div>,
-            <MetaCard><IconMetadata data={metadata} /></MetaCard>
-          ),
+          tab("General", <>General</>, <MetaCard><SummaryMetadata m={metadata} /></MetaCard>),
+          tab("Open Graph", <>Open Graph</>, <MetaCard><OpengraphMetadata m={metadata} /></MetaCard>),
+          tab("Twitter", <>Twitter</>, <MetaCard><TwitterMetadata m={metadata} /></MetaCard>),
+          tab("Icons", <>Icons</>, <MetaCard><IconMetadata data={metadata} /></MetaCard>),
         ]} />
     );
   } catch (error) {
@@ -65,13 +53,11 @@ function SummaryMetadata(
       <MetadataRow data={d.general.title} />
       <MetadataRow data={d.general.description} />
       <MetadataRow data={d.general.author} />
-
       <MetadataRow data={d.general.inferredFavicon}>
         <Suspense fallback="Loading...">
           <FaviconSummary data={d.general.favicons} baseUrl={d.general.rawUrl.value} />
         </Suspense>
       </MetadataRow>
-
       <Separator />
       <MetadataRow data={d.og.title} />
       <MetadataRow data={d.og.description} />
