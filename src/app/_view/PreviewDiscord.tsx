@@ -134,12 +134,16 @@ async function getDiscordPreview(metadata: ResoledMetadata) {
     if (res.valid) {
       if (res.shortHex || (res.shortHex && res.withAlpha)) {
         messages.push(["warn", `Short Hex values (${ data.themeColor }) will be parsed incorrectly by Discord. Consider using full hex values.`])
-        data.themeColor = data.themeColor === "#000" ? undefined : '#' + data.themeColor.split('#')[1].padStart(6, '0')
+        data.themeColor = '#' + data.themeColor.split('#')[1].padStart(6, '0')
       }
       if (!res.shortHex && res.withAlpha) {
         messages.push(["error", `8 digit hex values (${ data.themeColor }) will cause the preview to not show up. Consider using 6 digit hex values.`])
         data.themeColor = undefined
         crashed = true
+      }
+      if (['#000', '#000000'].includes(data.themeColor ?? "")) {
+        messages.push(["warn", `Black color theme values (${ data.themeColor }) will be parsed incorrectly by Discord. Consider using a different color.`])
+        data.themeColor = undefined
       }
     }
   }
