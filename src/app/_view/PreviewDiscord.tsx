@@ -1,6 +1,5 @@
 import type { ComponentProps, CSSProperties } from "react";
 import type { ResoledMetadata } from "../lib/get-metadata-field-data";
-import { getTwitterPreview } from "./PreviewTwitter";
 import { cn } from "lazy-cn";
 import { AppImage } from "../module/image/Image";
 import { appFetch } from "../lib/fetch";
