@@ -85,7 +85,7 @@ function Footer(
   props: ComponentProps<"footer">
 ) {
   return (
-    <footer {...props} className={cn(" w-full col-span-2 pb-[100vh] pt-10", props.className)}>
+    <footer {...props} className={cn(" w-full col-span-2 pb-[100vh] pt-10 border-t border-border bg-background shadow-2xl", props.className)}>
       <div className="container-md lg:container-2xl px-8 lg:px-12 xl:px-24 text-foreground-body flex">
         <div className="flex flex-col grow">
           <div className="text-[1rem] font-semibold tracking-tight leading-none font-mono">
