@@ -88,7 +88,7 @@ async function getDiscordPreview(metadata: ResoledMetadata) {
   let crashed = false
 
   const data = {
-    site: m.og.siteName.value ?? m.twitter.site.value, // check if it fallbacks to twitter.site.value
+    site: m.og.siteName.value, // check if it fallbacks to twitter.site.value
     title: m.twitter.title.value ?? m.og.title.value ?? m.general.title.value,
     description: m.og.description.value ?? m.twitter.description.value ?? m.general.description.value,
     image: m.twitter.image.resolvedUrl ?? m.og.image.resolvedUrl,
