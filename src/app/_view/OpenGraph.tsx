@@ -53,7 +53,7 @@ function StructuredOpengraphMetadata(
           <div key={i} className="flex flex-col gap-2 items-start">
             {i !== 0 && <hr className="self-stretch my-3" />}
             {type === "images" && (
-              <div className="border border-slate-200 p-1 w-auto shrink-0 self-start">
+              <div className="image-frame w-auto shrink-0 self-start">
                 <AppImage src={item.resolvedUrl} className="h-[2lh]" />
               </div>
             )}

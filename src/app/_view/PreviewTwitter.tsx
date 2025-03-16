@@ -71,8 +71,8 @@ export async function PreviewTwitter(
       PreviewSection={PreviewSection}
       PreviewInfoContent={
         <>
-          {image && (<div className="break-word text-xs text-slate-500">
-            {image?.format}, {image?.width}✕{image?.height}, {image?.size} Bytes, <span className="break-all">{image?.url}</span>
+          {image && (<div className="break-word text-xs text-foreground-muted-2">
+            {image?.format}, {image?.width}✕{image?.height}, {image?.size} bytes, <span className="break-all">{image?.url}</span>
           </div>)}
           <MessageList messages={messages} />
         </>

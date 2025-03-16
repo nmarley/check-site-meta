@@ -128,7 +128,8 @@ async function getDiscordPreview(metadata: ResoledMetadata) {
   if (data.themeColor) {
     const res = validateHex(data.themeColor)
     if (!res.valid) {
-      messages.push(["error", `Invalid color theme value. (${ data.themeColor })`])
+      messages.push(["error", `Invalid color theme value: ${ data.themeColor }`])
+      data.themeColor = "oklab(0.239468 0.000131123 -0.00589392)"
     }
     if (res.valid) {
       if (res.shortHex || (res.shortHex && res.withAlpha)) {
@@ -141,7 +142,6 @@ async function getDiscordPreview(metadata: ResoledMetadata) {
         crashed = true
       }
     }
-
   }
 
   return {

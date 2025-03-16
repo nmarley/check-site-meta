@@ -29,9 +29,9 @@ export function MessageList(
               animationDelay: `${ (i + 3) * 100 }ms`
             }}
             className={cn("flex items-start gap-1 fadeIn-0",
-              item[0] === "error" && "text-orange-400",
-              item[0] === "warn" && "text-yellow-500",
-              item[0] === "info" && "text-slate-500",
+              item[0] === "error" && "text-error",
+              item[0] === "warn" && "text-warning",
+              item[0] === "info" && "text-foreground-muted-2",
               "[&_svg]:opacity-60"
             )}>
             {

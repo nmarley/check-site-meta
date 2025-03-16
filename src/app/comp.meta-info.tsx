@@ -110,9 +110,8 @@ async function FaviconSummary(props: { data: MetadataMetadataItem, baseUrl: stri
   if (!favicon) return <span className="meta-mute">-</span>
 
   return (
-    <div className="flex gap-2 items-start">
+    <div className="flex *:first:shrink-0 gap-2 items-start">
       <FaviconPreview
-        containerProps={{ className: "shrink-0" }}
         src={favicon.resolvedUrl}
       />
       <div>
@@ -134,7 +133,7 @@ function ColorThemes(
         return (
           <div key={i} className="flex gap-1 items-start my-1">
             <div
-              className="w-4 h-4 rounded-sm border border-slate-200 shrink-0"
+              className="w-4 h-4 rounded-sm border border-border shrink-0"
               style={{
                 background: item.value
               }}
@@ -231,7 +230,6 @@ function IconMetadata(props: {
             const { source, size, value, resolvedUrl, resolvedSize } = item
             return <div key={i} className="flex gap-2 items-start flex-wrap">
               <FaviconPreview
-                containerProps={{ className: "" }}
                 imgProps1={{ style: { height: resolvedSize ? px(resolvedSize) : undefined, width: resolvedSize ? px(resolvedSize) : undefined } }}
                 imgProps2={{ style: { height: resolvedSize ? px(resolvedSize) : undefined, width: resolvedSize ? px(resolvedSize) : undefined } }}
                 src={resolvedUrl} />

@@ -15,47 +15,41 @@ export function MetadataRow(props: {
   const { label, value, resolvedUrl, type, description } = props.data
 
   const [infoOpen, setInfoOpen] = useState(false)
+  const toggleInfo = () => setInfoOpen(!infoOpen)
 
   const content = props.children ?? <>
     {!value && <span className="meta-mute">{'-'}</span>}
     {!type && value}
-    {value && type === "url" && <span>
-      <a target="_blank" href={resolvedUrl} className="group link-underline text-base! *:inline [&_svg]:align-[-0.15rem]">
-        {value} <ExternalIcon />
-      </a>
-    </span>}
+    {value && type === "url" && <InlineLink href={resolvedUrl} value={value} />}
     {value && type?.startsWith("image") && (
       <div className="flex gap-x-2 flex-wrap" >
-        <div className="border border-slate-200 p-1 w-auto shrink-0 self-start">
+        <div className="image-frame w-auto shrink-0 self-start">
           {type === "image-favicon"
             ? <AppImage src={resolvedUrl} className="h-[1.5lh]" />
             : <AppImage src={resolvedUrl} className="h-[2lh]" />}
         </div>
-        <div className="min-w-20">
-          <a target="_blank" href={resolvedUrl} className="group link-underline block">
-            {value} <ExternalIcon />
-          </a>
-        </div>
+        <InlineLink href={resolvedUrl} value={value} className="min-w-30 basis-0 grow" />
       </div>
     )}
   </>
 
   return (
     <div {...props.containerProps} className={cn("group flex-nowrap whitespace-pre-wrap", props.containerProps?.className)}>
-      
-      <div>
-        {label} <InfoButton onClick={() => setInfoOpen(!infoOpen)} />
-      </div>
-      
-      <div {...props.contentProps} className={cn(props.contentProps?.className)} >
+
+      <button className="w-fit h-fit meta-info-field-key" onClick={toggleInfo}>
+        {label}
+      </button>
+
+      <div {...props.contentProps} className={cn('w-full', props.contentProps?.className)} >
+        <InfoButton className="float-right ml-1" onClick={toggleInfo} />
         {content}
       </div>
 
       <div className={cn("col-span-2 grid grid-rows-[0fr] overflow-hidden transition-all", infoOpen && "grid-rows-[1fr]")}>
         <div className="overflow-hidden">
-          <div className={cn("bg-background-tooltip p-4 py-3.5 rounded-md text-sm overflow-hidden mt-2 flex flex-col")}>
+          <div className={cn("bg-background-tooltip p-3 py-2.5 rounded-md text-sm overflow-hidden mt-2 flex flex-col")}>
             {description ?? "No description available"}
-            <button className="text-end mt-3 -mb-1 -mr-1 text-foreground-muted-2 text-xs font-medium bg-transparent block px-0 self-end hover:underline"
+            <button className="text-end mt-3 text-foreground-muted-2 text-xs font-medium bg-transparent block px-0 self-end hover:underline"
               onClick={() => setInfoOpen(false)}
             >hide</button>
           </div>
@@ -69,6 +63,11 @@ export function MetadataRow(props: {
 export function Separator() {
   return <hr />
 }
+export function InlineLink(props: { href?: string, value?: string, className?: string }) {
+  return <a target="_blank" href={props.href} className={cn("link-underline text-[0.8rem] leading-snug mt-0.5 block break-all", props.className)}>
+    {props.value} <ExternalIcon />
+  </a>
+}
 
 
 export function ExternalIcon(props: SVGProps<SVGSVGElement>) {
@@ -78,8 +77,8 @@ export function InfoButton(
   props: ComponentProps<"button">
 ) {
   return (
-    <button className="opacity-10 group-hover:opacity-100 group-hover:*:translate-y-0 bg-background-tooltip rounded-md px-0 py-0 w-3.5 h-3.5 text-foreground-muted inline-flex items-center justify-center align-[-0.1rem] ml-0.5 overflow-hidden " {...props}>
-      <InfoIcon className="transition translate-y-full" />
+    <button {...props} className={cn("opacity-0 mt-1 group-hover:opacity-100 bg-background-tooltip rounded-md px-0 py-0 w-3.5 h-3.5 text-foreground-muted inline-flex items-center justify-center align-[-0.1rem] overflow-hidden", props.className)} >
+      <InfoIcon className="transition translate-y-full group-hover:translate-y-0" />
     </button>
   )
 }

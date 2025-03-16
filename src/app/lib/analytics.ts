@@ -2,8 +2,8 @@
 
 export function logEvent(ev: string) {
   try {
-    const version = document.getElementById('version')?.textContent
-    const disableAnalytics = document.getElementById('disable_analytics')?.textContent
+    const version = document.querySelector('meta[name="csm-version"]')?.getAttribute('content')
+    const disableAnalytics = document.querySelector('meta[name="disable_analytics"]')?.getAttribute('content')
 
     console.log(disableAnalytics, version)
     if (

@@ -64,10 +64,10 @@ export default function ErrorCard(
         </div>
       </div>
       {error.detail && (
-        <div className="font-mono p-1 px-2 mt-4 bg-slate-100 border border-slate-200 rounded-md">{error.detail}</div>
+        <div className="font-mono p-1 px-2 mt-4 bg-background-tooltip border border-border rounded-md">{error.detail}</div>
       )}
       {!!error.context.length && (error.context.map((context, index) => (
-        <div key={index} className="font-mono p-1 px-2 mt-4 bg-slate-100 border border-slate-200 rounded-md">{context}</div>
+        <div key={index} className="font-mono p-1 px-2 mt-4 bg-background-tooltip border border-border rounded-md">{context}</div>
       )))}
     </div>
   )

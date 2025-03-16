@@ -7,15 +7,11 @@ import { px } from "../lib/unit";
 
 export function FaviconPreview(props: {
   src: string,
-  containerProps?: ComponentProps<"div">
   imgProps1?: ComponentProps<"img">
   imgProps2?: ComponentProps<"img">
 }) {
   return (
-    <div
-      {...props.containerProps}
-      className={cn("border border-slate-200 flex items-start", props.containerProps?.className)}
-    >
+    <div className={cn("image-frame flex items-start")}>
       <div className="p-1 bg-zinc-100 shrink">
         <AppImage
           {...props.imgProps1}
@@ -24,7 +20,7 @@ export function FaviconPreview(props: {
         />
       </div>
 
-      <div className="p-1 bg-zinc-500 shrink">
+      <div className="p-1 bg-neutral-600 shrink">
         <AppImage
           {...props.imgProps2}
           src={props.src}
@@ -56,7 +52,7 @@ export function IconListPreviewMetadataItem(props: {
               const resolvedSizes = item.label ? parseInt(item.label) || null : null
 
               return <div key={i} className="flex flex-col gap-1 items-center justify-center text-center">
-                <div className="border border-slate-200 p-1 w-auto shrink-0"
+                <div className="image-frame w-auto shrink-0"
                   style={{
                     width: resolvedSizes ? px(resolvedSizes) : undefined,
                     height: resolvedSizes ? px(resolvedSizes) : undefined

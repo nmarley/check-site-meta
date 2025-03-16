@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { cn } from "lazy-cn";
-import { ButtonTest } from "./theme-switch";
+import { ThemeSwitcherDev } from "./theme-switch";
 import Script from "next/script";
 
 export const metadata: Metadata = {
@@ -20,13 +20,15 @@ export default function RootLayout(props: {
     <html lang="en" suppressHydrationWarning>
       <head>
         <ThemeScript />
+        <meta name="version" content={process.env['CSM_VERSION']} />
+        <meta name="disable_analytics" content={process.env['DISABLE_ANALYTICS']} />
       </head>
       <body className={cn(
         sans.variable,
         mono.variable,
         `subpixel-antialiased bg-background`
       )}>
-        <ButtonTest />
+        <ThemeSwitcherDev />
         {props.children}
       </body>
     </html>
@@ -49,16 +51,17 @@ const mono = Geist_Mono({
 
 function ThemeScript() {
   return (
-    <script id="theme">{`
-const theme = localStorage.getItem('theme');
+    <script id="theme">{`const theme = localStorage.getItem('theme');
 if (theme === null || !['light', 'dark', 'system'].includes(theme)) {
   localStorage.setItem('theme', 'system');
-  document.documentElement.style.colorScheme = 'system';
+  document.documentElement.style.colorScheme = 'light dark';
 } else {
-  document.documentElement.style.colorScheme = theme;
-}
-      `}</script>
-
+  if (theme === 'system') {
+    document.documentElement.style.colorScheme = 'light dark';
+  } else {
+    document.documentElement.style.colorScheme = theme;
+  }
+}`}</script>
   )
 }
 

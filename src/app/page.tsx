@@ -9,6 +9,11 @@ import { MetaPreviewPanel } from "./comp.meta-preview";
 import { after } from "next/server";
 import { logCheckButton } from "./lib/analytics";
 import { cn } from "lazy-cn";
+import { getVersion } from "./lib/version";
+import { Tabs } from "./module/tab/Tabs";
+import { tab } from "./module/tab/tab-primitives";
+import { TabList } from "./module/tab/TabList";
+import { ThemeSwitcher } from "./theme-switch";
 
 // Structure:
 // 
@@ -40,25 +45,25 @@ export default async function Home(context: SearchParamsContext) {
   const random = Math.random()
 
   return (
-    <main className="container-md lg:container-2xl px-8 lg:px-12 xl:px-24 *:py-12 font-medium lg:grid lg:grid-cols-2 gap-x-8 font-sans pb-[100vh]">
-      <div className="flex flex-col gap-8 min-h-screen">
-        <Header />
-        <InputForm url={query.url as string} />
-        <Suspense key={random} fallback={<Loading />}>
-          <MetaInfoPanel metadata={getMetadata()} />
-        </Suspense>
-        {/* <RawHTML url={query.url} /> */}
-      </div>
-      <div className="flex flex-col items-center gap-8">
-        <Suspense key={random}>
-          <MetaPreviewPanel metadata={getMetadata()} />
-        </Suspense>
-      </div>
-      <div id="version" className="hidden">{process.env['CSM_VERSION']}</div>
-      <div id="disable_analytics" className="hidden">{process.env['DISABLE_ANALYTICS']}</div>
-      <Footer />
-    </main>
+    <>
+      <main className="container-md lg:container-2xl px-8 lg:px-12 xl:px-24 *:py-12 font-medium lg:grid lg:grid-cols-2 gap-x-8 font-sans">
+        <div className="flex flex-col gap-8 min-h-screen">
+          <Header />
+          <InputForm query={query} />
+          <Suspense key={random} fallback={<Loading />}>
+            <MetaInfoPanel metadata={getMetadata()} />
+          </Suspense>
+          {/* <RawHTML url={query.url} /> */}
+        </div>
+        <div className="flex flex-col items-center gap-8">
+          <Suspense key={random}>
+            <MetaPreviewPanel metadata={getMetadata()} />
+          </Suspense>
+        </div>
 
+      </main>
+      <Footer />
+    </>
   );
 }
 
@@ -66,12 +71,12 @@ export default async function Home(context: SearchParamsContext) {
 
 
 function Header() {
-  return <header className="text-start">
-    <div className="text-xs text-foreground-muted-2 font-mono">
+  return <header className="text-start text-foreground-muted">
+    <div className="text-xs font-mono">
       npx check-site-meta</div>
     <h1 className="leading-normal text-lg font-bold tracking-tight">
       Site Metadata Checker</h1>
-    <p className="text-foreground-muted-2 text-pretty text-sm">
+    <p className="text-pretty text-sm">
       Validate how your Open Graph data is used for link previews on social platforms.</p>
   </header>
 }
@@ -80,29 +85,58 @@ function Footer(
   props: ComponentProps<"footer">
 ) {
   return (
-    <footer {...props} className={cn("card w-full col-span-2", props.className)}  >
-      <div className="text-xs text-gray-600 font-mono">
-        <a href="" className="hover:underline">Privacy Policy</a>
-        <span className="mx-1">•</span>
-        <a href="" className="hover:underline">Terms of Service</a>
+    <footer {...props} className={cn(" w-full col-span-2 pb-[100vh] pt-10", props.className)}>
+      <div className="container-md lg:container-2xl px-8 lg:px-12 xl:px-24 text-foreground-body flex">
+        <div className="flex flex-col grow">
+          <div className="text-[1rem] font-semibold tracking-tight leading-none font-mono">
+            npx check-site-meta
+          </div>
+          <div className="text-xs font-normal">
+            v{getVersion()}
+          </div>
+          <div className="mt-10 flex flex-wrap gap-6">
+            {
+              [
+                ['npm', 'https://www.npmjs.com/package/check-site-meta'],
+                ['github', 'https://github.com/alfonsusac/check-site-meta'],
+                ['twitter', 'https://x.com/alfonsusac/status/1899798175512412648'],
+                ['discord', 'https://discord.gg/DCNgFtCm'],
+              ].map(e => (<a key={e[0]} className="button transition underline" href={e[1]} target="_blank">{e[0]}</a>))
+            }
+          </div>
+          <div className="mt-4">
+            Made by <a href="https://alfon.dev">alfonsusac</a> • ©{new Date().getFullYear()} alfonsusac. All rights reserved.
+          </div>
+        </div>
+        {/* Left */}
+        {/* Right */}
+        <div>
+          <ThemeSwitcher />
+        </div>
       </div>
     </footer>
   )
 }
 
+
 function InputForm(
-  props: { url: string }
+  props: { query: Record<string, string | string[] | undefined> }
 ) {
   return <Form
     onSubmit={logCheckButton}
     action="/"
-    className="flex gap-2">
+    className="flex gap-2"
+  >
+    <input readOnly type="hidden" name="info" value={String(props.query['info'])} />
+    <input readOnly type="hidden" name="preview" value={String(props.query['preview'])} />
+
     <div className="grow flex p-1 card rounded-xl focus-within:border-border-focus outline-transparent outline-0 focus-within:outline-4 focus-within:outline-focus transition-all">
-      <CiSearchMagnifyingGlass className="w-4 h-4 ml-3 mr-3 self-center" />
+      <CiSearchMagnifyingGlass className="w-4 h-4 ml-3 mr-1.5 self-center" />
       <input required id="lookup_url" name="url"
-        className="grow border-none focus:outline-0 mr-1 px-2"
-        defaultValue={props.url as string}
+        className="grow border-none focus:outline-0 mr-1 px-1 placeholder:text-foreground-muted-3/50 placeholder:font-normal placeholder:italic"
+        defaultValue={props.query['url'] as string}
         autoComplete="off"
+        placeholder="localhost:3000"
       />
     </div>
 
