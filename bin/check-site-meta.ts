@@ -66,12 +66,13 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
+
 const nextProcess = spawn("node", [path.join(__dirname, "./standalone/server.js")], {
   stdio: ["ignore", "pipe", "pipe"],
   env: {
     ...process.env,
     PORT: String(PORT),
-    DISABLE_ANALYTICS: options.noAnalytics,
+    DISABLE_ANALYTICS: !options.analytics ? "true" : undefined,
     CSM_VERSION: VERSION,
   },
 });

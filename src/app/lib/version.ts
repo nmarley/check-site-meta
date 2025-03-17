@@ -4,6 +4,6 @@ export function getVersion() {
   if (process.env.NODE_ENV === 'development') {
     return JSON.parse(readFileSync('package.json', 'utf-8')).version
   } else {
-    return process.env['VERSION']
+    return process.env['CSM_VERSION'] + ` ${ process.env['DISABLE_ANALYTICS'] ? "(Analytics Disabled)" : "" }`
   }
 }

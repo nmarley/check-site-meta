@@ -55,7 +55,7 @@ export default function ErrorCard(
   return (
     <div className="card fadeIn-0">
       <div className="flex flex-col gap-2 items-start">
-        <div className="shrink-0 text-red-400 p-2 rounded-md bg-red-100">
+        <div className="shrink-0 text-red-400 p-2 rounded-md bg-[light-dark(var(--color-red-100),--alpha(var(--color-red-500)/0.2))]">
           <LucideTriangleAlert className="w-6 h-6" />
         </div>
         <div className="flex flex-col gap-1">
