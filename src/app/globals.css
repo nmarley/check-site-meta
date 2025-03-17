@@ -100,6 +100,9 @@ body {
 @utility w-px-* {
   width: calc(--value(integer) / 16 * 1rem)
 }
+@utility h-px-* {
+  height: calc(--value(integer) / 16 * 1rem)
+}
 @utility text-px-* {
   font-size: calc(--value(integer) / 16 * 1rem)
 }

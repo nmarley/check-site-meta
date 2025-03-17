@@ -2,6 +2,7 @@ import type { ComponentProps, CSSProperties } from "react";
 import { descriptions, type ResoledMetadata } from "../lib/get-metadata-field-data";
 import { MessageList, PreviewFrame, PreviewPanelContent, type PreviewMessages } from "./Preview";
 import { AppImage } from "../module/image/Image";
+import { cn } from "lazy-cn";
 
 export async function PreviewGoogle({ metadata, className, ...props }: ComponentProps<"div"> & {
   metadata: ResoledMetadata
@@ -31,7 +32,11 @@ export async function PreviewGoogle({ metadata, className, ...props }: Component
               <div className="max-w-[calc(100%_-_20px)] fadeIn-0">
                 <div className="flex items-center overflow-hidden">
                   <div className="mr-px-12 inline-block">
-                    <AppImage src={data.favicon} className="w-px-26 h-px-26 bg-white border border-[var(--border)] rounded-[50%] overflow-clip" />
+                    <div className="w-px-26 h-px-26 bg-white border border-[var(--border)] rounded-[50%] overflow-clip flex items-center justify-center">
+                      <AppImage src={data.favicon} className={cn(
+                        data.fullWidthFavicon ? "w-px-26 h-px-26" : "w-px-18 h-px-18",
+                      )} />
+                    </div>
                   </div>
                   <div className="overflow-hidden max-w-[22rem]">
                     <div className="leading-[20px]">
@@ -89,6 +94,7 @@ async function getGooglePreview(metadata: ResoledMetadata) {
     site: m.og.siteName.value ?? m.twitter.site.value ?? new URL(m.general.rawUrl.value).hostname, // Google might infer from domain if missing
     url: m.general.url.value ?? m.general.rawUrl.value,
     favicon: m.general.favicons.values[0].resolvedUrl,
+    fullWidthFavicon: false,
   }
 
   if (!data.title) {
@@ -104,6 +110,9 @@ async function getGooglePreview(metadata: ResoledMetadata) {
   if (!data.site) {
     messages.push(["warn", "Site Name is recommended for better visibility."])
     data.site = new URL(data.url).hostname
+  }
+  if (m.icons.appleTouchIcons.values.length > 0 || m.general.favicons.values.find(f => f.source.includes("favicon.ico"))) {
+    data.fullWidthFavicon = true
   }
 
   return {
