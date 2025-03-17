@@ -62,7 +62,7 @@ export default async function Home(context: SearchParamsContext) {
             <MetaInfoPanel metadata={getMetadata()} head={getHead()} />
           </Suspense>
         </div>
-        <div className="flex flex-col items-center gap-8">
+        <div className="flex flex-col items-center gap-8 pt-15!">
           <Suspense key={random}>
             <MetaPreviewPanel metadata={getMetadata()} />
           </Suspense>
