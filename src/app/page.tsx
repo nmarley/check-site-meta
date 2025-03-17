@@ -56,7 +56,7 @@ export default async function Home(context: SearchParamsContext) {
     <>
       <main className="container-md lg:container-2xl px-8 lg:px-12 xl:px-24 *:py-12 font-medium lg:grid lg:grid-cols-2 gap-x-8 font-sans">
         <div className="flex flex-col gap-8 min-h-screen">
-          <Header />
+          {/* <Header /> */}
           <InputForm query={query} />
           <Suspense key={random} fallback={<Loading />}>
             <MetaInfoPanel metadata={getMetadata()} head={getHead()} />
@@ -81,8 +81,8 @@ function Header() {
   return <header className="text-start text-foreground-muted">
     <div className="text-xs font-mono">
       npx check-site-meta</div>
-    <h1 className="leading-normal text-lg font-bold tracking-tight">
-      Site Metadata Checker</h1>
+    <h1 className="leading-normal text-lg font-medium">
+      site metadata checker</h1>
     <p className="text-pretty text-sm">
       Validate how your Open Graph data is used for link previews on social platforms.</p>
   </header>
