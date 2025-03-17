@@ -89,5 +89,10 @@ export function PreviewPanelContent(
 export function PreviewFrame(
   { className, ...props }: ComponentProps<"div"> & {}
 ) {
-  return (<div {...props} className={cn("w-full flex flex-col rounded-md", className)} />)
+  return (<div {...props} className={cn(
+    "bg-[var(--bg)]",
+    "text-[var(--fg)]",
+    "font-[family-name:var(--font)]",
+    "w-full flex flex-col rounded-md", className
+  )} />)
 }

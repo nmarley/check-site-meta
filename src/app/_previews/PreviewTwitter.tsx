@@ -5,7 +5,7 @@ import { AppImage } from "../module/image/Image";
 import type { ComponentProps, SVGProps } from "react";
 import { cn } from "lazy-cn";
 import { getImageSizeFromResponse } from '../lib/image-size';
-import { PreviewPanelContent, MessageList, type PreviewMessages } from './Preview';
+import { PreviewPanelContent, MessageList, type PreviewMessages, PreviewFrame } from './Preview';
 
 export async function PreviewTwitter(
   { metadata, className, ...props }: { metadata: ResoledMetadata } & ComponentProps<"div">
@@ -16,61 +16,62 @@ export async function PreviewTwitter(
   const PreviewSection = (() => {
     if (type === "summary_large_image") {
       return (
-        <div className={cn("flex flex-col gap-y-1 max-w-[32.375rem] leading-5 font-twitter font-[400] subpixel-antialiased", className)} {...props}>
-          <div className="rounded-2xl relative border border-[rgb(207,_217,_222)] overflow-hidden aspect-[120/63]">
-            <AppImage
-              width="1200"
-              height="630"
-              className="h-full object-cover"
-              src={image?.url}
-              firstFrameGif={image?.format === "gif"}
-            />
-            <div className="absolute bottom-3 left-3 px-2 bg-[rgba(0,_0,_0,_0.77)] text-white rounded-sm line-clamp-1">
-              {data.title}
+        <TwitterPreviewFrame>
+          <div className={cn("flex flex-col gap-y-1 max-w-[32.375rem] leading-5 font-twitter font-[400] subpixel-antialiased", className)} {...props}>
+            <div className="rounded-2xl relative border border-[rgb(207,_217,_222)] overflow-hidden aspect-[120/63]">
+              <AppImage
+                width="1200"
+                height="630"
+                className="h-full object-cover"
+                src={image?.url}
+                firstFrameGif={image?.format === "gif"}
+              />
+              <div className="fadeIn-50 absolute bottom-3 left-3 px-2 bg-[rgba(0,_0,_0,_0.77)] text-white rounded-sm line-clamp-1">
+                {data.title}
+              </div>
+            </div>
+            <div className="fadeIn-100 text-[0.813rem] text-[rgb(83,_100,_113)]">
+              From {data.url}
             </div>
           </div>
-          <div className="text-[0.813rem] text-[rgb(83,_100,_113)]">
-            From {data.url}
-          </div>
-        </div>
+        </TwitterPreviewFrame>
       )
     } else if (type === "summary") {
       return (
-        <div className="max-w-[32.375rem] h-[8.188rem] w-full rounded-2xl border border-[rgb(207,_217,_222)] flex overflow-hidden bg-white">
-          <div className="w-[6.875rem] min-[554px]:w-[8.125rem] border-r border-[rgb(207,_217,_222)] shrink-0 flex items-center justify-center bg-[rgba(247,249,249,1.00)]">
-            {
-              image ?
-                <AppImage
-                  className="w-full h-full object-cover bg-white"
-                  firstFrameGif={image?.format === "gif"}
-                  src={image.url} />
-                : <svg viewBox="0 0 24 24" aria-hidden="true" className="h-[2em] fill-current align-bottom select-none max-w-full relative text-[rgba(83,100,113,1.00)] inline-block"><g><path d="M1.998 5.5c0-1.38 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.12 2.5 2.5v13c0 1.38-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.12-2.5-2.5v-13zm2.5-.5c-.276 0-.5.22-.5.5v13c0 .28.224.5.5.5h15c.276 0 .5-.22.5-.5v-13c0-.28-.224-.5-.5-.5h-15zM6 7h6v6H6V7zm2 2v2h2V9H8zm10 0h-4V7h4v2zm0 4h-4v-2h4v2zm-.002 4h-12v-2h12v2z"></path></g></svg>
-            }
-          </div>
-          <div className="p-3 flex flex-col gap-0.5 justify-center font-twitter text-[0.9375rem] leading-5  font-[400] subpixel-antialiased">
-            <div className="text-[rgb(83,_100,_113)]">
-              {data.url}</div>
-            <div className="text-[rgb(15,_20,_25)] line-clamp-1">
-              {data.title}</div>
-            <div className="text-[rgb(83,_100,_113)] line-clamp-2">
-              <span>
-                {data.description}
-              </span>
+        <TwitterPreviewFrame>
+          <div className="max-w-[32.375rem] h-[8.188rem] w-full rounded-2xl border border-[rgb(207,_217,_222)] flex overflow-hidden bg-white">
+            <div className="w-[6.875rem] min-[554px]:w-[8.125rem] border-r border-[rgb(207,_217,_222)] shrink-0 flex items-center justify-center bg-[rgba(247,249,249,1.00)]">
+              {
+                image ?
+                  <AppImage
+                    className="w-full h-full object-cover bg-white"
+                    firstFrameGif={image?.format === "gif"}
+                    src={image.url} />
+                  : <svg viewBox="0 0 24 24" aria-hidden="true" className="h-[2em] fill-current align-bottom select-none max-w-full relative text-[rgba(83,100,113,1.00)] inline-block"><g><path d="M1.998 5.5c0-1.38 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.12 2.5 2.5v13c0 1.38-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.12-2.5-2.5v-13zm2.5-.5c-.276 0-.5.22-.5.5v13c0 .28.224.5.5.5h15c.276 0 .5-.22.5-.5v-13c0-.28-.224-.5-.5-.5h-15zM6 7h6v6H6V7zm2 2v2h2V9H8zm10 0h-4V7h4v2zm0 4h-4v-2h4v2zm-.002 4h-12v-2h12v2z"></path></g></svg>
+              }
+            </div>
+            <div className="p-3 flex flex-col gap-0.5 justify-center font-twitter text-[0.9375rem] leading-5  font-[400] subpixel-antialiased">
+              <div className="text-[rgb(83,_100,_113)]">
+                {data.url}</div>
+              <div className="text-[rgb(15,_20,_25)] line-clamp-1">
+                {data.title}</div>
+              <div className="text-[rgb(83,_100,_113)] line-clamp-2">
+                <span>
+                  {data.description}
+                </span>
+              </div>
             </div>
           </div>
-        </div>
+        </TwitterPreviewFrame>
       )
     } else {
       return (null)
     }
-  })()
+  })
 
   return (
     <PreviewPanelContent
-      PreviewSection={<div
-        className="p-8 w-full min-h-80 bg-white rounded-lg overflow-hidden flex justify-center">
-        {PreviewSection}
-      </div>}
+      PreviewSection={<PreviewSection />}
       PreviewInfoContent={
         <>
           {image && (<div className="break-word text-xs text-foreground-muted-2">
@@ -81,6 +82,13 @@ export async function PreviewTwitter(
       }
     />
   )
+}
+
+function TwitterPreviewFrame({ children }: { children: React.ReactNode }) {
+  return <PreviewFrame
+    className="p-8 bg-white rounded-lg overflow-hidden flex justify-center">
+    {children}
+  </PreviewFrame>
 }
 
 

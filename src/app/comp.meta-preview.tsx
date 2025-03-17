@@ -6,6 +6,7 @@ import { PreviewTwitter } from "./_previews/PreviewTwitter";
 import { PreviewDiscord } from "./_previews/PreviewDiscord";
 import { cn } from "lazy-cn";
 import { StaticTooltip, TooltipBase } from "./_view/Tooltip";
+import { PreviewGoogle } from "./_previews/PreviewGoogle";
 
 export async function MetaPreviewPanel(
   props: { metadata: Promise<ResoledMetadata | null> }
@@ -44,7 +45,7 @@ export async function MetaPreviewPanel(
                   className="transition group-hover:text-[var(--color)] group-data-active:text-[var(--color)]"
                 />
               </StaticTooltip>,
-              <PreviewDiscord key="d" metadata={metadata} className="fadeIn-100" />
+              <PreviewDiscord key="d" metadata={metadata} className="fadeIn-0" />
             ),
             tab("Google",
               <StaticTooltip
@@ -52,7 +53,7 @@ export async function MetaPreviewPanel(
                 className=" -m-2 -mx-3 p-2 px-3">
                 <LogosGoogleIcon className="p-0.5" />
               </StaticTooltip>,
-              <ComingSoon />
+              <PreviewGoogle key="g" metadata={metadata} className="fadeIn-0" />
             ),
             tab("Facebook",
               <StaticTooltip

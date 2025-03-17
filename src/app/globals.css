@@ -97,6 +97,21 @@ body {
 @utility clickable {
   @apply cursor-pointer active:translate-y-0.5;
 }
+@utility w-px-* {
+  width: calc(--value(integer) / 16 * 1rem)
+}
+@utility text-px-* {
+  font-size: calc(--value(integer) / 16 * 1rem)
+}
+@utility mb-px-* {
+  margin-bottom: calc(--value(integer) / 16 * 1rem)
+}
+@utility mr-px-* {
+  margin-right: calc(--value(integer) / 16 * 1rem)
+}
+@utility pt-px-* {
+  padding-top: calc(--value(integer) / 16 * 1rem)
+}
 
 /* Selectors ----------------------------- */
 
