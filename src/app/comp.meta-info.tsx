@@ -245,6 +245,7 @@ function IconMetadata(props: {
 
           for (const f of rawFavicons) {
             const validUrl = await isValidIcon(f.resolvedUrl)
+            console.log(validUrl)
             if (validUrl) {
               const resolvedSize = f ? parseInt(f.sizes ?? "") : NaN
               favicons.push({
@@ -293,7 +294,10 @@ async function isValidIcon(url?: string) {
   if (!url) return false
   const res = await appFetch(url)
   if (res.headers.get('content-type') === 'image/svg+xml') return url
+  if (res.headers.get('content-type')?.startsWith('text/')) return false
+
   const imageSizeRes = await getImageSizeFromResponse(res)
   if (!imageSizeRes.imageSize) return false
+  console.log(url, typeof imageSizeRes, imageSizeRes)
   return url
 }

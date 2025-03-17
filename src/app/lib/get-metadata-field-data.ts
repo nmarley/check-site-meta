@@ -57,7 +57,6 @@ export function getResolvedMeta(m: Metadata) {
               return {
                 value: e.href,
                 label: "",
-                // labels: [e.rel, e.type, e.sizes],
                 source: `link[rel="${e.rel}"]`,
                 type: e.type,
                 sizes: e.sizes,
@@ -67,7 +66,6 @@ export function getResolvedMeta(m: Metadata) {
             {
               value: "/favicon.ico",
               label: "",
-              // labels: ['direct link to /favicon.ico', 'image/x-icon', 'size undefined'],
               source: 'direct link to /favicon.ico',
               type: 'image/x-icon',
               sizes: 'size undefined',
@@ -76,7 +74,6 @@ export function getResolvedMeta(m: Metadata) {
             {
               value: "/favicon.png",
               label: "",
-              // labels: ['direct link to /favicon.png', 'image/png', 'size undefined'],
               source: 'direct link to /favicon.png',
               type: 'image/png',
               sizes: 'size undefined',

@@ -38,10 +38,6 @@ export function getRawMeta(root: HTMLElement, rawUrl: string) {
             href: e.getAttribute("href")
           }
         }),
-        // favicon: root.querySelector("link[rel=icon]")?.getAttribute("href"),
-        // favicon2: root.querySelector("link[rel='shortcut icon']")?.getAttribute("href"),
-        // favicon3: root.querySelector("link[rel='icon shortcut']")?.getAttribute("href"),
-        // favicon4: "/favicon.ico",
         author: root.querySelector("meta[name=author]")?.getAttribute("content"),
         robots: root.querySelector("meta[name=robots]")?.getAttribute("content"),
         keywords: root.querySelector("meta[name=keywords]")?.getAttribute("content"),
