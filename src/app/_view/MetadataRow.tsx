@@ -37,10 +37,12 @@ export function MetadataRow(props: {
   return (
     <div {...props.containerProps} className={cn("group flex-nowrap whitespace-pre-wrap", props.containerProps?.className)}>
 
-      <button className="w-fit h-fit text-start meta-info-field-key" onClick={toggleInfo}>
-        {label}
+      <div>
+        <button className="w-fit h-fit text-start meta-info-field-key" onClick={toggleInfo}>
+          {label}
+        </button>
         {props.putInfoBesideLabel && <InfoButton className="ml-1" onClick={toggleInfo} />}
-      </button>
+      </div>
 
       <div {...props.contentProps} className={cn('w-full', props.contentProps?.className)} >
         {!props.putInfoBesideLabel && <InfoButton className="float-right ml-1" onClick={toggleInfo} />}
