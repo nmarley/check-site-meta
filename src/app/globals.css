@@ -84,7 +84,7 @@ body {
     clickable transition-all
     active:translate-y-0.5;
     &.normal {
-      @apply px-4 py-2;
+      @apply px-5 py-2.5 text-xs;
     }
     &.primary {
       @apply bg-foreground text-background;
