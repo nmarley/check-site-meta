@@ -1,5 +1,5 @@
 import type { ComponentProps, CSSProperties } from "react";
-import type { ResoledMetadata } from "../lib/get-metadata-field-data";
+import { descriptions, type ResoledMetadata } from "../lib/get-metadata-field-data";
 import { MessageList, PreviewFrame, PreviewPanelContent, type PreviewMessages } from "./Preview";
 import { AppImage } from "../module/image/Image";
 
@@ -33,19 +33,29 @@ export async function PreviewGoogle({ metadata, className, ...props }: Component
                   <div className="mr-px-12 inline-block">
                     <AppImage src={data.favicon} className="w-px-26 h-px-26 bg-white border border-[var(--border)] rounded-[50%] overflow-clip" />
                   </div>
-                  <div className="overflow-hidden">
+                  <div className="overflow-hidden max-w-[22rem]">
                     <div className="leading-[20px]">
                       {data.site}
                     </div>
-                    <div className="text-px-12 text-[var(--muted)]">
-                      {data.url}
+                    <div className="text-px-12 text-[var(--muted)] line-clamp-1">
+                      {new URL(data.url).origin}
+                      {(() => {
+                        const pathname = new URL(data.url).pathname
+                        const arr = pathname.split("/").filter(Boolean)
+                        if (arr.length === 0) return ""
+                        const separator = " › "
+
+                        return <span>{separator}{arr.join(separator)}</span>
+
+                        return pathname.length > 1 ? pathname : ""
+                      })()}
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div className="basis-full shrink grow fadeIn-100"> 
+          <div className="basis-full shrink grow fadeIn-100">
             <div className="line-clamp-2 overflow-hidden text-px-14 font-[400]">
               {data.description}
             </div>
@@ -76,13 +86,24 @@ async function getGooglePreview(metadata: ResoledMetadata) {
       m.general.description.value ??
       m.og.description.value ??
       m.twitter.description.value,
-    site: m.og.siteName.value ?? m.twitter.site.value ?? m.general.rawUrl.value, // Google might infer from domain if missing
+    site: m.og.siteName.value ?? m.twitter.site.value ?? new URL(m.general.rawUrl.value).hostname, // Google might infer from domain if missing
     url: m.general.url.value ?? m.general.rawUrl.value,
     favicon: m.general.favicons.values[0].resolvedUrl,
   }
 
   if (!data.title) {
     return { messages: [["error", "Title Metadata is required to show a preview."]] as PreviewMessages }
+  }
+  if (!data.description) {
+    messages.push(["warn", "Description Metadata is recommended for better visibility."])
+    data.description = "No description provided."
+  }
+  if ((data.description ?? '').length < 50) {
+    messages.push(["warn", "Description is too short. It may not show up properly in search results. (50-160 characters recommended)"])
+  }
+  if (!data.site) {
+    messages.push(["warn", "Site Name is recommended for better visibility."])
+    data.site = new URL(data.url).hostname
   }
 
   return {
