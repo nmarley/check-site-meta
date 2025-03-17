@@ -146,6 +146,15 @@ export function getRawMeta(root: HTMLElement, rawUrl: string) {
         appleMobileWebAppTitle: fromMetaTagWithName(root, 'apple-mobile-web-app-title'),
         appleMobileWebAppStatusBarStyle: fromMetaTagWithName(root, 'apple-mobile-web-app-status-bar-style'),
       },
+      jsonld: {
+        data: root.querySelectorAll("script[type='application/ld+json']").map(e => {
+          try {
+            return JSON.parse(e.text)
+          } catch (error) {
+            throw new AppError(error, "parse", "JSON Parse Failed", error instanceof Error ? error.message : "Unknown Error")
+          }
+        })
+      }
     }
   } catch (error) {
     throw new AppError(error, "parse", "Metadata Parse Failed", error instanceof Error ? error.message : "Unknown Error")

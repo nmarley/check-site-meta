@@ -38,6 +38,7 @@ export async function MetaInfoPanel(
           tab("Open Graph", <>Open Graph</>, <MetaCard><OpengraphMetadata m={metadata} /></MetaCard>),
           tab("Twitter", <>Twitter</>, <MetaCard><TwitterMetadata m={metadata} /></MetaCard>),
           tab("Icons", <>Icons</>, <MetaCard><IconMetadata data={metadata} /></MetaCard>),
+          // tab("JSON-LD", <>JSON-LD</>, <MetaCard></MetaCard>),
           tab("Raw", <>Raw</>, <MetaCard><pre className="overflow-auto text-xs">{head?.split('<body')[0].replaceAll('/><', '/>\n<').replaceAll(/<style[^>]*>[\s\S]*?<\/style>/g, '<style>...</style>')}</pre></MetaCard >),
         ]} />
     );
