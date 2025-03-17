@@ -8,9 +8,20 @@ export async function GET(request: NextRequest) {
 
   try {
     const response = await appFetch(imageUrl);
+
     return new Response(response.body, {
-      headers: { ...response.headers },
+      headers: {
+        ...(() => {
+          const contentType = response.headers.get('content-type')
+          if (contentType) {
+            return {
+              "content-type": contentType,
+            }
+          }
+        })(),
+      }
     })
+
   } catch (error) {
     console.log("Proxy Img: Error:\n", error)
     return Response.json({ error: error instanceof Error ? error.message : "Unknown error occurred" }, { status: 500 });

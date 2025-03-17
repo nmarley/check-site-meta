@@ -1,7 +1,7 @@
 import { cn } from "lazy-cn";
 import type { ComponentProps } from "react";
 import { AppImage } from "../module/image/Image";
-import { MetadataRow } from "./MetadataRow";
+import { ExternalIcon, MetadataRow } from "./MetadataRow";
 import type { ResoledMetadata } from "../lib/get-metadata-field-data";
 import { px } from "../lib/unit";
 
@@ -38,12 +38,13 @@ export function IconListPreviewMetadataItem(props: {
   const item = props.data
   return (
     <MetadataRow data={item}
+      putInfoBesideLabel
       containerProps={{ className: "flex! flex-col" }}
       contentProps={{ className: "col-span-2 row-start-[10] order-10 mt-2" }}>
       <div className="flex gap-2 items-end flex-wrap ">
         {(() => {
           const items = item.values
-          if (!items?.length) return (<div className="opacity-40">-</div>)
+          if (!items?.length) return (<div className="meta-mute">-</div>)
 
           return <>
             {items?.map((item, i) => {
@@ -71,18 +72,16 @@ export function IconListPreviewMetadataItem(props: {
           const items = item.values
 
           if (!items?.length) {
-            return (<div className="opacity-40">-</div>)
+            return (<div className="meta-mute">-</div>)
           }
 
           return <>
             {items?.map((item, i) => {
               if (!item.value) return null
               return <div key={i} className="text-xs my-0.5">
-                {item.value.startsWith('data:') ? (
-                  <div className="line-clamp-3">{item.value}...</div>
-                ) : (
-                  <div>{item.value}</div>
-                )}
+                <a className={cn("link-underline", item.value.startsWith('data:') && "line-clamp-3")}>
+                  {item.value} <ExternalIcon />
+                </a>
               </div>
             })}
           </>

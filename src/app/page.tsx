@@ -46,7 +46,8 @@ export default async function Home(context: SearchParamsContext) {
     const url = parseUrlFromQuery(query.url)
     if (!url) return null
     const { html } = await fetchRoot(url.toString())
-    return html.split('<body>')[0].replaceAll('\>', '\>\n')
+    // remove script
+    return html
   }
 
   const random = Math.random()

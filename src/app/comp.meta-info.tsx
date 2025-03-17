@@ -9,6 +9,7 @@ import { appFetch } from "./lib/fetch";
 import { px } from "./lib/unit";
 import { OpengraphMetadata } from "./_view/OpenGraph";
 import { cn } from "lazy-cn";
+import { getImageSizeFromResponse } from "./lib/image-size";
 
 function MetaCard({ className, ...props }: ComponentProps<"section">) {
   return (
@@ -37,7 +38,7 @@ export async function MetaInfoPanel(
           tab("Open Graph", <>Open Graph</>, <MetaCard><OpengraphMetadata m={metadata} /></MetaCard>),
           tab("Twitter", <>Twitter</>, <MetaCard><TwitterMetadata m={metadata} /></MetaCard>),
           tab("Icons", <>Icons</>, <MetaCard><IconMetadata data={metadata} /></MetaCard>),
-          tab("Head", <>Head</>, <MetaCard><pre className="whitespace-pre overflow-auto">{head}</pre></MetaCard>),
+          tab("Head", <>Head</>, <MetaCard><pre className="overflow-auto text-xs">{head?.split('<body')[0].replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '').replaceAll('/><', '/>\n<')}</pre></MetaCard>),
         ]} />
     );
   } catch (error) {
@@ -88,27 +89,45 @@ function SummaryMetadata(props: { m: ResoledMetadata }) {
   )
 }
 
-async function FaviconSummary(props: { data: MetadataMetadataItem, baseUrl: string }) {
+async function FaviconSummary(props: { data: ResoledMetadata['general']['favicons'], baseUrl: string }) {
   const favicons = props.data.values
   if (!favicons) return <span className="meta-mute">-</span>
 
   let favicon: {
+    source: string,
+    size: string,
+    resolvedSize: number | null,
+    type: string,
     value: string,
     resolvedUrl: string,
-    label: string
   } | null = null
 
   for (const f of favicons) {
-    if (!f.resolvedUrl) continue
-    const res = await appFetch(f.resolvedUrl)
-    if (res.headers.get("content-type")?.includes("image")) {
+    const validUrl = await isValidIcon(f.resolvedUrl)
+    if (validUrl) {
+      const resolvedSize = f.sizes ? parseInt(f.sizes) : NaN
       favicon = {
-        value: f.value ?? "",
-        resolvedUrl: f.resolvedUrl,
-        label: f.label
+        source: f.source ?? "?",
+        size: f.sizes ?? "size undefined",
+        value: f.value ?? "value undefined (huh?)",
+        type: f.type ?? "type undefined",
+        resolvedSize: isNaN(resolvedSize) ? null : resolvedSize,
+        resolvedUrl: validUrl
       }
       break
     }
+
+
+    // if (!f.resolvedUrl) continue
+    // const res = await appFetch(f.resolvedUrl)
+    // const imageSizeRes = await getImageSizeFromResponse(res)
+    // if (!imageSizeRes.imageSize) continue
+    // favicon = {
+    //   value: f.value ?? "",
+    //   resolvedUrl: f.resolvedUrl,
+    //   label: f.label
+    // }
+    // break
   }
 
   if (!favicon) return <span className="meta-mute">-</span>
@@ -119,9 +138,16 @@ async function FaviconSummary(props: { data: MetadataMetadataItem, baseUrl: stri
         src={favicon.resolvedUrl}
       />
       <div>
+        <div className="text-xs">
+          {favicon.source}
+        </div>
         <a className="link-underline block leading-snug" target="_blank" href={favicon.resolvedUrl}>
           {favicon.value} <ExternalIcon />
-        </a> <span>{favicon.label}</span>
+        </a>
+        <div className="text-xs">
+          <div>{favicon.type}</div>
+          <span>{favicon.size}</span>
+        </div>
       </div>
     </div>
   )
@@ -200,6 +226,7 @@ function IconMetadata(props: {
   return (
     <>
       <MetadataRow data={{ label: "icon", value: undefined }}
+        putInfoBesideLabel
         contentProps={{ className: "col-span-2 col-span-2 row-start-[10] mt-2 grid grid-cols-1 gap-2" }}>
         {(async () => {
           if (!props.data.general.favicons.values.length) return <div className="opacity-40">-</div>
@@ -211,40 +238,42 @@ function IconMetadata(props: {
             size: string,
             resolvedSize: number | null,
             value: string,
+            type: string,
             resolvedUrl: string,
           }[] = []
 
           for (const f of rawFavicons) {
-            if (!f.resolvedUrl) continue
-            const res = await appFetch(f.resolvedUrl)
-
-            if (res.headers.get("content-type")?.includes("image")) {
-              const resolvedSize = f.labels[2] ? parseInt(f.labels[2]) : NaN
+            const validUrl = await isValidIcon(f.resolvedUrl)
+            if (validUrl) {
+              const resolvedSize = f ? parseInt(f.sizes ?? "") : NaN
               favicons.push({
-                source: f.labels[0] ?? "?",
-                size: f.labels[2] ?? "size undefined",
+                source: f.source ?? "?",
+                size: f.sizes ?? "size undefined",
                 value: f.value ?? "value undefined (huh?)",
+                type: f.type ?? "type undefined",
                 resolvedSize: isNaN(resolvedSize) ? null : resolvedSize,
-                resolvedUrl: f.resolvedUrl
+                resolvedUrl: validUrl
               })
+              continue
             }
           }
 
           return <>{favicons.map((item, i) => {
-            const { source, size, value, resolvedUrl, resolvedSize } = item
+            const { source, size, value, resolvedUrl, resolvedSize, type } = item
             return <div key={i} className="flex gap-2 items-start flex-wrap">
               <FaviconPreview
                 imgProps1={{ style: { height: resolvedSize ? px(resolvedSize) : undefined, width: resolvedSize ? px(resolvedSize) : undefined } }}
                 imgProps2={{ style: { height: resolvedSize ? px(resolvedSize) : undefined, width: resolvedSize ? px(resolvedSize) : undefined } }}
                 src={resolvedUrl} />
               <div className="text-xs meta-info-field-value break-words min-w-40 basis-0 grow">
-                &quot;{source}&quot;<br />
-                {value.startsWith('data:') ? (
-                  <div className="line-clamp-3">{value}...</div>
-                ) : (
-                  <div>{value}</div>
-                )}
+                {source}<br />
+
+                <a className={cn("link-underline block leading-snug", value.startsWith('data:') && "line-clamp-3")} target="_blank" href={resolvedUrl}>
+                  {value} <ExternalIcon />
+                </a>
+
                 {size ?? "size undefined"}<br />
+                {type ?? "size undefined"}<br />
               </div>
             </div>
           })}
@@ -257,4 +286,13 @@ function IconMetadata(props: {
       <IconListPreviewMetadataItem data={props.data.icons.appleTouchIconsPrecomposed} />
     </>
   )
+}
+
+async function isValidIcon(url?: string) {
+  if (!url) return false
+  const res = await appFetch(url)
+  if (res.headers.get('content-type') === 'image/svg+xml') return url
+  const imageSizeRes = await getImageSizeFromResponse(res)
+  if (!imageSizeRes.imageSize) return false
+  return url
 }

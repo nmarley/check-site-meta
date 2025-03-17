@@ -48,69 +48,43 @@ export function getResolvedMeta(m: Metadata) {
         resolvedUrl: resolveUrl(m.general.rawUrl),
       },
       ...(() => {
-        const type = "image-favicon"
         const favicons = {
           value: undefined,
-          label: "",
+          label: "favicons",
           type: "image-favicon",
           values: [
             ...m.general.favicons.map(e => {
               return {
                 value: e.href,
                 label: "",
-                labels: [e.rel, e.type, e.sizes],
+                // labels: [e.rel, e.type, e.sizes],
+                source: `link[rel="${e.rel}"]`,
+                type: e.type,
+                sizes: e.sizes,
                 resolvedUrl: resolveUrl(e.href),
               }
             }),
             {
               value: "/favicon.ico",
               label: "",
-              labels: ['/favicon.ico', 'image/x-icon', 'size undefined'],
+              // labels: ['direct link to /favicon.ico', 'image/x-icon', 'size undefined'],
+              source: 'direct link to /favicon.ico',
+              type: 'image/x-icon',
+              sizes: 'size undefined',
               resolvedUrl: resolveUrl("/favicon.ico"),
             },
             {
               value: "/favicon.png",
               label: "",
-              labels: ['/favicon.png', 'image/png', 'size undefined'],
+              // labels: ['direct link to /favicon.png', 'image/png', 'size undefined'],
+              source: 'direct link to /favicon.png',
+              type: 'image/png',
+              sizes: 'size undefined',
               resolvedUrl: resolveUrl("/favicon.png"),
             }
           ]
         }
-        const favicon1 = {
-          type,
-          value: m.general.favicon,
-          label: "favicon (icon)",
-          resolvedUrl: resolveUrl(m.general.favicon),
-        }
-        const favicon2 = {
-          type,
-          value: m.general.favicon2,
-          label: "favicon (shortcut icon)",
-          resolvedUrl: resolveUrl(m.general.favicon2),
-        }
-        const favicon3 = {
-          type,
-          value: m.general.favicon3,
-          label: "favicon (icon shortcut)",
-          resolvedUrl: resolveUrl(m.general.favicon3),
-        }
-        const favicon4 = {
-          type,
-          value: m.general.favicon4,
-          label: "favicon (direct link)",
-          resolvedUrl: resolveUrl(m.general.favicon4),
-        }
-        const inferredFavicon = m.general.favicon ?
-          favicon1 : m.general.favicon2 ?
-            favicon2 : m.general.favicon3 ?
-              favicon3 : favicon4
-
         return {
-          favicon1,
-          favicon2,
-          favicon3,
-          favicon4,
-          inferredFavicon,
           favicons
         }
       })(),
@@ -387,11 +361,11 @@ export const descriptions = {
     robots: "Instructions for search engines on how to index and follow links on the page.",
     viewport: "Defines the page's responsive behavior, commonly set for mobile-friendly design.",
     rawUrl: "The original URL before any resolution or normalization.",
-    favicon1: "Primary favicon of the page, usually a small icon shown in browser tabs.",
-    favicon2: "Shortcut icon, another format of favicon used for bookmarking and home screens.",
-    favicon3: "Icon shortcut, an alternative method for specifying a site icon.",
-    favicon4: "Direct link to a favicon file, typically used when multiple favicons are available.",
-    inferredFavicon: "The most relevant favicon chosen based on available metadata.",
+    // favicon1: "Primary favicon of the page, usually a small icon shown in browser tabs.",
+    // favicon2: "Shortcut icon, another format of favicon used for bookmarking and home screens.",
+    // favicon3: "Icon shortcut, an alternative method for specifying a site icon.",
+    // favicon4: "Direct link to a favicon file, typically used when multiple favicons are available.",
+    // inferredFavicon: "The most relevant favicon chosen based on available metadata.",
     favicons: "List of all favicons found in the metadata, including different formats and sizes.",
     author: "The name of the content creator or website author.",
     keywords: "Keywords related to the page's content, used for SEO (though less relevant today).",

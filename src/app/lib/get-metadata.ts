@@ -30,7 +30,6 @@ export function getRawMeta(root: HTMLElement, rawUrl: string) {
         description: root.querySelector("meta[name=description]")?.getAttribute("content"),
         url: root.querySelector("link[rel=canonical]")?.getAttribute("href"),
         rawUrl,
-        favicon: root.querySelector("link[rel=icon]")?.getAttribute("href"),
         favicons: root.querySelectorAll("link[rel~=icon]").map(e => {
           return {
             rel: e.getAttribute("rel"),
@@ -39,9 +38,10 @@ export function getRawMeta(root: HTMLElement, rawUrl: string) {
             href: e.getAttribute("href")
           }
         }),
-        favicon2: root.querySelector("link[rel='shortcut icon']")?.getAttribute("href"),
-        favicon3: root.querySelector("link[rel='icon shortcut']")?.getAttribute("href"),
-        favicon4: "/favicon.ico",
+        // favicon: root.querySelector("link[rel=icon]")?.getAttribute("href"),
+        // favicon2: root.querySelector("link[rel='shortcut icon']")?.getAttribute("href"),
+        // favicon3: root.querySelector("link[rel='icon shortcut']")?.getAttribute("href"),
+        // favicon4: "/favicon.ico",
         author: root.querySelector("meta[name=author]")?.getAttribute("content"),
         robots: root.querySelector("meta[name=robots]")?.getAttribute("content"),
         keywords: root.querySelector("meta[name=keywords]")?.getAttribute("content"),

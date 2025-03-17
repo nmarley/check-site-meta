@@ -9,16 +9,25 @@ export function AppImage(
     firstFrameGif?: boolean
   }
 ) {
+  const usingProxyRef = useRef(false)
+
   if (!src) return null
 
   if (firstFrameGif) {
     return <AppImageFirstFrameGif src={`/api/proxy-img?url=${ encodeURIComponent(src) }`} {...props as ComponentProps<"canvas">} />
   }
 
+
   return <img
     {...props}
     alt={props.alt || ""}
-    src={`/api/proxy-img?url=${ encodeURIComponent(src) }`}
+    src={src}
+    onError={e => {
+      if (usingProxyRef.current) return
+      e.currentTarget.src = `/api/proxy-img?url=${ encodeURIComponent(src) }`
+      usingProxyRef.current = true
+      // console.error("AppImage: Error loading image", e)
+    }}
   />;
 
 }

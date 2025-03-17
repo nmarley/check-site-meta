@@ -5,6 +5,7 @@ import { AppImage } from "../module/image/Image";
 import type { ComponentProps, SVGProps } from "react";
 import { cn } from "lazy-cn";
 import { MessageList, PreviewInfo, PreviewPanelContent, type PreviewMessages } from "./Preivew";
+import { getImageSizeFromResponse } from '../lib/image-size';
 
 export async function PreviewTwitter(
   { metadata, className, ...props }: { metadata: ResoledMetadata } & ComponentProps<"div">
@@ -147,17 +148,26 @@ export async function getTwitterPreview(metadata: ResoledMetadata) {
         return { fallbackToSummary: true }
       }
 
-      const res = await appFetch(data.image)
-      const buffer = Buffer.from(await res.arrayBuffer()); // Convert once
+      const res = await appFetch(data.image).catch((err) => {
+        // console.error("Error Procesing Twitter Image", err)
+        return undefined
+      })
+      if (!res) {
+        messages.push(["error", `Unable to fetch image from ${ data.image }. Defaulting to summary.`])
+        return { fallbackToSummary: true }
+      }
 
-      const { width, height, type: format } = (() => {
-        try {
-          return imageSize(buffer)
-        } catch (error) {
-          messages.push(["error", `Unable to read image metadata.${ isLargeSummary ? " Defaulting to summary." : "" } Error: ${ error } `])
-          return { width: undefined, height: undefined, type: undefined }
-        }
-      })()
+      const imageSizeRes = await getImageSizeFromResponse(res).catch((err) => {
+        // console.error("Error Procesing Twitter Image", err)
+        return undefined
+      })
+      if (!imageSizeRes?.imageSize) {
+        messages.push(["error", `Unable to read image metadata.${ isLargeSummary ? " Defaulting to summary." : "" }`])
+        return { fallbackToSummary: true }
+      }
+
+      const { buffer, imageSize: { width, height, type: format } } = imageSizeRes
+
       const imgData = { width, height, format, size: buffer.length, url: data.image }
 
       if (!width || !height || !format) {

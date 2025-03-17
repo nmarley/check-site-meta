@@ -11,6 +11,7 @@ export function MetadataRow(props: {
   contentProps?: ComponentProps<"div">
   titleProps?: ComponentProps<"div">
   containerProps?: ComponentProps<"div">
+  putInfoBesideLabel?: boolean
 }) {
   const { label, value, resolvedUrl, type, description } = props.data
 
@@ -38,10 +39,11 @@ export function MetadataRow(props: {
 
       <button className="w-fit h-fit text-start meta-info-field-key" onClick={toggleInfo}>
         {label}
+        {props.putInfoBesideLabel && <InfoButton className="ml-1" onClick={toggleInfo} />}
       </button>
 
       <div {...props.contentProps} className={cn('w-full', props.contentProps?.className)} >
-        <InfoButton className="float-right ml-1" onClick={toggleInfo} />
+        {!props.putInfoBesideLabel && <InfoButton className="float-right ml-1" onClick={toggleInfo} />}
         {content}
       </div>
 
