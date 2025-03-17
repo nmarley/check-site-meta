@@ -46,7 +46,7 @@ export async function PreviewGoogle({ metadata, className, ...props }: Component
             </div>
           </div>
           <div className="basis-full shrink grow fadeIn-100"> 
-            <div className="line-clamp-2 flow-root overflow-hidden text-px-14 font-[400]">
+            <div className="line-clamp-2 overflow-hidden text-px-14 font-[400]">
               {data.description}
             </div>
           </div>
