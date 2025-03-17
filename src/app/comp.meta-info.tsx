@@ -38,7 +38,7 @@ export async function MetaInfoPanel(
           tab("Open Graph", <>Open Graph</>, <MetaCard><OpengraphMetadata m={metadata} /></MetaCard>),
           tab("Twitter", <>Twitter</>, <MetaCard><TwitterMetadata m={metadata} /></MetaCard>),
           tab("Icons", <>Icons</>, <MetaCard><IconMetadata data={metadata} /></MetaCard>),
-          tab("Head", <>Head</>, <MetaCard><pre className="overflow-auto text-xs">{head?.split('<body')[0].replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '').replaceAll('/><', '/>\n<')}</pre></MetaCard>),
+          tab("Raw", <>Raw</>, <MetaCard><pre className="overflow-auto text-xs">{head?.split('<body')[0].replaceAll('/><', '/>\n<')}</pre></MetaCard>),
         ]} />
     );
   } catch (error) {
