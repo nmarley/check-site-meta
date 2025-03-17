@@ -2,8 +2,8 @@ import { Suspense, type ComponentProps, type CSSProperties, type SVGProps } from
 import { type ResoledMetadata } from "./lib/get-metadata-field-data";
 import { tab } from "./module/tab/tab-primitives";
 import { Tabs } from "./module/tab/Tabs";
-import { PreviewTwitter } from "./_view/PreviewTwitter";
-import { PreviewDiscord } from "./_view/PreviewDiscord";
+import { PreviewTwitter } from "./_previews/PreviewTwitter";
+import { PreviewDiscord } from "./_previews/PreviewDiscord";
 import { cn } from "lazy-cn";
 import { StaticTooltip, TooltipBase } from "./_view/Tooltip";
 

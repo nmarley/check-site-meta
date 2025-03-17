@@ -4,7 +4,7 @@ import { cn } from "lazy-cn";
 import { AppImage } from "../module/image/Image";
 import { appFetch } from "../lib/fetch";
 import imageSize from "image-size";
-import { MessageList, PreviewPanelContent, type PreviewMessages } from "./Preivew";
+import { MessageList, PreviewFrame, PreviewPanelContent, type PreviewMessages } from "./Preview";
 import { validateHex } from "../lib/hex";
 
 export async function PreviewDiscord(
@@ -17,7 +17,7 @@ export async function PreviewDiscord(
   const PreviewSection = (() => {
     if (!data) return null
     if (crashed) return null
-    return <div {...props} className={cn("bg-[var(--bg)] w-full rounded-md font-discord subpixel-antialiased", className)}
+    return <PreviewFrame {...props} className={cn("bg-[var(--bg)] font-discord", className)}
       style={{
         "--bg": "oklab(0.321044 -0.000249296 -0.00927344)",
         "--embed-bg": "oklab(0.296709 -0.000735492 -0.00772537)",
@@ -27,7 +27,7 @@ export async function PreviewDiscord(
       } as CSSProperties
       }
     >
-      <div className="_pl-[4.5rem] p-8">
+      <div className="p-8">
         <div className={cn(
           "bg-[var(--embed-bg)] border-l-[0.25rem] border-[var(--embed-border)] rounded-[0.25rem] grid",
           "max-w-max"
@@ -66,7 +66,7 @@ export async function PreviewDiscord(
           </div>
         </div>
       </div>
-    </div>
+    </PreviewFrame>
 
   })()
 

@@ -4,8 +4,8 @@ import type { ResoledMetadata } from "../lib/get-metadata-field-data";
 import { AppImage } from "../module/image/Image";
 import type { ComponentProps, SVGProps } from "react";
 import { cn } from "lazy-cn";
-import { MessageList, PreviewInfo, PreviewPanelContent, type PreviewMessages } from "./Preivew";
 import { getImageSizeFromResponse } from '../lib/image-size';
+import { PreviewPanelContent, MessageList, type PreviewMessages } from './Preview';
 
 export async function PreviewTwitter(
   { metadata, className, ...props }: { metadata: ResoledMetadata } & ComponentProps<"div">
@@ -81,7 +81,6 @@ export async function PreviewTwitter(
       }
     />
   )
-
 }
 
 
