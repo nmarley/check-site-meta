@@ -61,15 +61,16 @@ export async function PreviewTwitter(
         </div>
       )
     } else {
-      return (
-        null
-      )
+      return (null)
     }
   })()
 
   return (
     <PreviewPanelContent
-      PreviewSection={PreviewSection}
+      PreviewSection={<div
+        className="p-8 w-full min-h-80 bg-white rounded-lg overflow-hidden flex justify-center">
+        {PreviewSection}
+      </div>}
       PreviewInfoContent={
         <>
           {image && (<div className="break-word text-xs text-foreground-muted-2">
