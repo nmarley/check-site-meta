@@ -5,6 +5,7 @@ import { Tabs } from "./module/tab/Tabs";
 import { PreviewTwitter } from "./_view/PreviewTwitter";
 import { PreviewDiscord } from "./_view/PreviewDiscord";
 import { cn } from "lazy-cn";
+import { StaticTooltip, TooltipBase } from "./_view/Tooltip";
 
 export async function MetaPreviewPanel(
   props: { metadata: Promise<ResoledMetadata | null> }
@@ -13,48 +14,77 @@ export async function MetaPreviewPanel(
     const metadata = await props.metadata;
     if (!metadata) return null
     return (
-      <Suspense fallback={<span className="fadeIn-0">Loading...</span>}>
+      <Suspense fallback={<span className="fadeIn-0 p-3">Loading...</span>}>
         <Tabs
           id="preview"
-          // containerProps={{ className: "flex flex-col gap-8 items-center w-full" }}
-          tabProps={{ className: "tab fadeIn-50 *:p-2 *:px-3 *:[&>svg]:w-5 *:[&>svg]:h-5 gap-0" }}
-          // tabProps={{ className: "*:p-1" }}
-          // tabIndicatorProps={{ className: "bg-white rounded-sm shadow-xs" }}
+          tabProps={{
+            className: "tab fadeIn-50 tab-item:p-[var(--p)] tab-item:px-[var(--px)] svg:w-5 svg:h-5 gap-0",
+            style: {
+              "--p": "0.5rem",
+              "--px": "0.75rem",
+            } as CSSProperties
+          }}
           tabs={[
             tab("Twitter",
-              <RiTwitterXFill />,
+              <StaticTooltip
+                tooltip={<TooltipBase>X/Twitter</TooltipBase>}
+                className=" -m-2 -mx-3 p-2 px-3">
+                <RiTwitterXFill
+                  className="transition group-data-active:text-foreground"
+                />
+              </StaticTooltip>,
               <PreviewTwitter key="x" metadata={metadata} className="fadeIn-100" />
             ),
             tab("Discord",
-              <IcBaselineDiscord
-                style={{ "--color": "#5865F2" } as CSSProperties}
-                className="transition group-hover:text-[var(--color)] group-data-active:text-[var(--color)]"
-              />,
+              <StaticTooltip
+                tooltip={<TooltipBase>Discord</TooltipBase>}
+                className=" -m-2 -mx-3 p-2 px-3">
+                <IcBaselineDiscord
+                  style={{ "--color": "#5865F2" } as CSSProperties}
+                  className="transition group-hover:text-[var(--color)] group-data-active:text-[var(--color)]"
+                />
+              </StaticTooltip>,
               <PreviewDiscord key="d" metadata={metadata} className="fadeIn-100" />
             ),
             tab("Google",
-              <LogosGoogleIcon className="p-0.5" />,
+              <StaticTooltip
+                tooltip={<TooltipBase>Google</TooltipBase>}
+                className=" -m-2 -mx-3 p-2 px-3">
+                <LogosGoogleIcon className="p-0.5" />
+              </StaticTooltip>,
               <ComingSoon />
             ),
             tab("Facebook",
-              <IcBaselineFacebook
-                style={{ "--color": "#1877f2" } as CSSProperties}
-                className="transition group-hover:text-[var(--color)] group-data-active:text-[var(--color)]"
-              />,
+              <StaticTooltip
+                tooltip={<TooltipBase>Facebook</TooltipBase>}
+                className=" -m-2 -mx-3 p-2 px-3">
+                <IcBaselineFacebook
+                  style={{ "--color": "#1877f2" } as CSSProperties}
+                  className="transition group-hover:text-[var(--color)] group-data-active:text-[var(--color)]"
+                />
+              </StaticTooltip>,
               <ComingSoon />
             ),
             tab("Whatsapp",
-              <IcBaselineWhatsapp
-                style={{ "--color": "#65D072" } as CSSProperties}
-                className="transition group-hover:text-[var(--color)] group-data-active:text-[var(--color)]"
-              />,
+              <StaticTooltip
+                tooltip={<TooltipBase>Whatsapp</TooltipBase>}
+                className=" -m-2 -mx-3 p-2 px-3">
+                <IcBaselineWhatsapp
+                  style={{ "--color": "#65D072" } as CSSProperties}
+                  className="transition group-hover:text-[var(--color)] group-data-active:text-[var(--color)]"
+                />
+              </StaticTooltip>,
               <ComingSoon />
             ),
             tab("Telegram",
-              <IcBaselineTelegram
-                style={{ "--color": "#2AABEE" } as CSSProperties}
-                className="transition group-hover:text-[var(--color)] group-data-active:text-[var(--color)]"
-              />,
+              <StaticTooltip
+                tooltip={<TooltipBase>Telegram</TooltipBase>}
+                className=" -m-2 -mx-3 p-2 px-3">
+                <IcBaselineTelegram
+                  style={{ "--color": "#2AABEE" } as CSSProperties}
+                  className="transition group-hover:text-[var(--color)] group-data-active:text-[var(--color)]"
+                />
+              </StaticTooltip>,
               <ComingSoon />
             ),
           ]} />

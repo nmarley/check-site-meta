@@ -103,10 +103,12 @@ export function Tabs
               contentRect.current.height = (tabContainer.nextSibling as HTMLDivElement)?.getBoundingClientRect?.().height ?? null
             }}
             className={cn(
-              "relative group tab-item",
+              "relative group cursor-pointer data-active:cursor-auto",
             )}
           >
-            {label.label}
+            <div className="tab-item">
+              {label.label}
+            </div>
             {tab === label && <div ref={indicatorRef}
               {...props.tabIndicatorProps}
               className={cn(
