@@ -2,11 +2,13 @@ import { imageSize } from 'image-size'
 import { appFetch } from "../lib/fetch";
 import type { ResoledMetadata } from "../lib/get-metadata-field-data";
 import { AppImage } from "../module/image/Image";
-import type { ComponentProps, SVGProps } from "react";
+import type { ComponentProps, CSSProperties, SVGProps } from "react";
 import { cn } from "lazy-cn";
 import { getImageSizeFromResponse } from '../lib/image-size';
-import { PreviewPanelContent, MessageList, type PreviewMessages } from './Preview';
-import { PreviewFrame } from './Preview.client';
+import { PreviewPanelContent, MessageList, type PreviewMessages, PreviewMenu } from './Preview';
+import { PreviewFrame, PreviewThemeSwitcher } from './Preview.client';
+import { tab } from '../module/tab/tab-primitives';
+import { MaterialSymbolsDarkModeOutline, MaterialSymbolsLightModeOutline, MaterialSymbolsNightsStayOutline } from '../theme-switch';
 
 export async function PreviewTwitter(
   { metadata, className, ...props }: { metadata: ResoledMetadata } & ComponentProps<"div">
@@ -19,7 +21,7 @@ export async function PreviewTwitter(
       return (
         <TwitterPreviewFrame>
           <div className={cn("flex flex-col gap-y-1 max-w-[32.375rem] leading-5 font-twitter font-[400] subpixel-antialiased", className)} {...props}>
-            <div className="rounded-2xl relative border border-[rgb(207,_217,_222)] overflow-hidden aspect-[120/63]">
+            <div className="rounded-2xl relative border border-(--border) overflow-hidden aspect-[120/63]">
               <AppImage
                 width="1200"
                 height="630"
@@ -27,11 +29,11 @@ export async function PreviewTwitter(
                 src={image?.url}
                 firstFrameGif={image?.format === "gif"}
               />
-              <div className="fadeIn-50 absolute bottom-3 left-3 px-2 bg-[rgba(0,_0,_0,_0.77)] text-white rounded-sm line-clamp-1">
+              <div className="fadeIn-50 absolute bottom-3 left-3 px-2 bg-(--overlay-bg) text-(--overlay-text) rounded-sm line-clamp-1">
                 {data.title}
               </div>
             </div>
-            <div className="fadeIn-100 text-[0.813rem] text-[rgb(83,_100,_113)]">
+            <div className="fadeIn-100 text-[0.813rem] text-(--text-description)">
               From {data.url}
             </div>
           </div>
@@ -40,23 +42,23 @@ export async function PreviewTwitter(
     } else if (type === "summary") {
       return (
         <TwitterPreviewFrame>
-          <div className="max-w-[32.375rem] h-[8.188rem] w-full rounded-2xl border border-[rgb(207,_217,_222)] flex overflow-hidden bg-white">
-            <div className="w-[6.875rem] min-[554px]:w-[8.125rem] border-r border-[rgb(207,_217,_222)] shrink-0 flex items-center justify-center bg-[rgba(247,249,249,1.00)]">
+          <div className="max-w-[32.375rem] h-[8.188rem] w-full rounded-2xl border border-(--border) flex overflow-hidden bg-(--bg)">
+            <div data-noimg={!!image ? "" : undefined} className="w-[6.875rem] min-[554px]:w-[8.125rem] border-r border-(--border) shrink-0 flex items-center justify-center data-noimg:bg-(--image-noimg-bg)">
               {
                 image ?
                   <AppImage
                     className="w-full h-full object-cover bg-white"
                     firstFrameGif={image?.format === "gif"}
                     src={image.url} />
-                  : <svg viewBox="0 0 24 24" aria-hidden="true" className="h-[2em] fill-current align-bottom select-none max-w-full relative text-[rgba(83,100,113,1.00)] inline-block"><g><path d="M1.998 5.5c0-1.38 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.12 2.5 2.5v13c0 1.38-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.12-2.5-2.5v-13zm2.5-.5c-.276 0-.5.22-.5.5v13c0 .28.224.5.5.5h15c.276 0 .5-.22.5-.5v-13c0-.28-.224-.5-.5-.5h-15zM6 7h6v6H6V7zm2 2v2h2V9H8zm10 0h-4V7h4v2zm0 4h-4v-2h4v2zm-.002 4h-12v-2h12v2z"></path></g></svg>
+                  : <svg viewBox="0 0 24 24" aria-hidden="true" className="h-[2em] fill-current align-bottom select-none max-w-full relative text-(--image-noimg-fill) inline-block"><g><path d="M1.998 5.5c0-1.38 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.12 2.5 2.5v13c0 1.38-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.12-2.5-2.5v-13zm2.5-.5c-.276 0-.5.22-.5.5v13c0 .28.224.5.5.5h15c.276 0 .5-.22.5-.5v-13c0-.28-.224-.5-.5-.5h-15zM6 7h6v6H6V7zm2 2v2h2V9H8zm10 0h-4V7h4v2zm0 4h-4v-2h4v2zm-.002 4h-12v-2h12v2z"></path></g></svg>
               }
             </div>
             <div className="p-3 flex flex-col gap-0.5 justify-center font-twitter text-[0.9375rem] leading-5  font-[400] subpixel-antialiased">
-              <div className="text-[rgb(83,_100,_113)]">
+              <div className="text-(--text-description)">
                 {data.url}</div>
-              <div className="text-[rgb(15,_20,_25)] line-clamp-1">
+              <div className="text-(--text-title) line-clamp-1">
                 {data.title}</div>
-              <div className="text-[rgb(83,_100,_113)] line-clamp-2">
+              <div className="text-(--text-description) line-clamp-2">
                 <span>
                   {data.description}
                 </span>
@@ -86,26 +88,78 @@ export async function PreviewTwitter(
 }
 
 function TwitterPreviewFrame({ children }: { children: React.ReactNode }) {
-  return <PreviewFrame
-    themeId="t-twitter"
-    className="p-8 bg-white rounded-lg overflow-hidden flex justify-center">
-    {children}
-  </PreviewFrame>
+  return <>
+    <PreviewFrame
+      themeId="t-twitter"
+      className="p-8 bg-(--bg) rounded-lg overflow-hidden flex justify-center"
+      style={{
+        "--overlay-text": "white",
+        "--overlay-bg": "rgba(0, 0, 0, 0.77)",
+      } as CSSProperties}
+      themes={{
+        "default": {
+          "--bg": "white",
+          "--border": "rgb(207,_217,_222)",
+          // "--image-bg": "rgba(247,249,249,1.00)", // TODO - TEST!
+
+          "--image-noimg-bg": "rgb(247, 249, 249)",
+          "--image-noimg-fill": "rgb(83, 100, 113)",
+          "--text-title": "rgb(15, 20, 25)",
+          "--text-description": "rgb(83, 100, 113)",
+        } as CSSProperties,
+        "dim": {
+          "--bg": "rgb(21, 32, 43)",
+          "--border": "rgb(56, 68, 77)",
+          // "--image-bg": "rgba(0, 0, 0, 0.77)", // TODO - TEST!
+
+          "--image-noimg-bg": "rgb(30, 39, 50)",
+          "--image-noimg-fill": "rgb(139, 152, 165)",
+          "--text-title": "rgb(247, 249, 249)",
+          "--text-description": "rgb(139, 152, 165)",
+
+        } as CSSProperties,
+        "dark": {
+          "--bg": "black",
+          "--border": "rgb(47, 51, 54)",
+          // "--image-bg": "rgba(247,249,249,1.00)", // TODO - TEST!
+
+          "--image-noimg-bg": "rgb(22, 24, 28)",
+          "--image-noimg-fill": "rgb(113, 118, 123)",
+          "--text-title": "rgb(231, 233, 234)",
+          "--text-description": "rgb(113, 118, 123)",
+
+
+        } as CSSProperties,
+      }}
+    >
+      {children}
+    </PreviewFrame>
+    <PreviewMenu>
+      <PreviewThemeSwitcher
+        themeId="t-twitter"
+        themes={[
+          tab("default", <MaterialSymbolsLightModeOutline />),
+          tab("dim", <MaterialSymbolsPartlyCloudyDayOutlineRounded />),
+          tab("dark", <MaterialSymbolsDarkModeOutline />),
+        ]}
+      />
+    </PreviewMenu>
+  </>
+}
+
+
+export function MaterialSymbolsPartlyCloudyDayOutlineRounded(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}><path fill="currentColor" d="M12 5q-.425 0-.712-.288T11 4V2q0-.425.288-.712T12 1t.713.288T13 2v2q0 .425-.288.713T12 5m4.95 2.05q-.275-.275-.275-.7t.275-.7l1.4-1.425q.3-.3.712-.3t.713.3q.275.275.275.7t-.275.7L18.35 7.05q-.275.275-.7.275t-.7-.275M20 13q-.425 0-.713-.288T19 12t.288-.712T20 11h2q.425 0 .713.288T23 12t-.288.713T22 13zm-1.65 6.775l-1.4-1.425q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275l1.425 1.4q.3.3.3.712t-.3.713t-.712.3t-.713-.3M5.65 7.05L4.225 5.625q-.275-.275-.275-.7t.275-.7q.3-.3.713-.3t.712.3l1.4 1.425q.275.275.275.7t-.275.7t-.7.275t-.7-.275M6 19h4.5q.625 0 1.063-.437T12 17.5t-.425-1.062t-1.05-.438H9.25l-.5-1.2q-.35-.825-1.1-1.312T6 13q-1.25 0-2.125.875T3 16t.875 2.125T6 19m0 2q-2.075 0-3.537-1.463T1 16t1.463-3.537T6 11q1.5 0 2.738.813T10.575 14q1.45 0 2.438 1.075T14 17.65q-.05 1.425-1.062 2.388T10.5 21zm8-3.35q-.125-.5-.25-.975t-.25-.975q1.125-.475 1.813-1.475T16 12q0-1.65-1.175-2.825T12 8q-1.5 0-2.625.975T8.05 11.45q-.5-.125-1.025-.225T6 11q.35-2.2 2.063-3.6T12 6q2.5 0 4.25 1.75T18 12q0 1.925-1.1 3.463T14 17.65M12.025 12"></path></svg>
+  )
 }
 
 
 export function ClarityExclamationCircleSolid(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 36 36" {...props}><path fill="currentColor" d="M18 6a12 12 0 1 0 12 12A12 12 0 0 0 18 6m-1.49 6a1.49 1.49 0 0 1 3 0v6.89a1.49 1.49 0 1 1-3 0ZM18 25.5a1.72 1.72 0 1 1 1.72-1.72A1.72 1.72 0 0 1 18 25.5" className="clr-i-solid clr-i-solid-path-1"></path><path fill="none" d="M0 0h36v36H0z"></path></svg>
-  )
+  return (<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 36 36" {...props}><path fill="currentColor" d="M18 6a12 12 0 1 0 12 12A12 12 0 0 0 18 6m-1.49 6a1.49 1.49 0 0 1 3 0v6.89a1.49 1.49 0 1 1-3 0ZM18 25.5a1.72 1.72 0 1 1 1.72-1.72A1.72 1.72 0 0 1 18 25.5" className="clr-i-solid clr-i-solid-path-1"></path><path fill="none" d="M0 0h36v36H0z"></path></svg>)
 }
-
-
-
 export function ClarityExclamationTriangleSolid(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 36 36" {...props}><path fill="currentColor" d="M30.33 25.54L20.59 7.6a3 3 0 0 0-5.27 0L5.57 25.54A3 3 0 0 0 8.21 30h19.48a3 3 0 0 0 2.64-4.43Zm-13.87-12.8a1.49 1.49 0 0 1 3 0v6.89a1.49 1.49 0 1 1-3 0ZM18 26.25a1.72 1.72 0 1 1 1.72-1.72A1.72 1.72 0 0 1 18 26.25" className="clr-i-solid clr-i-solid-path-1"></path><path fill="none" d="M0 0h36v36H0z"></path></svg>
-  )
+  return (<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 36 36" {...props}><path fill="currentColor" d="M30.33 25.54L20.59 7.6a3 3 0 0 0-5.27 0L5.57 25.54A3 3 0 0 0 8.21 30h19.48a3 3 0 0 0 2.64-4.43Zm-13.87-12.8a1.49 1.49 0 0 1 3 0v6.89a1.49 1.49 0 1 1-3 0ZM18 26.25a1.72 1.72 0 1 1 1.72-1.72A1.72 1.72 0 0 1 18 26.25" className="clr-i-solid clr-i-solid-path-1"></path><path fill="none" d="M0 0h36v36H0z"></path></svg>)
 }
 
 
@@ -247,8 +301,6 @@ export async function getTwitterPreview(metadata: ResoledMetadata) {
 
     return { type: "summary_large_image", image }
   })()
-
-
 
   return {
     messages,
