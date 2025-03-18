@@ -4,9 +4,11 @@ import { cn } from "lazy-cn";
 import { AppImage } from "../module/image/Image";
 import { appFetch } from "../lib/fetch";
 import imageSize from "image-size";
-import { MessageList, PreviewPanelContent, type PreviewMessages } from "./Preview";
+import { MessageList, PreviewMenu, PreviewPanelContent, type PreviewMessages } from "./Preview";
 import { validateHex } from "../lib/hex";
-import { PreviewFrame } from "./Preview.client";
+import { PreviewFrame, PreviewThemeSwitcher } from "./Preview.client";
+import { tab } from "../module/tab/tab-primitives";
+import { MaterialSymbolsDarkModeOutline, MaterialSymbolsLightModeOutline } from "../theme-switch";
 
 export async function PreviewDiscord(
   { metadata, className, ...props }: ComponentProps<"div"> & {
@@ -18,19 +20,39 @@ export async function PreviewDiscord(
   const PreviewSection = (() => {
     if (!data) return null
     if (crashed) return null
-    return <PreviewFrame {...props} className={cn("bg-[var(--bg)] font-discord", className)}
+    return <PreviewFrame themeId="t-discord" {...props} className={cn("bg-[var(--bg)] font-discord", className)}
       style={{
-        "--bg": "oklab(0.321044 -0.000249296 -0.00927344)",
-        "--embed-bg": "oklab(0.296709 -0.000735492 -0.00772537)",
-        "--embed-border": data.themeColor ?? "oklab(0.239468 0.000131123 -0.00589392)",
-        "--embed-link": "oklab(0.705515 -0.0795695 -0.144235)",
-        "--embed-text": "oklab(0.89908 -0.00192907 -0.0048306)",
+        // "--bg": "oklab(0.321044 -0.000249296 -0.00927344)",
+        // "--embed-bg": "oklab(0.296709 -0.000735492 -0.00772537)",
+        // "--embed-border": data.themeColor ?? "oklab(0.239468 0.000131123 -0.00589392)",
+        // "--embed-link": "oklab(0.705515 -0.0795695 -0.144235)",
+        // "--embed-text": "oklab(0.89908 -0.00192907 -0.0048306)",
       } as CSSProperties}
+      themes={{
+        "default": {
+          "--bg": "oklab(0.321044 -0.000249296 -0.00927344)",
+          "--embed-bg": "oklab(0.296709 -0.000735492 -0.00772537)",
+          "--embed-border": data.themeColor ?? "oklab(0.239468 0.000131123 -0.00589392)",
+          "--embed-link": "oklab(0.705515 -0.0795695 -0.144235)",
+          "--embed-text": "oklab(0.89908 -0.00192907 -0.0048306)",
+          "--embed-site-name": "oklab(0.787067 -0.00258079 -0.0110391)",
+          "--embed-author": "oklab(0.963876 -0.000228494 -0.00284719)",
+        } as CSSProperties,
+        "light": {
+          "--bg": "oklab(0.999994 0.0000455678 0.0000200868)",
+          "--embed-bg": "oklab(0.963876 -0.000228494 -0.00284719)",
+          "--embed-border": data.themeColor ?? "oklab(0.921147 -0.000889629 -0.00448376)",
+          "--embed-link": "oklab(0.553338 -0.042478 -0.200934)",
+          "--embed-text": "oklab(0.321044 -0.000249296 -0.00927344)",
+          "--embed-site-name": "oklab(0.432341 0.00109924 -0.0133243)",
+          "--embed-author": "oklab(0.122749 0.000796985 -0.00276326)",
+        } as CSSProperties,
+      }}
     >
       <div className="p-8">
         <div className={cn(
           "fadeIn-100",
-          "bg-[var(--embed-bg)] border-l-[0.25rem] border-[var(--embed-border)] rounded-[0.25rem] grid",
+          "bg-[var(--embed-bg)] border-l-[0.25rem] border-(--embed-border) rounded-[0.25rem] grid",
           "max-w-max"
         )}>
           <div className={cn(
@@ -40,16 +62,16 @@ export async function PreviewDiscord(
             "max-w-[27rem]"
           )}>
             {data.site && (
-              <div className="fadeIn-0 mt-2 col-[1/1] text-[color:var(--embed-text)] text-[.75rem] font-[400] leading-[1rem]">
+              <div className="fadeIn-0 mt-2 col-[1/1] text-(--embed-site-name) text-[.75rem] font-[400] leading-[1rem]">
                 {data.site}
               </div>
             )}
             <div className="fadeIn-50 mt-2 col-[1/1] break-words min-w-0">
-              <a className="text-[color:var(--embed-link)] text-[1rem] font-[600] leading-[1.375rem] min-w-0 line-clamp-2">
+              <a className="text-(--embed-link) text-[1rem] font-[600] leading-[1.375rem] min-w-0 line-clamp-2">
                 {data.title}
               </a>
             </div>
-            <div className="fadeIn-100 mt-2 col-[1/1] text-[color:var(--embed-text)] text-[0.875rem] font-[400] leading-[1.125rem] whitespace-pre-wrap break-words min-w-0">
+            <div className="fadeIn-100 mt-2 col-[1/1] text-(--embed-text) text-[0.875rem] font-[400] leading-[1.125rem] whitespace-pre-wrap break-words min-w-0">
               {data.description}
             </div>
             {data.image && data.type === "summary" && (
@@ -58,9 +80,9 @@ export async function PreviewDiscord(
               </div>
             )}
             {data.image && data.type === "summary_large_image" && (
-              <div className="fadeIn-150 col-[1/1] mt-4 w-full flex object-contain rounded-[.25rem] overflow-hidden">
-                <div>
-                  <AppImage src={data.image} alt="" className="max-w-none w-full" />
+              <div className="fadeIn-150 col-[1/1] mt-4 w-full flex object-contain rounded-[.25rem] overflow-hidden max-w-fit">
+                <div className="">
+                  <AppImage src={data.image} alt="" className="max-w-none w-full max-h-[300px]" />
                 </div>
               </div>
             )}
@@ -69,11 +91,24 @@ export async function PreviewDiscord(
       </div>
     </PreviewFrame>
 
-  })()
+  })
 
   return (
     <PreviewPanelContent
-      PreviewSection={PreviewSection}
+      PreviewSection={
+        <>
+          <PreviewSection />
+          <PreviewMenu>
+            <PreviewThemeSwitcher
+              themeId="t-discord"
+              themes={[
+                tab("default", <MaterialSymbolsDarkModeOutline />),
+                tab("light", <MaterialSymbolsLightModeOutline />),
+              ]}
+            />
+          </PreviewMenu>
+        </>
+      }
       PreviewInfoContent={
         <MessageList messages={messages} />
       }

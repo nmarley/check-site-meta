@@ -87,6 +87,7 @@ export async function PreviewTwitter(
 
 function TwitterPreviewFrame({ children }: { children: React.ReactNode }) {
   return <PreviewFrame
+    themeId="t-twitter"
     className="p-8 bg-white rounded-lg overflow-hidden flex justify-center">
     {children}
   </PreviewFrame>
