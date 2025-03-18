@@ -16,6 +16,7 @@ export async function PreviewGoogle({ metadata, className, ...props }: Component
     if (!data) return null
     return (
       <PreviewFrame
+        themeId="t-google"
         className="p-8 rounded-lg overflow-hidden flex justify-center"
         style={{
           "--font": "Arial, sans-serif",
@@ -102,7 +103,9 @@ export async function PreviewGoogle({ metadata, className, ...props }: Component
         <>
           <PreviewSection />
           <PreviewMenu>
-            <PreviewThemeSwitcher themes={[
+            <PreviewThemeSwitcher
+              themeId="t-google"
+              themes={[
               tab("default", <MaterialSymbolsLightModeOutline />),
               tab("dark", <MaterialSymbolsDarkModeOutline />),
             ]} />

@@ -2,18 +2,17 @@
 
 import { cn } from "lazy-cn"
 import { useSearchParams } from "next/navigation"
-import type { ComponentProps, CSSProperties, ReactNode } from "react"
+import { useEffect, type ComponentProps, type CSSProperties, type ReactNode } from "react"
 import { TabList } from "../module/tab/TabList"
-import { tab } from "../module/tab/tab-primitives"
-import { MaterialSymbolsDarkModeOutline, MaterialSymbolsLightModeOutline } from "../theme-switch"
 
 export function PreviewFrame(
-  { className, themes, ...props }: ComponentProps<"div"> & {
+  { className, themes, themeId,...props }: ComponentProps<"div"> & {
+    themeId: string,
     themes?: Record<string, CSSProperties> & { "default": CSSProperties }
   }
 ) {
   const sp = useSearchParams()
-  const themeKey = sp.get("theme")
+  const themeKey = sp.get(themeId)
 
   const theme = (() => {
     if (!themes) return props.style
@@ -34,21 +33,21 @@ export function PreviewFrame(
 }
 
 export function PreviewThemeSwitcher(props: {
+  themeId: string,
   themes?: {
     key: string,
     label: ReactNode,
   }[],
 }) {
   const sp = useSearchParams()
-
-
+  const spTheme = props.themes?.findIndex((item) => item.key === sp.get(props.themeId)) ?? 0
   return (
     <TabList
-      className="tab-item:p-1.5 tab-item:px-2 text-lg"
-      initialTab={() => props.themes?.findIndex((item, i) => item.key === sp.get("theme")) ?? 0}
+      className="tab-item:p-1.5 tab-item:px-2 text-lg p-1"
+      initialTab={() => spTheme < 0 ? 0 : spTheme}
       onTabChange={tab => {
         const newSp = new URLSearchParams(sp)
-        newSp.set("theme", tab.key)
+        newSp.set(props.themeId, tab.key)
         window.history.replaceState(null, "", "?" + newSp.toString())
       }}
       tabs={props.themes ?? []}
