@@ -54,11 +54,11 @@ export async function PreviewTwitter(
               }
             </div>
             <div className="p-3 flex flex-col gap-0.5 justify-center font-twitter text-[0.9375rem] leading-5  font-[400] subpixel-antialiased">
-              <div className="text-(--text-description)">
+              <div className="text-(--text-description) fadeIn-50">
                 {data.url}</div>
-              <div className="text-(--text-title) line-clamp-1">
+              <div className="text-(--text-title) line-clamp-1 fadeIn-100">
                 {data.title}</div>
-              <div className="text-(--text-description) line-clamp-2">
+              <div className="text-(--text-description) line-clamp-2 fadeIn-150">
                 <span>
                   {data.description}
                 </span>
