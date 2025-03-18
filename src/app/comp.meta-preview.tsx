@@ -7,6 +7,7 @@ import { PreviewDiscord } from "./_previews/PreviewDiscord";
 import { cn } from "lazy-cn";
 import { StaticTooltip, TooltipBase } from "./_view/Tooltip";
 import { PreviewGoogle } from "./_previews/PreviewGoogle";
+import { PreviewFacebook } from "./_previews/PreviewFacebook";
 
 export async function MetaPreviewPanel(
   props: { metadata: Promise<ResoledMetadata | null> }
@@ -64,7 +65,7 @@ export async function MetaPreviewPanel(
                   className="transition group-hover:text-[var(--color)] group-data-active:text-[var(--color)]"
                 />
               </StaticTooltip>,
-              <ComingSoon />
+              <PreviewFacebook key="f" metadata={metadata} className="fadeIn-0" />
             ),
             tab("Whatsapp",
               <StaticTooltip
