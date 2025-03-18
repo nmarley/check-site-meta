@@ -43,6 +43,7 @@ export function PreviewThemeSwitcher(props: {
   const spTheme = props.themes?.findIndex((item) => item.key === sp.get(props.themeId)) ?? 0
   return (
     <TabList
+      key={props.themeId}
       className="tab-item:p-1.5 tab-item:px-2 text-lg p-1"
       initialTab={() => spTheme < 0 ? 0 : spTheme}
       onTabChange={tab => {
@@ -53,5 +54,4 @@ export function PreviewThemeSwitcher(props: {
       tabs={props.themes ?? []}
     />
   )
-
 }
