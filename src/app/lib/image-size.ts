@@ -1,31 +1,33 @@
 import imageSize from "image-size";
 
 export async function getImageSizeFromResponse(response: Response) {
+  let errorMessage = ""
+
   const abuf = await response.arrayBuffer().catch(error => {
-    // console.log("getImageSizeFromResponse: Error fetching image buffer", error)
+    errorMessage = error.message
     return undefined
   })
-  if (!abuf) return { arrayBufferError: true }
+  if (!abuf) return { arrayBufferError: true, error: `Error fetching image buffer from url. ${ errorMessage }` }
 
   const buffer = (() => {
     try {
       return Buffer.from(abuf)
     } catch (error) {
-      // console.log("getImageSizeFromResponse: Error converting to buffer", error)
+      errorMessage = error instanceof Error ? error.message : "Unknown error"
       return undefined
     }
   })()
-  if (!buffer) return { bufferError: true }
+  if (!buffer) return { bufferError: true, error: `Error converting to buffer. ${ errorMessage }` }
 
   const imageSizeRes = (() => {
     try {
       return imageSize(buffer)
     } catch (error) {
-      // console.log("getImageSizeFromResponse: Error getting image size", error)
+      errorMessage = error instanceof Error ? error.message : "Unknown error"
       return undefined
     }
   })()
-  if (!imageSizeRes) return { imageSizeError: true }
+  if (!imageSizeRes) return { imageSizeError: true, error: `Error getting image size. ${errorMessage}` }
 
   return { imageSize: imageSizeRes, buffer }
 

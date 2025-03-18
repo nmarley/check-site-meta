@@ -14,24 +14,27 @@ export function AppImage(
 
   const usingProxyRef = useRef(false)
   
-  if (!src) return null
+  // if (!src) return null
   if (firstFrameGif) {
-    return <AppImageFirstFrameGif src={`/api/proxy-img?url=${ encodeURIComponent(src) }`} {...props as ComponentProps<"canvas">} />
+    return <AppImageFirstFrameGif src={src ? `/api/proxy-img?url=${ encodeURIComponent(src) }` : undefined} {...props as ComponentProps<"canvas">} />
   }
 
   if (error && onErrorFallback) {
+    console.log("Hello???")
     return onErrorFallback
   }
 
   return <img
     {...props}
     alt={props.alt || ""}
-    src={src}
+    // src={src}
+    src={src ? `/api/proxy-img?url=${ encodeURIComponent(src) }` : undefined}
     onError={e => {
-      if (!usingProxyRef.current) {
-        e.currentTarget.src = `/api/proxy-img?url=${ encodeURIComponent(src) }`
+      if (!usingProxyRef.current && src) {
+        e.currentTarget.src = src
         usingProxyRef.current = true
       } else {
+        console.error("Failed to load image", src)
         setError(true)
       }
     }}
@@ -41,7 +44,7 @@ export function AppImage(
 
 function AppImageFirstFrameGif(
   { src, ...props }: ComponentProps<'canvas'> & {
-    src: string
+    src?: string
   }
 ) {
   const canvasRef = useRef<HTMLCanvasElement>(null)

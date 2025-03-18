@@ -6,6 +6,8 @@ import { tab } from "../module/tab/tab-primitives";
 import { MaterialSymbolsDarkModeOutline, MaterialSymbolsLightModeOutline } from "../theme-switch";
 import { cn } from "lazy-cn";
 import { AppImage } from "../module/image/Image";
+import { getImageSizeFromResponse } from "../lib/image-size";
+import { appFetch } from "../lib/fetch";
 
 export async function PreviewFacebook(
   { metadata, className, ...props }: ComponentProps<"div"> & {
@@ -13,9 +15,10 @@ export async function PreviewFacebook(
   }
 ) {
 
-  const { messages, data } = await getFacebookPreview(metadata)
+  const { messages, data, imageSize } = await getFacebookPreview(metadata)
 
   const PreviewSection = (() => {
+    if (!data) return null
     return (
       <PreviewFrame
         themeId="t-facebook"
@@ -23,6 +26,7 @@ export async function PreviewFacebook(
         style={{
           '--card-radius': '8px',
           '--font-family': 'system-ui, -apple-system, "system-ui", ".SFNSText-Regular", sans-serif',
+          '--card-shadow': '0 1px 2px rgba(0,0,0,.2)',
         } as CSSProperties}
         themes={{
           'default': {
@@ -30,15 +34,16 @@ export async function PreviewFacebook(
             '--card-bg': 'rgb(255, 255, 255)',
             '--main': 'rgb(8, 8, 9)',
             '--muted': 'rgb(101, 104, 108)',
-            '--card-shadow': '0 1px 2px rgba(0,0,0,.2)',
-
             '--border': 'rgba(0, 0, 0, 0.1)',
-
             '--meta-bg': 'rgb(240, 242, 245)'
-
           } as CSSProperties,
           'dark': {
-            // '--bg': 'rgb(21, 32, 43)',
+            '--bg': 'rgb(28, 28, 29)',
+            '--card-bg': 'rgb(37, 39, 40)',
+            '--main': 'rgb(226, 229, 233)',
+            '--muted': 'rgb(176, 179, 184)',
+            '--border': 'rgba(255, 255, 255, 0.05)',
+            '--meta-bg': 'rgb(51, 51, 52)'
           } as CSSProperties,
         }}
       >
@@ -72,41 +77,91 @@ export async function PreviewFacebook(
             {/* Text Content */}
             <div className="pt-px-4 px-px-12 pb-px-16">
               <div className="mb-px-1 -mt-px-1 text-px-15 font-[400] leading-[1.3333]  text-(--main)">
-                just checked out this website and had such a great experience! the design is super clean, everything loads fast, and the content is really well-organized. found exactly what i was looking for without any hassle. definitely worth a visit if ure into discovering new creative tools! #greatux #smoothexperience
+                just checked out this website and had such a great experience! the design is super clean, everything loads fast, and the content is really well-organized. found exactly what i was looking for without any hassle. definitely worth a visit if ure into discovering new creative tools!
               </div>
             </div>
             {/* Link Preview */}
-            <div>
-              {/* Image */}
-              <div className="relative">
-                <div className="aspect-[1000/522] outline overflow-hidden object-center">
-                  <AppImage src={data.image} alt="" className="h-full w-full object-cover" />
-                </div>
-                <div className="absolute -bottom-px-14 right-px-14 size-px-30 z-10 rounded-px-14 border bg-(--card-bg) border-(--border) flex items-center justify-center">
-                  <TypcnInfoLarge className="size-px-20 text-(--main)" />
-                </div>
-              </div>
-              {/* Text */}
-              <div className="-mx-1.5 px-4 py-3 flex relative items-center shrink-0 flex-nowrap bg-(--meta-bg)">
-                <div className="-my-0.5 -mb-2 min-w-0 px-1.5">
-                  <div className="mb-px-1 -mt-1 ">
-                    <span className="uppercase text-px-13 font-[400] leading-[1.2308] text-(--muted)">
-                      {data.site}
-                    </span>
+            {
+              data.type === 'large'
+                ? (
+                  <div>
+                    {/* Image */}
+                    {
+                      data.image && (
+                        <div className="relative">
+                          <div className="aspect-[1000/522] outline overflow-hidden object-center">
+                            <AppImage src={data.image} alt="" className="h-full w-full object-cover" />
+                          </div>
+                          {/* I floating action button */}
+                          <IFloatingButton />
+                        </div>
+                      )
+                    }
+                    {/* Text */}
+                    <div className="-mx-1.5 px-4 py-3 flex relative items-center shrink-0 flex-nowrap bg-(--meta-bg)">
+                      <div className="-my-0.5 -mb-2 min-w-0 px-1.5">
+                        <div className="mb-px-1 -mt-1 ">
+                          <span className="uppercase text-px-13 font-[400] leading-[1.2308] text-(--muted)">
+                            {new URL(data.url).hostname}
+                          </span>
+                        </div>
+                        <div className="my-px-1">
+                          <span className="text-px-17 font-[600] leading-[1.1765] text-(--main)">
+                            {data.title}
+                          </span>
+                        </div>
+                        {
+                          data.image && (
+                            <div className="my-px-1 text-(--muted) overflow-ellipsis overflow-hidden max-w-full">
+                              <span className="text-px-15 font-[400] leading-[1.333] text-nowrap [text-wrap-mode:nowrap] p-0.25">
+                                {data.description}
+                              </span>
+                            </div>
+                          )
+                        }
+                      </div>
+                    </div>
                   </div>
-                  <div className="my-px-1">
-                    <span className="text-px-17 font-[600] leading-[1.1765] text-(--main)">
-                      {data.title}
-                    </span>
+                )
+                : (
+                  <div className={cn(
+                    "flex flex-row items-stretch bg-(--meta-bg) border-y border-(--border) relative",
+                    data.type === "small" && "h-[139px]",
+                    data.type === "tall" && "max-h-[430px] h-80",
+                  )}>
+                    {/* Floating */}
+                    <IFloatingButton className="-top-2 right-4"/>
+                    {/* Image */}
+                    <div className={cn(
+                      "aspect-square bg-red-500 h-full",
+                      data.type === "small" && "aspect-square object-cover",
+                      data.type === "tall" && "object-cover min-w-[162px] max-w-[430px] aspect-[1/1.545]",
+                    )}>
+                      <AppImage src={data.image} alt="" className="h-full w-full object-cover" />
+                    </div>
+                    {/* Text */}
+                    <div className="py-px-12 px-px-16 flex flex-col justify-center grow">
+                      <div className="my-px-[-5] w-full">
+                        <div className="my-px-5">
+                          <span className="mt-px-[-4] mb-px-[-3] text-px-13 font-[400] leading-[1.231] text-(--muted) uppercase">
+                            {new URL(data.url).hostname}
+                          </span>
+                        </div>
+                        <div className="my-px-5">
+                          <span className="mt-px-[-4] mb-px-[-4] line-clamp-2 text-px-17 font-[600] leading-[1.1765] text-(--main)">
+                            {data.title}
+                          </span>
+                        </div>
+                        <div className="my-px-5">
+                          <span className="mt-px-[-4] mb-px-[-4] line-clamp-3 text-px-15 font-[400] leading-[1.333] text-(--muted)">
+                            {data.description}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="my-px-1 text-(--muted) overflow-ellipsis overflow-hidden max-w-full">
-                    <span className="text-px-15 font-[400] leading-[1.333] text-nowrap [text-wrap-mode:nowrap] whitespa">
-                    {data.description}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+                )
+            }
           </div>
 
           {/* Footer */}
@@ -148,7 +203,7 @@ async function getFacebookPreview(metadata: ResoledMetadata) {
   const messages: PreviewMessages = []
 
   const data = {
-    title: m.general.title.value ?? m.og.title.value ?? m.twitter.title.value,
+    title: m.general.title.value ?? m.og.title.value ?? m.twitter.title.value ?? new URL(m.general.rawUrl.value).hostname,
     description:
       m.general.description.value ??
       m.og.description.value ??
@@ -157,38 +212,58 @@ async function getFacebookPreview(metadata: ResoledMetadata) {
     url: m.general.url.value ?? m.general.rawUrl.value,
     image: m.og.image.resolvedUrl ?? m.twitter.image.resolvedUrl,
     fullWidthFavicon: false,
+    type: 'none' as 'small' | 'tall' | 'large'
   }
 
-  // if (!data.title) {
-  //   return { messages: [["error", "Title Metadata is required to show a preview."]] as PreviewMessages }
-  // }
-  // if (!data.description) {
-  //   messages.push(["warn", "Description Metadata is recommended for better visibility."])
-  //   // data.description = "No description provided."
-  // }
-  // if ((data.description ?? '').length < 50) {
-  //   messages.push(["warn", "Description is too short. It may not show up properly in search results. (50-160 characters recommended)"])
-  // }
-  // if (!data.site) {
-  //   messages.push(["warn", "Site Name is recommended for better visibility."])
-  //   data.site = new URL(data.url).hostname
-  // }
-  // if (m.icons.appleTouchIcons.values.length > 0) {
-  //   data.fullWidthFavicon = true
-  //   messages.push(['info', 'Apple Touch Icon or Favicon.ico detected. Favicon will be displayed in full size.'])
-  // } else {
-  //   messages.push(['info', 'No Apple Touch Icon or Favicon.ico detected. Favicon will be displayed in 18x18 size.'])
-  // }
+  let imageSize: { width: number, height: number } | undefined = undefined
 
-  // messages.push(['info', 'Preview is generated based on the provided metadata. Actual appearance may vary.'])
+  if (data.image) {
+
+    const res = await appFetch(data.image)
+    const imageSizeRes = await getImageSizeFromResponse(res)
+
+    if (!imageSizeRes.imageSize) {
+      messages.push(['error', `Failed to get image size. Image may not be displayed correctly. ${ imageSizeRes.error }`])
+    } else {
+      const { width, height } = imageSizeRes.imageSize
+      imageSize = imageSizeRes.imageSize
+      console.log(width, height, width / height)
+      if (imageSizeRes.imageSize?.width < 200 || imageSizeRes.imageSize?.height < 200) {
+        messages.push(["warn", "Image size is too small. The preview will not display the image. Minimum size is 200x200px."])
+        data.image = undefined
+      } else
+        if ((width / height) < 0.8) {
+          messages.push(['info', 'Image aspect ratio is greater than 4:5. Tall preview will be displayed.'])
+          messages.push(['info', 'Aspect ratio of tall preview is not accurate.'])
+          data.type = 'tall'
+        } else
+          if (width > 221 && height > 424) {
+            messages.push(['info', 'Image width and height are greater than 221x424. Large preview will be displayed.'])
+            data.type = 'large'
+          } else {
+            messages.push(['info', 'Image width an height is smaller than 221x424. Small preview will be displayed.'])
+            data.type = 'small'
+          }
+    }
+
+  } else {
+    messages.push(["info", "Image not found. Preview will not display an image."])
+  }
 
   return {
     messages,
     data,
+    imageSize,
   }
 }
 
-
+function IFloatingButton({className, ...props}: ComponentProps<"div">) {
+  return (
+    <div className={cn("absolute -bottom-px-14 right-px-14 size-px-30 z-10 rounded-px-14 border bg-(--card-bg) border-(--border) flex items-center justify-center", className)} {...props}>
+      <TypcnInfoLarge className="size-px-20 text-(--main)" />
+    </div>
+  )
+}
 
 function GlobeIcon(props: ComponentProps<"svg">) {
   return (

@@ -80,17 +80,17 @@ body {
 /* Utilities ----------------------------- */
 
 @utility max-w-screen-* {
-  max-width: --value(--breakpoint- *);
+  max-width: --value(--breakpoint-*);
 }
 @utility font-use-* {
-  font-family: var(--value([ *]));
+  font-family: var(--value([*]));
 }
 @utility break-word {
   word-break: break-word;
   @apply break-words;
 }
 @utility container-* {
-  max-width: --value(--breakpoint- *);
+  max-width: --value(--breakpoint-*);
   max-width: calc(--value(integer) * 0.25rem);
   @apply mx-auto;
 }
@@ -107,13 +107,16 @@ body {
   font-size: calc(--value(integer) / 16 * 1rem)
 }
 @utility mt-px-* {
-  margin-top: calc(--value(integer) / 16 * 1rem)
+  margin-top: calc(--value(number) / 16 * 1rem);
+  margin-top: calc(--value([number]) / 16 * 1rem);
 }
 @utility mb-px-* {
-  margin-bottom: calc(--value(integer) / 16 * 1rem)
+  margin-bottom: calc(--value(number) / 16 * 1rem);
+  margin-bottom: calc(--value([number]) / 16 * 1rem);
 }
 @utility my-px-* {
-  margin-block: calc(--value(integer) / 16 * 1rem)
+  margin-block: calc(--value(number) / 16 * 1rem);
+  margin-block: calc(--value([number]) / 16 * 1rem);
 }
 @utility -my-px-* {
   margin-block: calc(--value(integer) / 16 * -1rem)
@@ -129,6 +132,9 @@ body {
 }
 @utility pb-px-* {
   padding-bottom: calc(--value(integer) / 16 * 1rem)
+}
+@utility py-px-* {
+  padding-block: calc(--value(integer) / 16 * 1rem)
 }
 @utility size-px-* {
   width: calc(--value(integer) / 16 * 1rem);
