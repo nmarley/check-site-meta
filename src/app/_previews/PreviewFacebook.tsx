@@ -89,7 +89,7 @@ export async function PreviewFacebook(
                     {
                       data.image && (
                         <div className="relative">
-                          <div className="aspect-[1000/522] outline overflow-hidden object-center">
+                          <div className="aspect-[1000/522] border-t border-(--border) overflow-hidden object-center">
                             <AppImage src={data.image} alt="" className="h-full w-full object-cover" />
                           </div>
                           {/* I floating action button */}
@@ -227,7 +227,6 @@ async function getFacebookPreview(metadata: ResoledMetadata) {
     } else {
       const { width, height } = imageSizeRes.imageSize
       imageSize = imageSizeRes.imageSize
-      console.log(width, height, width / height)
       if (imageSizeRes.imageSize?.width < 200 || imageSizeRes.imageSize?.height < 200) {
         messages.push(["warn", "Image size is too small. The preview will not display the image. Minimum size is 200x200px."])
         data.image = undefined
