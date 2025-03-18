@@ -4,8 +4,9 @@ import { cn } from "lazy-cn";
 import { AppImage } from "../module/image/Image";
 import { appFetch } from "../lib/fetch";
 import imageSize from "image-size";
-import { MessageList, PreviewFrame, PreviewPanelContent, type PreviewMessages } from "./Preview";
+import { MessageList, PreviewPanelContent, type PreviewMessages } from "./Preview";
 import { validateHex } from "../lib/hex";
+import { PreviewFrame } from "./Preview.client";
 
 export async function PreviewDiscord(
   { metadata, className, ...props }: ComponentProps<"div"> & {
@@ -24,8 +25,7 @@ export async function PreviewDiscord(
         "--embed-border": data.themeColor ?? "oklab(0.239468 0.000131123 -0.00589392)",
         "--embed-link": "oklab(0.705515 -0.0795695 -0.144235)",
         "--embed-text": "oklab(0.89908 -0.00192907 -0.0048306)",
-      } as CSSProperties
-      }
+      } as CSSProperties}
     >
       <div className="p-8">
         <div className={cn(

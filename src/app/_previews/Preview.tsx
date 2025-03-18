@@ -76,7 +76,7 @@ export function PreviewPanelContent(
 ) {
   return (
     <>
-      <div className={cn("mb-8 w-full flex justify-center fadeIn-0", className)} {...props}>
+      <div className={cn("mb-8 w-full flex flex-col items-center fadeIn-0 gap-2 **:transition", className)} {...props}>
         {PreviewSection}
       </div>
       <PreviewInfo>
@@ -86,13 +86,22 @@ export function PreviewPanelContent(
   )
 }
 
-export function PreviewFrame(
+// export function PreviewFrame(
+//   { className, ...props }: ComponentProps<"div"> & {}
+// ) {
+//   return (<div {...props} className={cn(
+//     "bg-[var(--bg)]",
+//     "text-[var(--fg)]",
+//     "font-[family-name:var(--font)]",
+//     "w-full flex flex-col rounded-md", className
+//   )} />)
+// }
+
+export function PreviewMenu(
   { className, ...props }: ComponentProps<"div"> & {}
 ) {
   return (<div {...props} className={cn(
-    "bg-[var(--bg)]",
-    "text-[var(--fg)]",
-    "font-[family-name:var(--font)]",
-    "w-full flex flex-col rounded-md", className
+    "flex gap-2 self-end -z-10",
+    className
   )} />)
 }

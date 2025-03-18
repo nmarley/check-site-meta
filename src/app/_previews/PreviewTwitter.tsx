@@ -5,7 +5,8 @@ import { AppImage } from "../module/image/Image";
 import type { ComponentProps, SVGProps } from "react";
 import { cn } from "lazy-cn";
 import { getImageSizeFromResponse } from '../lib/image-size';
-import { PreviewPanelContent, MessageList, type PreviewMessages, PreviewFrame } from './Preview';
+import { PreviewPanelContent, MessageList, type PreviewMessages } from './Preview';
+import { PreviewFrame } from './Preview.client';
 
 export async function PreviewTwitter(
   { metadata, className, ...props }: { metadata: ResoledMetadata } & ComponentProps<"div">

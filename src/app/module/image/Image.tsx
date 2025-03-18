@@ -2,28 +2,38 @@
 /* eslint-disable @next/next/no-img-element */
 "use client"
 
-import { useEffect, useRef, type ComponentProps } from "react";
+import { useEffect, useRef, useState, type ComponentProps, type ReactNode } from "react";
 
 export function AppImage(
-  { firstFrameGif, src, ...props }: ComponentProps<'img'> & {
-    firstFrameGif?: boolean
+  { firstFrameGif, src, onErrorFallback, ...props }: ComponentProps<'img'> & {
+    firstFrameGif?: boolean,
+    onErrorFallback?: ReactNode
   }
 ) {
+  const [error, setError] = useState(false) 
+
   const usingProxyRef = useRef(false)
   
   if (!src) return null
   if (firstFrameGif) {
     return <AppImageFirstFrameGif src={`/api/proxy-img?url=${ encodeURIComponent(src) }`} {...props as ComponentProps<"canvas">} />
   }
+
+  if (error && onErrorFallback) {
+    return onErrorFallback
+  }
+
   return <img
     {...props}
     alt={props.alt || ""}
     src={src}
     onError={e => {
-      if (usingProxyRef.current) return
-      e.currentTarget.src = `/api/proxy-img?url=${ encodeURIComponent(src) }`
-      usingProxyRef.current = true
-      // console.error("AppImage: Error loading image", e)
+      if (!usingProxyRef.current) {
+        e.currentTarget.src = `/api/proxy-img?url=${ encodeURIComponent(src) }`
+        usingProxyRef.current = true
+      } else {
+        setError(true)
+      }
     }}
   />;
 

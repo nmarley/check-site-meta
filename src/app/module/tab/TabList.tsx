@@ -45,7 +45,7 @@ export function TabList(
       easing: "ease-in-out",
     })
     a.onfinish = () => a.cancel()
-  }, [tab])
+  }, [tabNum])
 
   return (
     <div className={cn('tab', className)} {...props} >
