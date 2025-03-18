@@ -6,7 +6,7 @@ import { useEffect, type ComponentProps, type CSSProperties, type ReactNode } fr
 import { TabList } from "../module/tab/TabList"
 
 export function PreviewFrame(
-  { className, themes, themeId,...props }: ComponentProps<"div"> & {
+  { className, themes, themeId, ...props }: ComponentProps<"div"> & {
     themeId: string,
     themes?: Record<string, CSSProperties> & { "default": CSSProperties }
   }
@@ -23,10 +23,11 @@ export function PreviewFrame(
 
   return (<div {...props}
     className={cn(
-      "bg-[var(--bg)]",
-      "text-[var(--fg)]",
+      "bg-(--bg)",
+      "text-(--fg)",
       "font-[family-name:var(--font)]",
-      "w-full flex flex-col rounded-md", className
+      "w-full flex flex-col rounded-lg overflow-hidden p-8",
+      className
     )}
     style={{ ...theme, ...props.style }}
   />)

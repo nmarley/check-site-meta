@@ -49,44 +49,42 @@ export async function PreviewDiscord(
         } as CSSProperties,
       }}
     >
-      <div className="p-8">
+      <div className={cn(
+        "fadeIn-100",
+        "bg-[var(--embed-bg)] border-l-[0.25rem] border-(--embed-border) rounded-[0.25rem] grid",
+        "max-w-max"
+      )}>
         <div className={cn(
-          "fadeIn-100",
-          "bg-[var(--embed-bg)] border-l-[0.25rem] border-(--embed-border) rounded-[0.25rem] grid",
-          "max-w-max"
+          "pt-[.5rem] pr-[1rem] pb-[1rem] pl-[.75rem]  grid",
+          "grid-cols-[auto_min-content]",
+          "grid-rows-[auto]",
+          "max-w-[27rem]"
         )}>
-          <div className={cn(
-            "pt-[.5rem] pr-[1rem] pb-[1rem] pl-[.75rem]  grid",
-            "grid-cols-[auto_min-content]",
-            "grid-rows-[auto]",
-            "max-w-[27rem]"
-          )}>
-            {data.site && (
-              <div className="fadeIn-0 mt-2 col-[1/1] text-(--embed-site-name) text-[.75rem] font-[400] leading-[1rem]">
-                {data.site}
-              </div>
-            )}
-            <div className="fadeIn-50 mt-2 col-[1/1] break-words min-w-0">
-              <a className="text-(--embed-link) text-[1rem] font-[600] leading-[1.375rem] min-w-0 line-clamp-2">
-                {data.title}
-              </a>
+          {data.site && (
+            <div className="fadeIn-0 mt-2 col-[1/1] text-(--embed-site-name) text-[.75rem] font-[400] leading-[1rem]">
+              {data.site}
             </div>
-            <div className="fadeIn-100 mt-2 col-[1/1] text-(--embed-text) text-[0.875rem] font-[400] leading-[1.125rem] whitespace-pre-wrap break-words min-w-0">
-              {data.description}
-            </div>
-            {data.image && data.type === "summary" && (
-              <div className="fadeIn-150 row-[1/8] col-[2/2] ml-4 mt-2 max-w-20 max-h-20 justify-items-end h-full flex rounded-[.25rem]">
-                <AppImage src={data.image} alt="" className="w-min h-min max-w-none max-h-[inherit] object-contain object-top rounded-[.25rem] overflow-hidden" />
-              </div>
-            )}
-            {data.image && data.type === "summary_large_image" && (
-              <div className="fadeIn-150 col-[1/1] mt-4 w-full flex object-contain rounded-[.25rem] overflow-hidden max-w-fit">
-                <div className="">
-                  <AppImage src={data.image} alt="" className="max-w-none w-full max-h-[300px]" />
-                </div>
-              </div>
-            )}
+          )}
+          <div className="fadeIn-50 mt-2 col-[1/1] break-words min-w-0">
+            <a className="text-(--embed-link) text-[1rem] font-[600] leading-[1.375rem] min-w-0 line-clamp-2">
+              {data.title}
+            </a>
           </div>
+          <div className="fadeIn-100 mt-2 col-[1/1] text-(--embed-text) text-[0.875rem] font-[400] leading-[1.125rem] whitespace-pre-wrap break-words min-w-0">
+            {data.description}
+          </div>
+          {data.image && data.type === "summary" && (
+            <div className="fadeIn-150 row-[1/8] col-[2/2] ml-4 mt-2 max-w-20 max-h-20 justify-items-end h-full flex rounded-[.25rem]">
+              <AppImage src={data.image} alt="" className="w-min h-min max-w-none max-h-[inherit] object-contain object-top rounded-[.25rem] overflow-hidden" />
+            </div>
+          )}
+          {data.image && data.type === "summary_large_image" && (
+            <div className="fadeIn-150 col-[1/1] mt-4 w-full flex object-contain rounded-[.25rem] overflow-hidden max-w-fit">
+              <div className="">
+                <AppImage src={data.image} alt="" className="max-w-none w-full max-h-[300px]" />
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </PreviewFrame>

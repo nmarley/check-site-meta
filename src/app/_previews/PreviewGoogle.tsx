@@ -17,7 +17,6 @@ export async function PreviewGoogle({ metadata, className, ...props }: Component
     return (
       <PreviewFrame
         themeId="t-google"
-        className="p-8 rounded-lg overflow-hidden flex justify-center"
         style={{
           "--font": "Arial, sans-serif",
         } as CSSProperties}

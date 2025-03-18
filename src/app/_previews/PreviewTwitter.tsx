@@ -91,7 +91,7 @@ function TwitterPreviewFrame({ children }: { children: React.ReactNode }) {
   return <>
     <PreviewFrame
       themeId="t-twitter"
-      className="p-8 bg-(--bg) rounded-lg overflow-hidden flex justify-center"
+      className="items-center"
       style={{
         "--overlay-text": "white",
         "--overlay-bg": "rgba(0, 0, 0, 0.77)",
