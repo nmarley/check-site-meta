@@ -126,7 +126,7 @@ async function getDiscordPreview(metadata: ResoledMetadata) {
     site: m.og.siteName.value, // check if it fallbacks to twitter.site.value
     title: m.twitter.title.value ?? m.og.title.value ?? m.general.title.value,
     description: m.og.description.value ?? m.twitter.description.value ?? m.general.description.value,
-    image: m.twitter.image.resolvedUrl ?? m.og.image.resolvedUrl,
+    image: m.twitter.image.resolvedUrl ?? m.og.images.values.at(-1)?.resolvedUrl ?? m.og.image.resolvedUrl,
     type: m.twitter.card.value ?? "summary",
     themeColor: m.general.colorTheme.values.at(-1)?.value
   }

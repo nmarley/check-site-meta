@@ -100,8 +100,6 @@ function TwitterPreviewFrame({ children }: { children: React.ReactNode }) {
         "default": {
           "--bg": "white",
           "--border": "rgb(207,_217,_222)",
-          // "--image-bg": "rgba(247,249,249,1.00)", // TODO - TEST!
-
           "--image-noimg-bg": "rgb(247, 249, 249)",
           "--image-noimg-fill": "rgb(83, 100, 113)",
           "--text-title": "rgb(15, 20, 25)",
@@ -110,8 +108,6 @@ function TwitterPreviewFrame({ children }: { children: React.ReactNode }) {
         "dim": {
           "--bg": "rgb(21, 32, 43)",
           "--border": "rgb(56, 68, 77)",
-          // "--image-bg": "rgba(0, 0, 0, 0.77)", // TODO - TEST!
-
           "--image-noimg-bg": "rgb(30, 39, 50)",
           "--image-noimg-fill": "rgb(139, 152, 165)",
           "--text-title": "rgb(247, 249, 249)",
@@ -121,8 +117,6 @@ function TwitterPreviewFrame({ children }: { children: React.ReactNode }) {
         "dark": {
           "--bg": "black",
           "--border": "rgb(47, 51, 54)",
-          // "--image-bg": "rgba(247,249,249,1.00)", // TODO - TEST!
-
           "--image-noimg-bg": "rgb(22, 24, 28)",
           "--image-noimg-fill": "rgb(113, 118, 123)",
           "--text-title": "rgb(231, 233, 234)",
@@ -172,7 +166,7 @@ export async function getTwitterPreview(metadata: ResoledMetadata) {
   const data = {
     title: m.twitter.title.value ?? m.og.title.value,
     description: m.twitter.description.value ?? m.og.description.value,
-    image: m.twitter.image.resolvedUrl ?? m.og.image.resolvedUrl,
+    image: m.twitter.image.resolvedUrl ?? m.og.images.values.at(-1)?.resolvedUrl ?? m.og.image.resolvedUrl,
     imageAlt: m.twitter.imageAlt.value ?? m.og.imageAlt.value,
     url: new URL(m.general.rawUrl.resolvedUrl!).host.replace('www.', ''),
     type: m.twitter.card.value
