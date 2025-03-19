@@ -45,7 +45,7 @@ export function RecentSuggestions(props: {
   const suggestionList = (recent ?? []).length < 5 ? suggestions : []
 
   return (
-    <div className="">
+    <div className={cn("transition-opacity opacity-0 delay-100", recent !== null ? "opacity-100" : "")}>
       {/* <button onClick={() => setIhidden(!hidden)}>Toggle Hidden</button> */}
       <div className="grid grid-rows-[1fr] closed:grid-rows-[0fr] group overflow-hidden transition-[grid-template-rows] duration-500" data-closed={hidden ? "" : undefined}>
         <div className={cn("min-h-0 min-w-0 transition-all duration-500 delay-200", hidden && "opacity-0 -translate-y-10")}>
