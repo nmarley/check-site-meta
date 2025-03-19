@@ -53,8 +53,10 @@ export function RecentSuggestions(props: {
           <div id="recentGrid" className="min-h-0 min-w-0 overflow-hidden">
             {
               !!recent?.length && (<>
-                <div className={cn("mt-10 text-base text-foreground-muted pb-4 transition-all")}>
-                  <div className="text-[0.8rem] text-foreground-muted-3 font-semibold">recent <button className="hover:underline text-[size:inherit] font-normal" onClick={onClear}>(clear)</button></div>
+                <div className={cn("mt-10 text-base text-foreground-muted pb-2 transition-all")}>
+                  <div className="text-foreground-muted-3">
+                    recent <button className="hover:underline text-[size:inherit] font-normal" onClick={onClear}>(clear)</button>
+                  </div>
                 </div>
                 {recent?.map((url, i) => (
                   <SuggestionGoToUrlButton key={i} value={url}
@@ -67,7 +69,7 @@ export function RecentSuggestions(props: {
                         animationDelay: `${ i * 100 + 500 }ms`,
                         transitionDelay: `${ hidden
                           ? ((recent.length - i + suggestionList.length) * 30)
-                          : ((i ) * 100 + 500) }ms`
+                          : ((i) * 100 + 500) }ms`
                       }
                     }}
                   />
@@ -78,8 +80,8 @@ export function RecentSuggestions(props: {
 
           {
             !!suggestionList.length && <>
-              <div className={cn("mt-10 text-base text-foreground-muted pb-4 transition-[asdf]")}>
-                <div className="text-[0.8rem] text-foreground-muted-3 font-semibold">suggested</div>
+              <div className={cn("mt-10 text-base text-foreground-muted pb-2 transition-[asdf]")}>
+                <div className="text-foreground-muted-3">suggested</div>
               </div>
 
 

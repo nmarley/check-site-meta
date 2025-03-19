@@ -1,4 +1,4 @@
-import { Suspense, type ComponentProps } from "react";
+import { Fragment, Suspense, type ComponentProps } from "react";
 import { getRawMeta, fetchRoot } from "./lib/get-metadata";
 import { parseUrlFromQuery } from "./lib/parse-url";
 import type { SearchParamsContext } from "./lib/next-types";
@@ -10,6 +10,7 @@ import { getVersion } from "./lib/version";
 import { ThemeSwitcher } from "./theme-switch";
 import { GoToUrlButton, InputForm } from "./_inputs/InputForm";
 import { RecentSuggestions } from "./_inputs/InputSuggestions";
+import { changelog } from "../../changelog"
 
 // Structure:
 // 
@@ -50,20 +51,9 @@ export default async function Home(context: SearchParamsContext) {
 
   return (
     <>
-      <main className="container-md lg:container-2xl px-8 lg:px-12 xl:px-24 *:py-12 font-medium lg:grid lg:grid-cols-2 gap-x-8 font-sans">
+      <main className="container-sm lg:container-2xl px-8 lg:px-12 xl:px-24 *:py-12 font-medium lg:grid lg:grid-cols-2 gap-x-8 font-sans">
         <div className="flex flex-col min-h-screen">
-          <div className="grid grid-rows-[1fr] closed:grid-rows-[0fr] group overflow-hidden transition-[grid-template-rows] duration-700" data-closed={query.url ? "" : undefined}>
-            <div className="min-h-0">
-              <div className="mb-12 mt-20 text-center lg:text-start flex flex-col items-center lg:block g-closed:opacity-0 g-closed:translate-y-10 transition duration-700">
-                <div className="text-6xl tracking-[-0.08em] font-mono header-fill font-bold">
-                  check-site-meta
-                </div>
-                <div className="text-foreground-muted max-w-100 mt-2 font-sans text-xl g-closed:opacity-0 g-closed:translate-y-10 transition duration-700">
-                  100% local site metadata checker
-                </div>
-              </div>
-            </div>
-          </div>
+          <Header hidden={!!query.url} />
           <InputForm query={query} />
           <RecentSuggestions hidden={!!query.url} />
           <div className="flex flex-col gap-8">
@@ -72,7 +62,8 @@ export default async function Home(context: SearchParamsContext) {
             </Suspense>
           </div>
         </div>
-        <div className="flex flex-col items-center gap-8 pt-15!">
+        <div className="flex flex-col items-center gap-8 pt-15! pb-40!">
+          <Changelog hidden={!!query.url} />
           <Suspense key={random}>
             <MetaPreviewPanel metadata={getMetadata()} />
           </Suspense>
@@ -86,14 +77,20 @@ export default async function Home(context: SearchParamsContext) {
 // Components -----------------------------
 
 
-function Header() {
-  return <header className="text-start text-foreground-muted">
-    <div className="text-xs font-mono">
-      npx check-site-meta</div>
-    <h1 className="leading-normal text-lg font-medium">
-      site metadata checker</h1>
-    <p className="text-pretty text-sm">
-      Validate how your Open Graph data is used for link previews on social platforms.</p>
+function Header(props: {
+  hidden: boolean
+}) {
+  return <header className="grid grid-rows-[1fr] closed:grid-rows-[0fr] group overflow-hidden transition-[grid-template-rows] duration-700" data-closed={props.hidden ? "" : undefined}>
+    <div className="min-h-0">
+      <div className="mb-12 mt-20 text-center lg:text-start flex flex-col items-center lg:block g-closed:opacity-0 g-closed:translate-y-10 transition duration-700">
+        <div className="text-6xl tracking-[-0.08em] font-mono header-fill font-bold">
+          check-site-meta
+        </div>
+        <div className="text-foreground-muted max-w-100 mt-2 font-sans text-xl g-closed:opacity-0 g-closed:translate-y-10 transition duration-700">
+          100% local site metadata checker
+        </div>
+      </div>
+    </div>
   </header>
 }
 
@@ -134,8 +131,6 @@ function Footer(
   )
 }
 
-
-
 function Loading() {
   return (
     <div>
@@ -144,6 +139,52 @@ function Loading() {
     </div>
   )
 }
+
+function Changelog(props: {
+  hidden?: boolean
+}) {
+  return (
+    <div className="w-full grid grid-rows-[1fr] closed:grid-rows-[0fr] overflow-hidden group transition-[grid-template-rows] duration-700" data-closed={props.hidden ? "" : undefined}>
+      <div className="min-h-0">
+        <div className="pt-20 pb-4 text-foreground-muted-3 font-medium">changelog</div>
+        <div className="grid grid-cols-[6rem_1fr] gap-y-4 text-foreground-muted text-base">
+          {
+            Object.entries(changelog).map(([version, changes]) => (
+              <Fragment key={version}>
+                <div className="text-foreground-muted-3">{version}</div>
+                <ul className="">
+                  {changes.map((change, i) => (
+                    <li key={i} className="text-foreground-muted-2 py-0.5 list-['-___']">{change}</li>
+                  ))}
+                </ul>
+              </Fragment>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  )
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // DEBUG
