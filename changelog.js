@@ -10,6 +10,7 @@ export const changelog = {
     "Added appear animation on each preview",
     "Added discord light mode",
     "Added reset and retry button",
+    "Added changelog",
     "Improved the UI of the input button and overall UI",
     "Switched to JetBrains Mono font for mono text",
     "Refactor component.css and tabs",
