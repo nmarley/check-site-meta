@@ -1,19 +1,15 @@
-import { Suspense, type ComponentProps, type SVGProps } from "react";
-import Form from 'next/form'
+import { Suspense, type ComponentProps } from "react";
 import { getRawMeta, fetchRoot } from "./lib/get-metadata";
 import { parseUrlFromQuery } from "./lib/parse-url";
 import type { SearchParamsContext } from "./lib/next-types";
 import { getResolvedMeta } from "./lib/get-metadata-field-data";
 import { MetaInfoPanel } from "./comp.meta-info";
 import { MetaPreviewPanel } from "./comp.meta-preview";
-import { after } from "next/server";
-import { logCheckButton } from "./lib/analytics";
 import { cn } from "lazy-cn";
 import { getVersion } from "./lib/version";
-import { Tabs } from "./module/tab/Tabs";
-import { tab } from "./module/tab/tab-primitives";
-import { TabList } from "./module/tab/TabList";
 import { ThemeSwitcher } from "./theme-switch";
+import { GoToUrlButton, InputForm } from "./_inputs/InputForm";
+import { RecentSuggestions } from "./_inputs/InputSuggestions";
 
 // Structure:
 // 
@@ -55,19 +51,32 @@ export default async function Home(context: SearchParamsContext) {
   return (
     <>
       <main className="container-md lg:container-2xl px-8 lg:px-12 xl:px-24 *:py-12 font-medium lg:grid lg:grid-cols-2 gap-x-8 font-sans">
-        <div className="flex flex-col gap-8 min-h-screen">
-          {/* <Header /> */}
+        <div className="flex flex-col min-h-screen">
+          <div className="grid grid-rows-[1fr] closed:grid-rows-[0fr] group overflow-hidden transition-[grid-template-rows] duration-700" data-closed={query.url ? "" : undefined}>
+            <div className="min-h-0">
+              <div className="mb-12 mt-20 text-center lg:text-start flex flex-col items-center lg:block g-closed:opacity-0 g-closed:translate-y-10 transition duration-700">
+                <div className="text-6xl tracking-[-0.08em] font-mono header-fill font-bold">
+                  check-site-meta
+                </div>
+                <div className="text-foreground-muted max-w-100 mt-2 font-sans text-xl g-closed:opacity-0 g-closed:translate-y-10 transition duration-700">
+                  100% local site metadata checker
+                </div>
+              </div>
+            </div>
+          </div>
           <InputForm query={query} />
-          <Suspense key={random} fallback={<Loading />}>
-            <MetaInfoPanel metadata={getMetadata()} head={getHead()} />
-          </Suspense>
+          <RecentSuggestions hidden={!!query.url} />
+          <div className="flex flex-col gap-8">
+            <Suspense key={random} fallback={<Loading />}>
+              <MetaInfoPanel metadata={getMetadata()} head={getHead()} />
+            </Suspense>
+          </div>
         </div>
         <div className="flex flex-col items-center gap-8 pt-15!">
           <Suspense key={random}>
             <MetaPreviewPanel metadata={getMetadata()} />
           </Suspense>
         </div>
-
       </main>
       <Footer />
     </>
@@ -93,7 +102,7 @@ function Footer(
 ) {
   return (
     <footer {...props} className={cn(" w-full col-span-2 pb-[100vh] pt-10 border-t border-border bg-background shadow-2xl", props.className)}>
-      <div className="container-md lg:container-2xl px-8 lg:px-12 xl:px-24 text-foreground-body flex">
+      <div className="container-md lg:container-2xl px-8 lg:px-12 xl:px-24 text-foreground-body flex flex-wrap gap-y-8">
         <div className="flex flex-col grow">
           <div className="text-[1rem] font-semibold tracking-tight leading-none font-mono">
             npx check-site-meta
@@ -117,7 +126,7 @@ function Footer(
         </div>
         {/* Left */}
         {/* Right */}
-        <div>
+        <div className="shrink-0">
           <ThemeSwitcher />
         </div>
       </div>
@@ -126,30 +135,7 @@ function Footer(
 }
 
 
-function InputForm(
-  props: { query: Record<string, string | string[] | undefined> }
-) {
-  return <Form
-    onSubmit={logCheckButton}
-    action="/"
-    className="flex gap-2"
-  >
-    <input readOnly type="hidden" name="info" value={String(props.query['info'])} />
-    <input readOnly type="hidden" name="preview" value={String(props.query['preview'])} />
 
-    <div className="grow flex p-1 card rounded-xl focus-within:border-border-focus outline-transparent outline-0 focus-within:outline-4 focus-within:outline-focus transition-all">
-      <CiSearchMagnifyingGlass className="w-4 h-4 ml-3 mr-1.5 self-center" />
-      <input required id="lookup_url" name="url"
-        className="grow border-none focus:outline-0 mr-1 px-1 placeholder:text-foreground-muted-3/50 placeholder:font-normal placeholder:italic"
-        defaultValue={props.query['url'] as string}
-        autoComplete="off"
-        placeholder="localhost:3000"
-      />
-    </div>
-
-    <button type="submit" className="primary normal">Check</button>
-  </Form>
-}
 function Loading() {
   return (
     <div>
@@ -157,9 +143,6 @@ function Loading() {
       <div className="fadeIn-2000">This takes longer than expected...</div>
     </div>
   )
-}
-function CiSearchMagnifyingGlass(props: SVGProps<SVGSVGElement>) {
-  return (<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m15 15l6 6m-11-4a7 7 0 1 1 0-14a7 7 0 0 1 0 14"></path></svg>)
 }
 
 
@@ -183,3 +166,5 @@ async function RawHTML(
     </Suspense>
   )
 }
+
+

@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @import "./globals.fonts.css";
-@import "./components.css";
 
 /* Root ----------------------------- */
 
@@ -25,6 +24,10 @@ body {
     var(--color-neutral-500)
   );
   --color-foreground-muted-3: light-dark(
+    --alpha(var(--color-slate-400) / 0.8),
+    var(--color-neutral-600)
+  );
+  --color-placeholder: light-dark(
     --alpha(var(--color-gray-300) / 1),
     var(--color-neutral-600)
   );
@@ -37,10 +40,14 @@ body {
     var(--color-gray-50),
     var(--color-neutral-900)
   );
-  --color-background-muted: light-dark(#eceff4, #121312);
+  --color-background-muted: light-dark(#eaeff5, #121312);
+  --color-background-muted-2: light-dark(
+    var(--color-gray-100),
+    --alpha(var(--color-neutral-700) / 0.5)
+  );
   --color-background-card: light-dark(#fff, #232424);
 
-  --color-border: light-dark(#eceff4, #2f3030);
+  --color-border: light-dark(#e6eaf2, #2f3030);
   --color-focus: light-dark(var(--color-slate-200), var(--color-neutral-800));
   --color-border-focus: light-dark(
     var(--color-slate-400),
@@ -80,17 +87,17 @@ body {
 /* Utilities ----------------------------- */
 
 @utility max-w-screen-* {
-  max-width: --value(--breakpoint-*);
+  max-width: --value(--breakpoint- *);
 }
 @utility font-use-* {
-  font-family: var(--value([*]));
+  font-family: var(--value([ *]));
 }
 @utility break-word {
   word-break: break-word;
   @apply break-words;
 }
 @utility container-* {
-  max-width: --value(--breakpoint-*);
+  max-width: --value(--breakpoint- *);
   max-width: calc(--value(integer) * 0.25rem);
   @apply mx-auto;
 }
@@ -98,13 +105,13 @@ body {
   @apply cursor-pointer active:translate-y-0.5;
 }
 @utility w-px-* {
-  width: calc(--value(integer) / 16 * 1rem)
+  width: calc(--value(integer) / 16 * 1rem);
 }
 @utility h-px-* {
-  height: calc(--value(integer) / 16 * 1rem)
+  height: calc(--value(integer) / 16 * 1rem);
 }
 @utility text-px-* {
-  font-size: calc(--value(integer) / 16 * 1rem)
+  font-size: calc(--value(integer) / 16 * 1rem);
 }
 @utility mt-px-* {
   margin-top: calc(--value(number) / 16 * 1rem);
@@ -119,22 +126,22 @@ body {
   margin-block: calc(--value([number]) / 16 * 1rem);
 }
 @utility -my-px-* {
-  margin-block: calc(--value(integer) / 16 * -1rem)
+  margin-block: calc(--value(integer) / 16 * -1rem);
 }
 @utility mr-px-* {
-  margin-right: calc(--value(integer) / 16 * 1rem)
+  margin-right: calc(--value(integer) / 16 * 1rem);
 }
 @utility pt-px-* {
-  padding-top: calc(--value(integer) / 16 * 1rem)
+  padding-top: calc(--value(integer) / 16 * 1rem);
 }
 @utility px-px-* {
-  padding-inline: calc(--value(integer) / 16 * 1rem)
+  padding-inline: calc(--value(integer) / 16 * 1rem);
 }
 @utility pb-px-* {
-  padding-bottom: calc(--value(integer) / 16 * 1rem)
+  padding-bottom: calc(--value(integer) / 16 * 1rem);
 }
 @utility py-px-* {
-  padding-block: calc(--value(integer) / 16 * 1rem)
+  padding-block: calc(--value(integer) / 16 * 1rem);
 }
 @utility size-px-* {
   width: calc(--value(integer) / 16 * 1rem);
@@ -168,7 +175,7 @@ body {
     @apply clickable;
   }
   button {
-    @apply text-sm rounded-md font-semibold
+    @apply text-sm rounded-xl font-semibold
     clickable transition-all
     active:translate-y-0.5;
     &.normal {
@@ -205,10 +212,11 @@ body {
 
 @custom-variant tab-item (& .tab-item);
 @utility tab-item {
-  @apply px-5 p-2 
+  @apply px-5 p-2
   text-foreground-muted 
   font-medium
   text-nowrap 
+  cursor-pointer group-data-active:cursor-auto
 
   /* outline outline-red-500 */
 
@@ -277,4 +285,79 @@ body {
   }
 }
 
-/* Smaller Components */
+/* Header */
+
+@custom-variant closed (&[data-closed]);
+@custom-variant g-closed (&:is(:where(.group)[data-closed] *));
+
+@utility header-fill {
+  /* background: light-dark(
+    linear-gradient(90deg, #f0f, #0ff),
+    linear-gradient(90deg, #0f0, #f00),
+  ); */
+  background: linear-gradient(
+    to bottom,
+    light-dark(var(--color-slate-500), var(--color-neutral-100)),
+    light-dark(var(--color-slate-800), var(--color-zinc-400))
+  );
+  @apply bg-clip-text text-transparent;
+}
+
+@utility input-box-shadow {
+  @apply shadow-lg
+  shadow-[light-dark(--alpha(var(--color-slate-200)/0.2),--alpha(var(--color-neutral-950)/0.3))]
+  hover:shadow-[light-dark(--alpha(var(--color-slate-200)/0.8),--alpha(var(--color-neutral-950)/0.8))]
+  outline-0 hover:outline-4 outline-transparent hover:outline-focus/50
+}
+
+/* Animations ----------------------------- */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility fadeIn-* {
+  animation: fadeIn 0.3s ease-out backwards;
+  animation-delay: calc(--value(integer) * 1ms);
+}
+
+@keyframes fadeBlurIn {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility fadeBlurIn-* {
+  animation: fadeBlurIn 0.2s ease-out both;
+  animation-delay: calc(--value(integer) * 1ms);
+}
+
+
+@keyframes fadeInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@utility fadeInFromLeft-* {
+  animation: fadeInFromLeft 0.3s ease-out backwards;
+  animation-delay: calc(--value(integer) * 1ms);
+}

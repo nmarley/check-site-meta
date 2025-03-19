@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
+import { Geist_Mono, JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { cn } from "lazy-cn";
 import { ThemeSwitcherDev } from "./theme-switch";
@@ -41,7 +41,7 @@ const sans = Plus_Jakarta_Sans({
   variable: "--font-pjs",
   subsets: ["latin"],
 });
-const mono = Geist_Mono({
+const mono = JetBrains_Mono({
   variable: "--font-gm",
   subsets: ["latin"],
 });

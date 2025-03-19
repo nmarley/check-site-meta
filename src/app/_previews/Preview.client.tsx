@@ -27,6 +27,7 @@ export function PreviewFrame(
       "text-(--fg)",
       "font-[family-name:var(--font)]",
       "w-full flex flex-col rounded-lg overflow-hidden p-8",
+      "z-20",
       className
     )}
     style={{ ...theme, ...props.style }}

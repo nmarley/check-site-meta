@@ -13,7 +13,7 @@ import { getImageSizeFromResponse } from "./lib/image-size";
 
 function MetaCard({ className, ...props }: ComponentProps<"section">) {
   return (
-    <section className={cn("card", className)}>
+    <section className={cn("card fadeIn-0", className)}>
       <div key={Math.random()} className="card-content meta-info-grid fadeBlurIn-100">
         {props.children}
       </div>
@@ -32,6 +32,7 @@ export async function MetaInfoPanel(
 
     return (
       <Tabs
+        tabProps={{ className: "fadeInFromLeft-0" }}
         id="info"
         tabs={[
           tab("General", <>General</>, <MetaCard><SummaryMetadata m={metadata} /></MetaCard>),

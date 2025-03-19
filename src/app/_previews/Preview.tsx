@@ -101,7 +101,7 @@ export function PreviewMenu(
   { className, ...props }: ComponentProps<"div"> & {}
 ) {
   return (<div {...props} className={cn(
-    "flex gap-2 self-end -z-10",
+    "flex gap-2 self-end z-10",
     className
   )} />)
 }

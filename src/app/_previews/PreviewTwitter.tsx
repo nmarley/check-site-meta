@@ -20,7 +20,7 @@ export async function PreviewTwitter(
     if (type === "summary_large_image") {
       return (
         <TwitterPreviewFrame>
-          <div className={cn("flex flex-col gap-y-1 max-w-[32.375rem] leading-5 font-twitter font-[400] subpixel-antialiased", className)} {...props}>
+          <div className={cn("flex flex-col gap-y-1 max-w-[32.375rem] w-[inherit] leading-5 font-twitter font-[400] subpixel-antialiased", className)} {...props}>
             <div className="rounded-2xl relative border border-(--border) overflow-hidden aspect-[120/63]">
               <AppImage
                 width="1200"
@@ -42,8 +42,8 @@ export async function PreviewTwitter(
     } else if (type === "summary") {
       return (
         <TwitterPreviewFrame>
-          <div className="max-w-[32.375rem] h-[8.188rem] w-full rounded-2xl border border-(--border) flex overflow-hidden bg-(--bg)">
-            <div data-noimg={!!image ? "" : undefined} className="w-[6.875rem] min-[554px]:w-[8.125rem] border-r border-(--border) shrink-0 flex items-center justify-center data-noimg:bg-(--image-noimg-bg)">
+          <div className="max-w-[32.375rem]  h-[8.188rem] w-full rounded-2xl border border-(--border) flex overflow-hidden bg-(--bg) ">
+            <div data-noimg={!!image ? "" : undefined} className="w-[6.875rem] min-[554px]:w-[8.125rem] max-w-full border-r border-(--border) shrink-0 flex items-center justify-center data-noimg:bg-(--image-noimg-bg)">
               {
                 image ?
                   <AppImage
