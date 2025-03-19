@@ -145,7 +145,7 @@ function Changelog(props: {
 }) {
   return (
     <div className="w-full grid grid-rows-[1fr] closed:grid-rows-[0fr] overflow-hidden group transition-[grid-template-rows] duration-700" data-closed={props.hidden ? "" : undefined}>
-      <div className="min-h-0">
+      <div className="min-h-0 closed:opacity-0 transition-all duration-300 delay-100" data-closed={props.hidden ? "" : undefined}>
         <div className="pt-20 pb-4 text-foreground-muted-3 font-medium">changelog</div>
         <div className="grid grid-cols-[6rem_1fr] gap-y-4 text-foreground-muted text-base">
           {
