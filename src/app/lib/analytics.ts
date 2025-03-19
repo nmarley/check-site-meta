@@ -2,7 +2,7 @@
 
 export function logEvent(ev: string) {
   try {
-    const version = document.querySelector('meta[name="csm-version"]')?.getAttribute('content')
+    const version = document.querySelector('meta[name="version"]')?.getAttribute('content')
     const disableAnalytics = document.querySelector('meta[name="disable_analytics"]')?.getAttribute('content')
     if (
       !disableAnalytics
