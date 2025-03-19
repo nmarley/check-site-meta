@@ -99,7 +99,7 @@ function TwitterPreviewFrame({ children }: { children: React.ReactNode }) {
       themes={{
         "default": {
           "--bg": "white",
-          "--border": "rgb(207,_217,_222)",
+          "--border": "rgb(207, 217, 222)",
           "--image-noimg-bg": "rgb(247, 249, 249)",
           "--image-noimg-fill": "rgb(83, 100, 113)",
           "--text-title": "rgb(15, 20, 25)",
