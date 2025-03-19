@@ -3,16 +3,19 @@
 import { logCheckButton } from "@/app/lib/analytics"
 import { cn } from "lazy-cn"
 import Form from "next/form"
+import { useSearchParams } from "next/navigation"
 import type { ComponentProps, KeyboardEvent, SVGProps } from "react"
 
 export function InputForm(
   props: { query: Record<string, string | string[] | undefined> }
 ) {
+  const sp = useSearchParams()
+  const existingSp = [...sp.entries()].filter(([key]) => key !== 'url')
+
   return <div
     className="flex gap-2 mb-8"
   >
-    <input readOnly type="hidden" name="info" value={String(props.query['info'])} />
-    <input readOnly type="hidden" name="preview" value={String(props.query['preview'])} />
+
 
     <div className="grow flex pl-1 p-0 card rounded-full input-box-shadow  transition-all">
       <CiSearchMagnifyingGlass className="w-4 h-4 ml-3 mr-1.5 self-center" />
@@ -34,6 +37,9 @@ export function InputForm(
         action="/"
         className="flex grow"
       >
+        {existingSp.map(([key, value]) => (
+          <input key={key} readOnly type="hidden" name={key} value={String(value)} />
+        ))}
         <input required id="lookup_url_input" name="url"
           className="grow border-none focus:outline-0 px-1 h-11 ml-2 text-[0.85rem] font-normal placeholder:text-foreground-muted-3/80 placeholder:font-normal placeholder:italic"
           defaultValue={props.query['url'] as string}
