@@ -17,7 +17,6 @@ export function InputForm(props: {
   useEffect(() => {
     const query = Array.isArray(props.query.url) ? props.query.url[0] : props.query.url
     if (query) recentSuggestionsLocal.add(query)
-      
   }, [props.query.url])
 
   return <div className="flex gap-2 mb-8">
