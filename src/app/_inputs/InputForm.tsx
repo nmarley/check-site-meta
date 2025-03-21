@@ -18,6 +18,10 @@ export function InputForm(props: {
     const query = Array.isArray(props.query.url) ? props.query.url[0] : props.query.url
     if (query) recentSuggestionsLocal.add(query)
   }, [props.query.url])
+  
+  useEffect(() => {
+    if (inputRef.current) inputRef.current.focus()
+  }, [])
 
   return <div className="flex gap-2 mb-8">
     <Form
@@ -30,7 +34,11 @@ export function InputForm(props: {
       className="grow"
       autoComplete="off"
     >
-      <div className="card flex items-center h-11 p-0 rounded-full input-box-shadow input-outline-hover transition-[outline,box-shadow] overflow-hidden">
+      <div
+        onClick={() => {
+          if (inputRef.current) inputRef.current.focus()
+        }}
+        className="card flex items-center h-11 p-0 rounded-full input-box-shadow input-outline-hover transition-[outline,box-shadow] overflow-hidden">
         <CiSearchMagnifyingGlass className="size-4 ml-4.5 mr-0" />
         <input
           required id="lookup_url_input"
