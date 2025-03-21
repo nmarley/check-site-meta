@@ -1,4 +1,7 @@
 export const changelog = {
+  "0.2.21": [
+    "Added support for DO_NOT_TRACK environment variable to disable analytics",
+  ],
   "0.2.20": [
     "Added header when url is empty",
     "Added fade in on meta info",

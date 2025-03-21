@@ -121,8 +121,6 @@ function TwitterPreviewFrame({ children }: { children: React.ReactNode }) {
           "--image-noimg-fill": "rgb(113, 118, 123)",
           "--text-title": "rgb(231, 233, 234)",
           "--text-description": "rgb(113, 118, 123)",
-
-
         } as CSSProperties,
       }}
     >
