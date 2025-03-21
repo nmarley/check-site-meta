@@ -154,7 +154,7 @@ function Changelog(props: {
               <div className="text-foreground-muted-3">{version}</div>
               <ul className="">
                 {changes.map((change, i) => (
-                  <li key={i} className="text-foreground-muted-2 py-0.5 list-['-___']">{change}</li>
+                  <li key={i} className="text-foreground-muted-2/80 py-0.5 list-['-___']">{change}</li>
                 ))}
               </ul>
             </Fragment>
