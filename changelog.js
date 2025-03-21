@@ -1,4 +1,7 @@
 export const changelog = {
+  "0.2.22": [
+    "Fixed Twitter Image not crashing when using relative path for og image"
+  ],
   "0.2.21": [
     "Added support for DO_NOT_TRACK environment variable to disable analytics",
   ],

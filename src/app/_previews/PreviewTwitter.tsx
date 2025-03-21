@@ -164,7 +164,8 @@ export async function getTwitterPreview(metadata: ResoledMetadata) {
   const data = {
     title: m.twitter.title.value ?? m.og.title.value,
     description: m.twitter.description.value ?? m.og.description.value,
-    image: m.twitter.image.resolvedUrl ?? m.og.images.values.at(-1)?.resolvedUrl ?? m.og.image.resolvedUrl,
+    imageUrl: m.twitter.image.value ?? m.og.images.values.at(-1)?.value ?? m.og.image.value,
+    resolvedImageUrl: m.twitter.image.resolvedUrl ?? m.og.images.values.at(-1)?.resolvedUrl ?? m.og.image.resolvedUrl,
     imageAlt: m.twitter.imageAlt.value ?? m.og.imageAlt.value,
     url: new URL(m.general.rawUrl.resolvedUrl!).host.replace('www.', ''),
     type: m.twitter.card.value
@@ -195,7 +196,7 @@ export async function getTwitterPreview(metadata: ResoledMetadata) {
       fallbackToSummary,
       image
     } = await (async () => {
-      if (!data.image) {
+      if (!data.resolvedImageUrl) {
         if (isLargeSummary) {
           messages.push(["error", "Image is not provided. Image is required for summary_large_image. Defaulting to summary."])
         } else {
@@ -204,12 +205,12 @@ export async function getTwitterPreview(metadata: ResoledMetadata) {
         return { fallbackToSummary: true }
       }
 
-      const res = await appFetch(data.image).catch((err) => {
+      const res = await appFetch(data.resolvedImageUrl).catch((err) => {
         // console.error("Error Procesing Twitter Image", err)
         return undefined
       })
       if (!res) {
-        messages.push(["error", `Unable to fetch image from ${ data.image }. Defaulting to summary.`])
+        messages.push(["error", `Unable to fetch image from ${ data.resolvedImageUrl }. Defaulting to summary.`])
         return { fallbackToSummary: true }
       }
 
@@ -224,7 +225,7 @@ export async function getTwitterPreview(metadata: ResoledMetadata) {
 
       const { buffer, imageSize: { width, height, type: format } } = imageSizeRes
 
-      const imgData = { width, height, format, size: buffer.length, url: data.image }
+      const imgData = { width, height, format, size: buffer.length, url: data.resolvedImageUrl }
 
       if (!width || !height || !format) {
         messages.push(["error", `Unable to read image metadata.${ isLargeSummary ? " Defaulting to summary." : "" }`])
@@ -253,6 +254,14 @@ export async function getTwitterPreview(metadata: ResoledMetadata) {
         messages.push(["error", `Image must be smaller than 4096x4096px (Current: ${ width }x${ height }).${ isLargeSummary ? " Defaulting to summary." : "" }`])
         return { fallbackToSummary: true }
       }
+
+      try {
+        new URL(data.imageUrl ?? "")
+      } catch (error) {
+        messages.push(["error", `Image URL needs to be an absolute URL for the image to show up properly in Twitter preview. Defaulting to summary with no image.`])
+        return { fallbackToSummary: true, image: null }
+      }
+
 
       // Docs said 120x120 but ive seen 109x109 works...
 
