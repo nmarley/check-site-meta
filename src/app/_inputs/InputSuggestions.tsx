@@ -13,6 +13,7 @@ export function RecentSuggestions(props: {
 
   useEffect(() => {
     if (!props.hidden) setRecent(recentSuggestionsLocal.get())
+    console.log(props.hidden)
   }, [props.hidden])
 
   const onClear = () => {
@@ -34,6 +35,10 @@ export function RecentSuggestions(props: {
 
   const suggestionList = (recent ?? []).length < 5 ? suggestions : []
 
+  const INITIAL_DELAY = 500
+  const INTERVAL = 75
+  const CLOSING_INTERVAL = 20
+
   return (
     <div className={cn("transition-opacity opacity-0", recent !== null ? "opacity-100" : "")}>
       <div className="grid grid-rows-[1fr] closed:grid-rows-[0fr] group overflow-hidden transition-[grid-template-rows] duration-500" data-closed={((recent === null) || hidden) ? "" : undefined}>
@@ -43,47 +48,49 @@ export function RecentSuggestions(props: {
             {
               !!recent?.length && (<>
                 <div className={cn("mt-10 text-base text-foreground-muted pb-2 transition-all")}>
-                  <div className="text-foreground-muted-3">
+                  <div className="text-foreground-muted-3 fadeInFromLeft-0">
                     recent <button className="hover:underline text-[size:inherit] font-normal" onClick={onClear}>(clear)</button>
                   </div>
                 </div>
-                {recent?.map((url, i) => (
-                  <SuggestionGoToUrlButton key={i} value={url}
-                    className={cn(
-                      "fadeInFromLeft-0 transition-[opacity,_translate] flex",
-                      (hidden) && "opacity-0 -translate-x-10"
-                    )}
-                    style={{
-                      animationDelay: `${ i * 100 + 500 }ms`,
-                      transitionDelay: `${ hidden
-                        ? ((recent.length - i + suggestionList.length) * 30)
-                        : ((i) * 100 + 500) }ms`
-                    }}
-                  />
-                ))}
+                {recent?.map((url, i) => {
+                  const transitionDelayMs = hidden ? ((recent.length - i + suggestionList.length + 1) * CLOSING_INTERVAL) : (i * INTERVAL + INITIAL_DELAY)
+                  return (
+                    <SuggestionGoToUrlButton key={i} value={url}
+                      className={cn(
+                        "fadeInFromLeft-0 transition-[opacity,_translate,_color]! flex z-50",
+                        (hidden) && "opacity-0 -translate-x-10"
+                      )}
+                      style={{
+                        animationDelay: `${ i * INTERVAL + INITIAL_DELAY }ms`,
+                        transitionDelay: `${ transitionDelayMs }ms, ${ transitionDelayMs }ms, 0ms`
+                      }}
+                    />
+                  )
+                })}
               </>)
             }
           </div>
           {
             !!suggestionList.length && <>
               <div className={cn("mt-10 text-base text-foreground-muted pb-2 transition-[asdf]")}>
-                <div className="text-foreground-muted-3">suggested</div>
+                <div className="text-foreground-muted-3 fadeInFromLeft-200">suggested</div>
               </div>
 
-              {suggestionList.map((url, i) => (
-                <SuggestionGoToUrlButton key={i} value={url}
-                  className={cn(
-                    "fadeInFromLeft-0 transition-[opacity,_translate]",
-                    hidden && "opacity-0 -translate-x-10"
-                  )}
-                  style={{
-                    animationDelay: `${ (i + (recent?.length ?? 0)) * 100 + 300 }ms`,
-                    transitionDelay: `${ hidden
-                      ? ((suggestionList.length + (recent?.length ?? 0) - i) * 30)
-                      : ((i + (recent?.length ?? 0)) * 100 + 500) }ms`
-                  }}
-                />
-              ))}
+              {suggestionList.map((url, i) => {
+                const transitionDelayMs = hidden ? ((suggestionList.length - i) * CLOSING_INTERVAL) : ((i + 1 + (recent?.length ?? 0)) * INTERVAL + INITIAL_DELAY)
+                return (
+                  <SuggestionGoToUrlButton key={i} value={url}
+                    className={cn(
+                      "fadeInFromLeft-0 transition-[opacity,_translate] z-50",
+                      hidden && "opacity-0 -translate-x-10"
+                    )}
+                    style={{
+                      animationDelay: `${ (i + (recent?.length ?? 0)) * INTERVAL + INITIAL_DELAY }ms`,
+                      transitionDelay: `${ transitionDelayMs }ms, ${ transitionDelayMs }ms, 0ms`
+                    }}
+                  />
+                )
+              })}
             </>
           }
         </div>
@@ -102,7 +109,7 @@ const suggestions = [
 ]
 
 
-function SuggestionGoToUrlButton({ value, ...props }: ComponentProps<"button"> & {
+function SuggestionGoToUrlButton({ value, className, ...props }: ComponentProps<"button"> & {
   value: string,
 }) {
   const nav = useAppNavigation()
@@ -110,7 +117,7 @@ function SuggestionGoToUrlButton({ value, ...props }: ComponentProps<"button"> &
   return (
     <button {...props}
       onClick={() => nav.navigate('url', value)}
-      className={cn("min-w-0 flex text-start break-all py-1.5 text-foreground-muted/80 hover:text-foreground font-medium max-w-full")}
+      className={cn("min-w-0 flex text-start break-all py-1.5 text-foreground-muted/80 hover:text-foreground font-medium max-w-full", className)}
     >
       <div className="text-nowrap overflow-ellipsis overflow-hidden">{value}</div>
       <div className="font-mono shrink-0 pl-1 text-[0.5rem] self-center">{'->'}</div>
