@@ -1,0 +1,27 @@
+import { useRouter, useSearchParams } from "next/navigation";
+
+export function useAppNavigation() {
+  const sp = useSearchParams()
+  const router = useRouter()
+
+  function getNewSetQuery(key: string, value: string) {
+    const newSp = new URLSearchParams(sp)
+    newSp.set(key, value)
+    return newSp
+  }
+
+  function softNavigate(key: string, value: string, mode: "replace" = "replace") {
+    const newSp = getNewSetQuery(key, value)
+    window.history.pushState({}, '', '/?' + newSp)
+  }
+
+  function navigate(key: string, value: string) {
+    const newSp = getNewSetQuery(key, value)
+    router.push('/?' + newSp)
+  }
+
+  return {
+    navigate,
+    softNavigate,
+  }
+}
