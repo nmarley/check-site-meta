@@ -3,7 +3,7 @@
 import { logCheckButton } from "@/app/lib/analytics"
 import { cn } from "lazy-cn"
 import Form from "next/form"
-import { useEffect, useRef, type ComponentProps, type CSSProperties, type SVGProps } from "react"
+import { useEffect, useRef, type ComponentProps, type SVGProps } from "react"
 import { recentSuggestionsLocal } from "../lib/localstorage"
 import { useAppNavigation } from "../lib/searchParams"
 
