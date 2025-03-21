@@ -3,7 +3,7 @@
 import { logCheckButton } from "@/app/lib/analytics"
 import { cn } from "lazy-cn"
 import Form from "next/form"
-import { useEffect, useRef, type ComponentProps, type SVGProps } from "react"
+import { useEffect, useRef, type ComponentProps, type CSSProperties, type SVGProps } from "react"
 import { recentSuggestionsLocal } from "../lib/localstorage"
 import { useAppNavigation } from "../lib/searchParams"
 
@@ -30,8 +30,8 @@ export function InputForm(props: {
       className="grow"
       autoComplete="off"
     >
-      <div className="card flex items-center h-11 px-1.5 p-0 rounded-full input-box-shadow input-outline-hover transition-[outline,box-shadow] overflow-hidden">
-        <CiSearchMagnifyingGlass className="size-4 ml-3 mr-0" />
+      <div className="card flex items-center h-11 p-0 rounded-full input-box-shadow input-outline-hover transition-[outline,box-shadow] overflow-hidden">
+        <CiSearchMagnifyingGlass className="size-4 ml-4.5 mr-0" />
         <input
           required id="lookup_url_input"
           name="url"
@@ -40,36 +40,8 @@ export function InputForm(props: {
           defaultValue={props.query['url'] as string}
           placeholder="localhost:3000              ↪ Enter"
         />
-        {/* <div className="grid grid-cols-[1fr] closed:grid-cols-[0fr] transition-[grid-template-columns] duration-500 border-red-500 self-start overflow-y-clip overflow-x-clip" data-closed={props.query.url ? "" : undefined}>
-          <div className="min-w-0">
-            <div
-              className="flex items-center transition-all duration-150 delay-150 h-11"
-              data-closed={props.query.url ? "" : undefined}>
-              <button type="submit" className="button p-2 rounded-full text-foreground-muted hover:bg-background-muted-2">
-                <MaterialSymbolsSendRounded className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        </div> */}
-        {/* <div className="grid grid-cols-[0fr] closed:grid-cols-[1fr] transition-[grid-template-columns] duration-500 border-green-500 self-end overflow-y-clip overflow-x-clip" data-closed={props.query.url ? "" : undefined}>
-          <div className="min-w-0 ">
-            <div
-              className="pr-0 flex items-center justify-center transition-all duration-150 delay-150 h-11"
-              data-closed={props.query.url ? "" : undefined}
-            >
-              <button type="submit" className="button p-2 rounded-full text-foreground-muted hover:bg-background-muted-2">
-                <MaterialSymbolsRefresh className="w-4 h-4" />
-              </button>
-              <button type="button" onClick={() => navigation.navigate('url', undefined)}
-                className="button p-2 rounded-full text-foreground-muted hover:bg-background-muted-2"
-              >
-                <MaterialSymbolsCloseRounded className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        </div> */}
         <div
-          className="self-end shrink-0 h-11 closed:w-16 w-0 min-w-0 pr-0 flex items-center justify-start transition-all overflow-hidden delay-150"
+          className="self-end shrink-0 h-11 closed:w-17.5 w-0 min-w-0 pr-1.5 flex items-center justify-start transition-all overflow-hidden"
           data-closed={props.query.url ? "" : undefined}
         >
           <button type="submit" className="button p-2 rounded-full text-foreground-muted hover:bg-background-muted-2">
