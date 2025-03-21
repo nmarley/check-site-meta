@@ -3,71 +3,68 @@
 import { logCheckButton } from "@/app/lib/analytics"
 import { cn } from "lazy-cn"
 import Form from "next/form"
-import { useSearchParams } from "next/navigation"
-import type { ComponentProps, KeyboardEvent, SVGProps } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useEffect, type ComponentProps, type KeyboardEvent, type SVGProps } from "react"
 
-export function InputForm(
-  props: { query: Record<string, string | string[] | undefined> }
-) {
+export function InputForm(props: {
+  query: Record<string, string | string[] | undefined>
+}) {
   const sp = useSearchParams()
+  const router = useRouter()
   const existingSp = [...sp.entries()].filter(([key]) => key !== 'url')
 
-  return <div
-    className="flex gap-2 mb-8"
-  >
+  useEffect(() => {
+    const query = Array.isArray(props.query.url) ? props.query.url[0] : props.query.url
+    if (query) {
+      try {
+        const storedRecents = JSON.parse(localStorage.getItem('recents') ?? "[]")
+        const recents = [...new Set([query, ...storedRecents])].slice(0, 20)
+        localStorage.setItem('recents', JSON.stringify(recents))
+      } catch (error) {
+        localStorage.setItem('recents', JSON.stringify([query]))
+      }
+    }
+  }, [props.query.url])
 
-
-    <div className="grow flex pl-1 p-0 card rounded-full input-box-shadow  transition-all">
-      <CiSearchMagnifyingGlass className="w-4 h-4 ml-3 mr-1.5 self-center" />
-      <Form
-        id="lookup_url"
-        onSubmit={(data) => {
-          const inputValue = document.getElementById("lookup_url_input") as HTMLInputElement
-          const url = inputValue.value
-          try {
-            const storedRecents = JSON.parse(localStorage.getItem('recents') ?? "[]")
-            const recents = [...new Set([url, ...storedRecents])].slice(0, 20)
-            localStorage.setItem('recents', JSON.stringify(recents))
-          } catch (error) {
-            localStorage.setItem('recents', JSON.stringify([]))
-          }
-          logCheckButton()
-        }}
-        onKeyDown={submitOnControlOrCommandEnter}
-        action="/"
-        className="flex grow"
-      >
+  return <div className="flex gap-2 mb-8">
+    <Form
+      id="lookup_url"
+      onSubmit={() => logCheckButton()}
+      onKeyDown={submitOnControlOrCommandEnter}
+      action="/"
+      className="grow outline"
+    >
+      <div className="flex items-center h-11 pl-1 outline card rounded-full input-box-shadow input-outline-hover transition-[outline,box-shadow]">
+        
+        <CiSearchMagnifyingGlass className="size-4 ml-3 mr-1.5" />
         {existingSp.map(([key, value]) => (
           <input key={key} readOnly type="hidden" name={key} value={String(value)} />
         ))}
         <input required id="lookup_url_input" name="url"
-          className="grow border-none focus:outline-0 px-1 h-11 ml-2 text-[0.85rem] font-normal placeholder:text-foreground-muted-3/80 placeholder:font-normal placeholder:italic"
+          className="grow border-none focus:outline-0 px-1 h-9 outline ml-2 text-[0.85rem] font-normal placeholder:text-foreground-muted-3/80 placeholder:font-normal placeholder:italic"
           defaultValue={props.query['url'] as string}
-          autoComplete="off"
-          placeholder="localhost:3000     ↪ Enter"
+          placeholder="localhost:3000 ↪ Enter"
         />
         <div
-          className="flex shrink-0 closed:h-11 h-0 self-end items-center justify-center transition-all overflow-hidden delay-150"
+          className="outline flex shrink-0 closed:h-11 h-0 pr-0 items-center justify-center transition-all overflow-hidden delay-150"
           data-closed={props.query.url ? "" : undefined}
         >
           <button type="submit" className="button p-2 rounded-full text-foreground-muted hover:bg-background-muted-2">
             <MaterialSymbolsRefresh className="w-4 h-4" />
           </button>
+          <button type="button" className="button p-2 rounded-full text-foreground-muted hover:bg-background-muted-2"
+            onClick={() => {
+              const newSp = new URLSearchParams(sp)
+              newSp.delete('url')
+              router.push('/?' + newSp)
+            }}
+          >
+            <MaterialSymbolsCloseRounded className="w-4 h-4" />
+          </button>
         </div>
+      </div>
 
-      </Form>
-      <Form
-        onSubmit={resetLookupForm}
-        action="/"
-        className="flex shrink-0 closed:h-11 h-0 mr-1.5 self-end items-center justify-center transition-all overflow-hidden"
-        data-closed={props.query.url ? "" : undefined}
-      >
-        <button type="submit" className="button p-2 rounded-full text-foreground-muted hover:bg-background-muted-2">
-          <MaterialSymbolsCloseRounded className="w-4 h-4" />
-        </button>
-      </Form>
-
-    </div>
+    </Form >
   </div>
 }
 
