@@ -177,6 +177,11 @@ export async function getTwitterPreview(metadata: ResoledMetadata) {
     return { messages }
   }
 
+  if (!data.type) {
+    messages.push(["error", "Twitter card type (`twitter:card`) or (`og:type`) is required. Please provide either twitter:card or any og:type value."])
+    return { messages }
+  }
+
   const {
     type,
     image

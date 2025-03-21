@@ -1,4 +1,7 @@
 export const changelog = {
+  "0.2.23": [
+    "Fixed twitter image not crashing when there is no og:type or twitter:card",
+  ],
   "0.2.22": [
     "Fixed Twitter Image not crashing when using relative path for og image"
   ],
