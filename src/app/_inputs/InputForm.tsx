@@ -30,9 +30,7 @@ export function InputForm(props: {
       <div className="flex items-center h-11 pl-1 outline card rounded-full input-box-shadow input-outline-hover transition-[outline,box-shadow]">
 
         <CiSearchMagnifyingGlass className="size-4 ml-3 mr-1.5" />
-        {existingSp.map(([key, value]) => (
-          <input key={key} readOnly type="hidden" name={key} value={String(value)} />
-        ))}
+        {existingSp.map(([key, value]) => <input key={key} readOnly type="hidden" name={key} value={String(value)} />)}
         <input required id="lookup_url_input" name="url"
           className="grow border-none focus:outline-0 px-1 h-9 outline ml-2 text-[0.85rem] font-normal placeholder:text-foreground-muted-3/80 placeholder:font-normal placeholder:italic"
           defaultValue={props.query['url'] as string}
@@ -56,7 +54,6 @@ export function InputForm(props: {
           </button>
         </div>
       </div>
-
     </Form >
   </div>
 }
