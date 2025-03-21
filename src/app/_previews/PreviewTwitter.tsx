@@ -168,7 +168,7 @@ export async function getTwitterPreview(metadata: ResoledMetadata) {
     resolvedImageUrl: m.twitter.image.resolvedUrl ?? m.og.images.values.at(-1)?.resolvedUrl ?? m.og.image.resolvedUrl,
     imageAlt: m.twitter.imageAlt.value ?? m.og.imageAlt.value,
     url: new URL(m.general.rawUrl.resolvedUrl!).host.replace('www.', ''),
-    type: m.twitter.card.value
+    type: m.twitter.card.value ?? (m.og.type.value ? "summary" : undefined)
   }
 
 
@@ -177,7 +177,7 @@ export async function getTwitterPreview(metadata: ResoledMetadata) {
     return { messages }
   }
 
-  if (!data.type) {
+  if (!m.twitter.card.value && !m.og.type.value) {
     messages.push(["error", "Twitter card type (`twitter:card`) or (`og:type`) is required. Please provide either twitter:card or any og:type value."])
     return { messages }
   }
