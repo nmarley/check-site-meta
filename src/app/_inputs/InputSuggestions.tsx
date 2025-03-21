@@ -10,6 +10,7 @@ export function RecentSuggestions(props: {
 }) {
   const { hidden } = props
   const [recent, setRecent] = useState<string[] | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
     if (!props.hidden) setRecent(recentSuggestionsLocal.get())
@@ -17,6 +18,7 @@ export function RecentSuggestions(props: {
   }, [props.hidden])
 
   const onClear = () => {
+    setIsDeleting(true)
     const recentContainer = document.getElementById('recentGrid') as HTMLDivElement
     const rect = recentContainer.getBoundingClientRect()
     const anim = recentContainer.animate([
@@ -29,13 +31,15 @@ export function RecentSuggestions(props: {
     })
     anim.onfinish = () => {
       setRecent(recentSuggestionsLocal.clear())
+      setIsDeleting(false)
       setTimeout(() => anim.cancel(), 10)
     }
   }
 
   const suggestionList = (recent ?? []).length < 5 ? suggestions : []
 
-  const INITIAL_DELAY = 500
+  // const INITIAL_DELAY = 500
+  const INITIAL_DELAY = 0
   const INTERVAL = 75
   const CLOSING_INTERVAL = 20
 
@@ -53,12 +57,14 @@ export function RecentSuggestions(props: {
                   </div>
                 </div>
                 {recent?.map((url, i) => {
-                  const transitionDelayMs = hidden ? ((recent.length - i + suggestionList.length + 1) * CLOSING_INTERVAL) : (i * INTERVAL + INITIAL_DELAY)
+                  const transitionDelayMs = isDeleting
+                    ? ((recent.length - i) * CLOSING_INTERVAL)
+                    : hidden ? ((recent.length - i + suggestionList.length + 1) * CLOSING_INTERVAL) : (i * INTERVAL + INITIAL_DELAY)
                   return (
                     <SuggestionGoToUrlButton key={i} value={url}
                       className={cn(
                         "fadeInFromLeft-0 transition-[opacity,_translate,_color]! flex z-50",
-                        (hidden) && "opacity-0 -translate-x-10"
+                        (hidden || isDeleting) && "opacity-0 -translate-x-10"
                       )}
                       style={{
                         animationDelay: `${ i * INTERVAL + INITIAL_DELAY }ms`,
