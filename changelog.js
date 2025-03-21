@@ -1,4 +1,9 @@
 export const changelog = {
+  "0.2.24": [
+    "Improved animation: url input transition & suggestion lists",
+    "Fixed hover suggestion animation",
+    "Added autofocus on page load",
+  ],
   "0.2.23": [
     "Fixed twitter image not crashing when there is no og:type or twitter:card",
   ],
