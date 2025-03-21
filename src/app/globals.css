@@ -303,6 +303,8 @@ body {
   @apply bg-clip-text text-transparent;
 }
 
+/* Misc */
+
 @utility input-box-shadow {
   @apply shadow-lg
   shadow-[light-dark(--alpha(var(--color-slate-200)/0.2),--alpha(var(--color-neutral-950)/0.3))]
@@ -312,6 +314,9 @@ body {
 @utility input-outline-hover {
   @apply outline-0 hover:outline-4 outline-transparent hover:outline-focus/50;
 }
+
+
+
 
 /* Animations ----------------------------- */
 
