@@ -7,13 +7,14 @@
     "check-site-meta": "./bin/check-site-meta.js"
   },
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "rm -rf .next && next build && rm -rf .next/cache && cp -r .next/static .next/standalone/.next/ && cp -r .next/standalone bin",
-    "start": "next start",
-    "lint": "next lint",
-    "test": "npm run build; tsc --p ./bin && node ./bin/check-site-meta.js",
-    "test:skipbuild": "tsc --p ./bin && node ./bin/check-site-meta.js",
-    "prepublishOnly": "npm run build && tsc --p ./bin"
+    "dev": "bun --bun next dev --turbopack",
+    "clean": "rm -fr .next",
+    "build": "bun run clean && next build && rm -rf .next/cache && cp -r .next/static .next/standalone/.next/ && cp -r .next/standalone bin",
+    "start": "bun --bun next start",
+    "start:standalone": "bun --bun ./bin/check-site-meta.ts",
+    "lint": "bun --bun next lint",
+    "format": "biome check . --write --unsafe",
+    "prepublishOnly": "bun run build && tsc --p ./bin"
   },
   "dependencies": {
     "commander": "^13.1.0",
@@ -27,13 +28,11 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
+    "@biomejs/biome": "^1.9.4",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "15.2.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

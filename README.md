@@ -11,12 +11,10 @@
 
 ## Installation & Usage
 
-To use `check-site-meta`, install it via `npx` or `pnpx`:
+To use `check-site-meta`, install it via `bunx`:
 
 ```sh
-npx check-site-meta
-# or
-pnpx check-site-meta
+bunx --bun check-site-meta
 ```
 
 ### Checking Localhost Ports
@@ -24,8 +22,8 @@ pnpx check-site-meta
 To inspect metadata for a locally running application, specify a port:
 
 ```sh
-pnpx check-site-meta 3000
-pnpx check-site-meta 5173
+bunx --bun check-site-meta 3000
+bunx --bun check-site-meta 5173
 ```
 
 ### Customizing the Backend Port
@@ -33,7 +31,7 @@ pnpx check-site-meta 5173
 To change the backend port, use the `-p` flag:
 
 ```sh
-pnpx check-site-meta 5173 -p 5000
+bunx --bun check-site-meta 5173 -p 5000
 ```
 
 ### Disable Analytics
@@ -41,7 +39,7 @@ pnpx check-site-meta 5173 -p 5000
 To disable the analytics, use the `--no-analytics` flag or set a `DO_NOT_TRACK` env to `true` or `1`
 
 ```sh
-pnpx check-site-meta --no-analytics
+bunx --bun check-site-meta --no-analytics
 ```
 
 ## Hyperlinks
